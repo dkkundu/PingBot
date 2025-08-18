@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-r from-indigo-50 via-white to-indigo-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-4xl bg-white shadow-2xl rounded-3xl border border-gray-200 p-10">
+
+        <!-- Header -->
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-8 text-center md:text-left">Edit User: {{ user.full_name }}</h2>
+
+        <!-- Edit Form -->
+        <form method="POST" enctype="multipart/form-data" class="space-y-8">
+
+            <!-- Personal Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Full Name</label>
+                    <input type="text" name="full_name" value="{{ user.full_name }}" 
+                           class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition shadow-sm">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Phone</label>
+                    <input type="text" name="phone" value="{{ user.phone }}" 
+                           class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition shadow-sm">
+                </div>
+
+              
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Role</label>
+                    <select name="role" 
+                            class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition shadow-sm">
+                        <option value="employee" {% if user.role == 'employee' %}selected{% endif %}>Employee</option>
+                        <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                    </select>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-gray-700 font-medium mb-1">Address</label>
+                    <input type="text" name="address" value="{{ user.address }}" 
+                           class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition shadow-sm">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-gray-700 font-medium mb-1">Bio</label>
+                    <textarea name="bio" rows="4" 
+                              class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition shadow-sm">{{ user.bio }}</textarea>
+                </div>
+            </div>
+
+            <!-- Role & Permissions -->
+            <div class="flex flex-col md:flex-row gap-6 items-center">
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" name="is_superuser" class="form-checkbox h-5 w-5 text-indigo-600" {% if user.is_superuser %}checked{% endif %}>
+                    <span class="text-gray-700 font-medium">Superuser</span>
+                </label>
+
+                <label class="inline-flex items-center space-x-2">
+                    <input type="checkbox" name="is_approved" class="form-checkbox h-5 w-5 text-indigo-600" {% if user.is_approved %}checked{% endif %}>
+                    <span class="text-gray-700 font-medium">Approved</span>
+                </label>
+            </div>
+
+           
+
+            <!-- Profile Picture -->
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">Profile Picture</label>
+                <div class="flex items-center space-x-6">
+                    <div class="relative">
+                        {% if user.profile_pic %}
+                        <img id="profilePreview" src="{{ url_for('static', filename=user.profile_pic.split('static/')[-1]) }}" 
+                             alt="Profile Pic" class="h-28 w-28 rounded-full object-cover border-2 border-indigo-400 shadow-md">
+                        {% else %}
+                        <div id="profilePreview" class="h-28 w-28 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xl font-semibold border-2 border-gray-300 shadow-md">
+                            No Image
+                        </div>
+                        {% endif %}
+                    </div>
+                    <input type="file" name="profile_pic" id="profilePicInput" 
+                           class="border border-gray-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition shadow-sm">
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex flex-col md:flex-row justify-end items-center space-y-3 md:space-y-0 md:space-x-4">
+                <a href="{{ url_for('frontend.approved_users') }}" 
+                   class="px-6 py-3 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition text-center font-semibold w-full md:w-auto">
+                   Cancel
+                </a>
+                <button type="submit" 
+                        class="px-6 py-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition w-full md:w-auto font-semibold shadow-lg">
+                        Save Changes
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- JS for live profile pic preview -->
+<script>
+    const profileInput = document.getElementById('profilePicInput');
+    const profilePreview = document.getElementById('profilePreview');
+
+    profileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profilePreview.src = e.target.result;
+                profilePreview.classList.remove('bg-gray-100', 'flex', 'items-center', 'justify-center', 'text-gray-400', 'text-xl', 'font-semibold');
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}

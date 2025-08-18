@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4">
+  <div class="bg-white/80 backdrop-blur-md shadow-xl rounded-3xl w-full max-w-4xl p-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-gray-800">Edit Profile</h2>
+      <p class="text-gray-500 mt-2">Update your information and profile picture</p>
+    </div>
+
+    <!-- Form -->
+    <form method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+      
+      <!-- Profile Picture -->
+      <div class="flex flex-col items-center justify-center space-y-4">
+        <div class="w-40 h-40 relative">
+          {% if user.profile_pic %}
+          <img id="profilePreview" src="{{ url_for('static', filename=user.profile_pic.split('static/')[-1]) }}" 
+               class="w-40 h-40 rounded-full object-cover shadow-lg border border-gray-200">
+          {% else %}
+          <div id="profilePreview" class="w-40 h-40 rounded-full bg-gray-300 flex items-center justify-center text-4xl text-gray-600 font-bold">
+            {{ user.full_name[0] }}
+          </div>
+          {% endif %}
+        </div>
+        <input type="file" name="profile_pic" id="profilePic" class="block text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+               file:rounded-full file:border-0 file:text-sm file:bg-indigo-600 file:text-white hover:file:bg-indigo-700" 
+               accept="image/*">
+      </div>
+
+      <!-- Form Fields -->
+      <div class="md:col-span-2 space-y-4">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Full Name</label>
+          <input type="text" name="full_name" value="{{ user.full_name }}"
+                 class="w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400">
+        </div>
+      
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Phone</label>
+          <input type="text" name="phone" value="{{ user.phone }}"
+                 class="w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400">
+        </div>
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Address</label>
+          <input type="text" name="address" value="{{ user.address }}"
+                 class="w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400">
+        </div>
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Bio</label>
+          <textarea name="bio" rows="4"
+                    class="w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400">{{ user.bio }}</textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-4 mt-4">
+          <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-3 rounded-xl shadow-lg hover:from-indigo-700 hover:to-purple-700 transition duration-300">
+            Save Changes
+          </button>
+          <a href="{{ url_for('frontend.profile') }}" 
+             class="flex-1 bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl shadow hover:bg-gray-300 transition duration-300 text-center">
+            Cancel
+          </a>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- JS for live image preview -->
+<script>
+document.getElementById('profilePic').addEventListener('change', function(event) {
+    const [file] = event.target.files;
+    if (file) {
+        const preview = document.getElementById('profilePreview');
+        const reader = new FileReader();
+        reader.onload = e => {
+            preview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+
+{% endblock %}

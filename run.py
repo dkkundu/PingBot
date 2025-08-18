@@ -1,5 +1,6 @@
-from app import create_app, db
 
+from app import create_app, db
+# from flask import Flask, render_template
 app = create_app()
 
 with app.app_context():

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Welcome, {{ current_user.full_name }}!</h2>
+  {% if current_user.role == 'admin' %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white p-6 rounded shadow">
+        <h3 class="font-semibold text-gray-700">Total Users</h3>
+        <p class="text-2xl font-bold mt-2">{{ approved_users|length }}</p>
+    </div>
+     {% endif %}
+    {% if current_user.role == 'admin' %}
+    <div class="bg-white p-6 rounded shadow">
+        <h3 class="font-semibold text-gray-700">Pending Users</h3>
+        <p class="text-2xl font-bold mt-2">{{ pending_users|length }}</p>
+    </div>
+    {% endif %}
+    <div class="bg-white p-6 rounded shadow">
+        <h3 class="font-semibold text-gray-700">Profile</h3>
+        <p class="mt-2">Update your information anytime from the Profile page.</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-5xl mx-auto py-16 px-6 lg:px-12">
+
+    <!-- Card Container -->
+    <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+
+        <!-- Cover -->
+        <div class="relative h-48 bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600">
+            <div class="absolute inset-0 bg-black bg-opacity-10"></div>
+        </div>
+
+        <!-- Profile Header -->
+        <div class="relative px-8 pb-10">
+            
+            <!-- Profile Pic -->
+            <div class="absolute -top-16 flex items-center">
+                {% if user.profile_pic %}
+                <img src="{{ url_for('static', filename=user.profile_pic.split('static/')[-1]) }}"
+                     alt="Profile Picture"
+                     class="w-32 h-32 rounded-full border-4 border-white shadow-xl object-cover ring-4 ring-white">
+                {% else %}
+                <div class="w-32 h-32 rounded-full border-4 border-white shadow-xl bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-600 text-4xl font-bold ring-4 ring-white">
+                    {{ user.full_name[0]|upper if user.full_name else "U" }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- User Info -->
+            <div class="pt-20">
+                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">
+                    {{ user.full_name }}
+                </h1>
+                <p class="text-lg text-gray-500 mt-1">{{ user.email }}</p>
+            </div>
+        </div>
+
+        <!-- Profile Details -->
+        <div class="px-8 pb-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- Phone -->
+            <div class="bg-gray-50 rounded-2xl p-6 shadow-sm hover:shadow-md transition duration-300">
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Phone</h3>
+                <p class="text-lg text-gray-900 mt-2">{{ user.phone or "Not provided" }}</p>
+            </div>
+
+            <!-- Address -->
+            <div class="bg-gray-50 rounded-2xl p-6 shadow-sm hover:shadow-md transition duration-300">
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Address</h3>
+                <p class="text-lg text-gray-900 mt-2">{{ user.address or "Not provided" }}</p>
+            </div>
+
+            <!-- Bio -->
+            <div class="md:col-span-2 bg-gray-50 rounded-2xl p-6 shadow-sm hover:shadow-md transition duration-300">
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">About Me</h3>
+                <p class="text-base text-gray-700 leading-relaxed mt-2">{{ user.bio or "No bio available." }}</p>
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+
+{% endblock %}

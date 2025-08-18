@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Floating label effect */
+        .floating-input {
+            position: relative;
+        }
+        .floating-input input:focus + label,
+        .floating-input input:not(:placeholder-shown) + label {
+            transform: translateY(-1.5rem) scale(0.85);
+            color: #2563EB; /* Tailwind blue-600 */
+        }
+        .floating-input label {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            background: rgba(255,255,255,0.9);
+            padding: 0 0.25rem;
+            color: #9CA3AF; /* gray-400 */
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        /* Background animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2, #6b5b95);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            z-index: -1;
+        }
+        @keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen font-sans text-gray-800">
+
+    <div class="w-full max-w-md p-10 bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20">
+        
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Welcome Back</h1>
+            <p class="text-gray-600">Login to access your professional dashboard</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mb-6 space-y-2">
+                {% for category, msg in messages %}
+                    <div class="px-4 py-2 rounded text-white {{ 'bg-green-500' if category=='success' else 'bg-red-500' if category=='danger' else 'bg-yellow-500' }}">
+                        {{ msg }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Login Form -->
+        <form method="POST" class="space-y-6">
+
+            <!-- Email -->
+            <div class="floating-input">
+                <input type="email" name="email" id="email" placeholder=" " 
+                       class="w-full px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300" required>
+                <label for="email">Email</label>
+            </div>
+
+            <!-- Password -->
+            <div class="floating-input">
+                <input type="password" name="password" id="password" placeholder=" " 
+                       class="w-full px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300" required>
+                <label for="password">Password</label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" 
+                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 rounded-xl shadow-xl transition-all duration-300 transform hover:scale-105">
+                Login
+            </button>
+        </form>
+
+        <!-- Links -->
+        <div class="mt-6 text-center">
+            <p class="text-gray-500 text-sm">
+                Don't have an account? 
+                <a href="{{ url_for('frontend.register') }}" class="text-blue-600 hover:underline font-medium">Register</a>
+            </p>
+        
+        </div>
+
+        <!-- Optional Divider -->
+        <div class="flex items-center my-6">
+            <hr class="flex-grow border-gray-300">
+            <span class="mx-2 text-gray-400 text-sm">OR</span>
+            <hr class="flex-grow border-gray-300">
+        </div>
+
+        <!-- Social Login -->
+        <div class="flex flex-col gap-3">
+            <button class="flex items-center justify-center gap-2 w-full py-2 border border-gray-300 rounded-xl hover:bg-gray-50 transition duration-300">
+                <img src="https://img.icons8.com/color/24/google-logo.png" alt="Google" class="w-5 h-5">
+                Continue with Google
+            </button>
+            <button class="flex items-center justify-center gap-2 w-full py-2 border border-gray-300 rounded-xl hover:bg-gray-50 transition duration-300">
+                <img src="https://img.icons8.com/color/24/linkedin.png" alt="LinkedIn" class="w-5 h-5">
+                Continue with LinkedIn
+            </button>
+        </div>
+
+    </div>
+</body>
+</html>
