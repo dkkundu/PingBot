@@ -16,43 +16,65 @@
 
 <!-- Sidebar -->
 <div class="flex h-screen">
-  <aside class="w-64 bg-[#1a1a2e] text-white flex flex-col shadow-lg">
-    <div class="p-6 text-2xl font-bold border-b border-[#162447] tracking-wide">
-      PingBot
+<aside class="w-64 bg-[#1E3A8A] text-white flex flex-col shadow-lg">
+<div class="flex items-center p-6 text-2xl font-bold border-b border-[#2563EB] tracking-wide text-white">
+  <!-- Icon: modern circle + wave/ping -->
+  <div class="relative mr-3">
+    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#22D3EE] to-[#3B82F6] flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m-3-3l-3 3m3-3a9 9 0 110-12 9 9 0 010 12z" />
+      </svg>
     </div>
-    <nav class="flex-1 overflow-y-auto mt-6">
-      <ul class="space-y-2">
-       
-          <li>
-          <a href="{{ url_for('frontend.profile') }}"
-             class="flex items-center px-6 py-3 rounded-lg hover:bg-[#162447] transition-colors duration-200
-             {% if request.endpoint == 'frontend.profile' %} bg-[#162447] border-l-4 border-[#4e91fc] {% endif %}">
-            <i class="fas fa-user w-5"></i>
-            <span class="ml-3 font-medium">Profile</span>
-          </a>
-        </li>
-        {% if current_user.role == 'admin' %}
-        <li>
-          <a href="{{ url_for('frontend.pending_users') }}"
-             class="flex items-center px-6 py-3 rounded-lg hover:bg-[#162447] transition-colors duration-200
-             {% if request.endpoint == 'frontend.pending_users' %} bg-[#162447] border-l-4 border-[#4e91fc] {% endif %}">
-            <i class="fas fa-user-clock w-5"></i>
-            <span class="ml-3 font-medium">Pending Users</span>
-          </a>
-        </li>
-        <li>
-          <a href="{{ url_for('frontend.approved_users') }}"
-             class="flex items-center px-6 py-3 rounded-lg hover:bg-[#162447] transition-colors duration-200
-             {% if request.endpoint == 'frontend.approved_users' %} bg-[#162447] border-l-4 border-[#4e91fc] {% endif %}">
-            <i class="fas fa-users w-5"></i>
-            <span class="ml-3 font-medium">Users</span>
-          </a>
-        </li>
-        {% endif %}
+  </div>
+
+  PingBot
+</div>
+
+  <nav class="flex-1 overflow-y-auto mt-6">
+    <ul class="space-y-2">
+
+      <!-- Dashboard -->
+      <li>
+        <a href="{{ url_for('frontend.dashboard') }}"
+           class="flex items-center px-6 py-3 rounded-lg hover:bg-[#2563EB] transition-colors duration-200
+           {% if request.endpoint == 'frontend.dashboard' %} bg-[#2563EB] border-l-4 border-[#22D3EE] {% endif %}">
+          <i class="fas fa-tachometer-alt w-5"></i>
+          <span class="ml-3 font-medium">Dashboard</span>
+        </a>
+      </li>
       
-      </ul>
-    </nav>
-  </aside>
+
+
+      <!-- Admin only -->
+      {% if current_user.role == 'admin' or current_user.is_superuser %}
+      <li>
+        <a href="{{ url_for('frontend.pending_users') }}"
+           class="flex items-center px-6 py-3 rounded-lg hover:bg-[#2563EB] transition-colors duration-200
+           {% if request.endpoint == 'frontend.pending_users' %} bg-[#2563EB] border-l-4 border-[#22D3EE] {% endif %}">
+          <i class="fas fa-user-clock w-5"></i>
+          <span class="ml-3 font-medium">Pending Users</span>
+        </a>
+      </li>
+     
+      {% endif %}
+
+
+          <!--  User -->
+
+                <li>
+                  <a href="{{ url_for('frontend.approved_users') }}"
+                    class="flex items-center px-6 py-3 rounded-lg hover:bg-[#2563EB] transition-colors duration-200
+                    {% if request.endpoint == 'frontend.approved_users' %} bg-[#2563EB] border-l-4 border-[#22D3EE] {% endif %}">
+                    <i class="fas fa-users w-5"></i>
+                    <span class="ml-3 font-medium">Users</span>
+                  </a>
+                </li>
+
+    </ul>
+  </nav>
+</aside>
+
+
 
   <!-- Main content -->
   <div class="flex-1 flex flex-col">
@@ -91,6 +113,14 @@
     <!-- Dropdown Menu -->
     <div id="user-dropdown" 
          class="hidden absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
+
+       <!-- Profile -->
+      <a href="{{ url_for('frontend.profile') }}" 
+         class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition">
+         <i class="fas fa-user w-5"></i>
+        <span><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">Profile</span>
+      </a>
+
 
       <!-- Edit Profile -->
       <a href="{{ url_for('frontend.edit_profile') }}" 

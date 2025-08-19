@@ -1,7 +1,7 @@
 # app/app.py
 from flask import Flask
 from .extensions import db, migrate, jwt
-from .authentication.urls import initialize_routes
+# from .authentication.urls import initialize_routes
 from app.authentication.views.auth_frontend import frontend_bp
 
 def create_app():
@@ -18,7 +18,7 @@ def create_app():
     jwt.init_app(app)
     
     # Initialize routes
-    initialize_routes(app)
+    # initialize_routes(app)
     app.register_blueprint(frontend_bp)
     @app.route('/')
     def index():

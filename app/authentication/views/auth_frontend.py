@@ -14,63 +14,10 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-# -------------------- Registration --------------------
-
-@frontend_bp.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        full_name = request.form.get('full_name')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        phone = request.form.get('phone')
-        address = request.form.get('address')
-        bio = request.form.get('bio')
-        profile_pic = request.files.get('profile_pic')
-
-        # Check if email exists
-        if User.query.filter_by(email=email).first():
-            flash("Email already exists.", "danger")
-            return redirect(url_for('frontend.register'))
-
-        # Handle profile picture upload
-        profile_pic_path = None
-        if profile_pic and allowed_file(profile_pic.filename):
-            filename = secure_filename(profile_pic.filename)
-            
-            # Full filesystem path
-            upload_folder = os.path.join(os.getcwd(), "app", "static", "uploads")
-            os.makedirs(upload_folder, exist_ok=True)  # Create folder if it doesn't exist
-            
-            profile_pic_path = os.path.join(upload_folder, filename)
-            profile_pic.save(profile_pic_path)
-            
-            # Store relative path for HTML
-            profile_pic_path = f"static/uploads/{filename}"
-
-        user = User(
-            full_name=full_name,
-            email=email,
-            role="employee",
-            is_superuser=False,
-            is_approved=False,
-            phone=phone,
-            address=address,
-            bio=bio,
-            profile_pic=profile_pic_path
-        )
-        user.set_password(password)
-        db.session.add(user)
-        db.session.commit()
-
-        flash("User registered successfully! Waiting for admin approval.", "success")
-        return redirect(url_for('frontend.login'))
-
-    return render_template('register.html')
-
 
 
 # -------------------- Login --------------------
-@frontend_bp.route('/', methods=['GET', 'POST'])
+@frontend_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -101,50 +48,33 @@ def logout():
 
 
 # -------------------- Dashboard --------------------
-# @frontend_bp.route('/dashboard')
-# def dashboard():
-#     user_id = session.get('user_id')
-#     if not user_id:
-#         flash("Please login first.", "warning")
-#         return redirect(url_for('frontend.login'))
-
-#     user = User.query.get(user_id)
-#     if not user:
-#         flash("User not found", "danger")
-#         return redirect(url_for('frontend.login'))
-
-#     # Admin view: show pending users
-#     pending_users = User.query.filter_by(is_approved=False).all() if user.role == "admin" else None
-
-#     return render_template('dashboard.html', current_user=user, pending_users=pending_users)
 
 
-@frontend_bp.route('/dashboard')
+@frontend_bp.route('/')
 def dashboard():
     user_id = session.get('user_id')
-    if not user_id:
-        flash("Please login first.", "warning")
+    current_user = User.query.get(user_id)
+
+    if not current_user:
+        flash("You must be logged in to view this page.", "danger")
         return redirect(url_for('frontend.login'))
 
-    user = User.query.get(user_id)
-    if not user:
-        flash("User not found", "danger")
-        return redirect(url_for('frontend.login'))
+    # Fetch all approved users (so everyone can see total users)
+    approved_users = User.query.filter_by(is_approved=True).all()
 
-    # Only for admin
-    if user.role == "admin":
+    # Optionally, fetch pending users only for admin
+    pending_users = []
+    if current_user.role == 'admin':
         pending_users = User.query.filter_by(is_approved=False).all()
-        approved_users = User.query.filter_by(is_approved=True).all()
-    else:
-        pending_users = None
-        approved_users = None
 
     return render_template(
-        'dashboard.html', 
-        current_user=user, 
-        pending_users=pending_users, 
-        approved_users=approved_users
+        'dashboard.html',
+        current_user=current_user,
+        approved_users=approved_users,
+        pending_users=pending_users
     )
+
+
 
 
 
@@ -169,12 +99,16 @@ def pending_users():
 def approved_users():
     user_id = session.get('user_id')
     current_user = User.query.get(user_id)
-    if not current_user or current_user.role != "admin":
-        flash("Unauthorized access.", "danger")
-        return redirect(url_for('frontend.approved_users'))
 
-    approved = User.query.filter_by(is_approved=True).all()
-    return render_template('approved_users.html', users=approved,current_user=current_user)
+    if not current_user:
+        flash("You must be logged in to view this page.", "danger")
+        return redirect(url_for('frontend.login'))
+
+    # Fetch approved users ordered by newest id first
+    approved = User.query.filter_by(is_approved=True).order_by(User.id.desc()).all()
+
+    return render_template('approved_users.html', users=approved, current_user=current_user)
+
 
 
 @frontend_bp.route('/users/approve/<int:user_id>')
@@ -282,22 +216,23 @@ def change_password():
         user.set_password(new_password)
         db.session.commit()
         flash("Password changed successfully!", "success")
-        return redirect(url_for('frontend.profile'))
+        return redirect(url_for('frontend.login'))
 
     return render_template("change_password.html", user=user, current_user=user)
 
 
 # -------------------- Admin: Edit User --------------------
-@frontend_bp.route('/admin/user/edit/<int:user_id>', methods=['GET', 'POST'])
+
+
+
+@frontend_bp.route('/user/edit/<int:user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):
-    # Get current logged-in user
     current_user_id = session.get('user_id')
     current_user = User.query.get(current_user_id)
 
-    # Only allow admin/superuser
-    if not current_user or not current_user.is_superuser:
-        flash("Unauthorized access.", "danger")
-        return redirect(url_for('frontend.approved_users'))
+    if not current_user:
+        flash("You must be logged in.", "danger")
+        return redirect(url_for('frontend.login'))
 
     # Get the user to edit
     user = User.query.get(user_id)
@@ -306,21 +241,22 @@ def edit_user(user_id):
         return redirect(url_for('frontend.approved_users'))
 
     if request.method == 'POST':
-        # Update basic fields
+        # Normal users can update these fields
         user.full_name = request.form.get('full_name', user.full_name)
         user.phone = request.form.get('phone', user.phone)
         user.address = request.form.get('address', user.address)
         user.bio = request.form.get('bio', user.bio)
         user.role = request.form.get('role', user.role)
-        user.email = request.form.get('email', user.email)
 
-        # Optional checkboxes
-        user.is_superuser = request.form.get('is_superuser') == 'on'
-        # Only update is_approved if checkbox exists
-        if request.form.get('is_approved') is not None:
-            user.is_approved = request.form.get('is_approved') == 'on'
+        # Only admin can update sensitive fields
+        if current_user.is_superuser:
+            user.email = request.form.get('email', user.email)
+            user.is_superuser = request.form.get('is_superuser') == 'on'
+            user.is_active = request.form.get('is_active') == 'on'
+            if request.form.get('is_approved') is not None:
+                user.is_approved = request.form.get('is_approved') == 'on'
 
-        # Handle profile picture upload
+        # Handle profile picture
         profile_pic = request.files.get('profile_pic')
         if profile_pic and allowed_file(profile_pic.filename):
             filename = secure_filename(profile_pic.filename)
@@ -330,7 +266,7 @@ def edit_user(user_id):
             profile_pic.save(profile_pic_path)
             user.profile_pic = f"static/uploads/{filename}"
 
-        # Optional: update password if provided
+        # Update password if provided
         new_password = request.form.get('password')
         if new_password:
             user.set_password(new_password)
@@ -338,7 +274,11 @@ def edit_user(user_id):
         try:
             db.session.commit()
             flash("User updated successfully!", "success")
-            return redirect(url_for('frontend.approved_users'))
+            # Redirect to user details if admin edited a pending user
+            if current_user.is_superuser and not user.is_approved:
+                return redirect(url_for('frontend.user_details', user_id=user.id))
+            else:
+                return redirect(url_for('frontend.approved_users'))
         except Exception as e:
             db.session.rollback()
             flash(f"Error updating user: {str(e)}", "danger")
@@ -346,56 +286,153 @@ def edit_user(user_id):
 
     return render_template("edit_user.html", user=user, current_user=current_user)
 
+
 # -------------------- Admin: User Details --------------------
-@frontend_bp.route('/admin/user/details/<int:user_id>')
+@frontend_bp.route('/user/details/<int:user_id>')
 def user_details(user_id):
     current_user_id = session.get('user_id')
     current_user = User.query.get(current_user_id)
 
-    # Check if user is logged in and is admin
-    if not current_user or not current_user.is_superuser:
-        flash("Unauthorized access.", "danger")
-        return redirect(url_for('frontend.user_details'))
+    if not current_user:
+        flash("Please log in to view user details.", "danger")
+        return redirect(url_for('frontend.login'))
 
-    # Get the user details
     user = User.query.get(user_id)
     if not user:
-        flash("User not found.", "danger")
-        return redirect(url_for('frontend.user_details'))
+        flash("User not found.", "warning")
+        return redirect(url_for('frontend.dashboard'))
 
-    # Optional: ensure profile exists
+    # Only prevent non-logged-in users (everyone else can view)
+    # Remove restriction for normal users to see others
+    # if not current_user.is_superuser and current_user.id != user.id:
+    #     flash("Unauthorized access.", "danger")
+    #     return redirect(url_for('frontend.dashboard'))
+
     profile = getattr(user, 'profile', None)
     if profile is None:
-        profile = type('Profile', (), {})()  # create empty object to avoid attribute errors
+        profile = type('Profile', (), {})()
         profile.phone = ''
         profile.address = ''
         profile.bio = ''
         profile.profile_pic = None
 
+    is_pending = not getattr(user, 'is_approved', False)
+
     return render_template(
         "user_details.html",
-        user=user,        # pass the actual User object
-        profile=profile,  # pass profile separately
-        current_user=current_user
+        user=user,
+        profile=profile,
+        current_user=current_user,
+        is_pending=is_pending
     )
 
 
+
+
 # -------------------- Admin: Delete User --------------------
-@frontend_bp.route('/admin/user/delete/<int:user_id>')
+
+
+@frontend_bp.route('/user/delete/<int:user_id>')
 def delete_user(user_id):
     current_user_id = session.get('user_id')
     current_user = User.query.get(current_user_id)
 
-    if not current_user or not current_user.is_superuser:
-        flash("Unauthorized access.", "danger")
-        return redirect(url_for('frontend.dashboard'))
+    if not current_user:
+        flash("Please log in first.", "danger")
+        return redirect(url_for('frontend.login'))
 
     user = User.query.get(user_id)
     if not user:
         flash("User not found.", "danger")
-        return redirect(url_for('frontend.dashboard'))
+        return redirect(url_for('frontend.approved_users'))
 
+    # Prevent deleting self
+    if current_user.id == user.id:
+        flash("You cannot delete yourself.", "warning")
+        return redirect(url_for('frontend.approved_users'))
+
+    # Normal user restrictions: cannot delete superuser
+    if not current_user.is_superuser and user.is_superuser:
+        flash("You cannot delete a superuser.", "danger")
+        return redirect(url_for('frontend.approved_users'))
+
+    # Delete the user
     db.session.delete(user)
     db.session.commit()
     flash("User deleted successfully!", "warning")
+
+    # Redirect to approved users page for everyone
     return redirect(url_for('frontend.approved_users'))
+
+
+
+
+
+
+# --------------------  Create User --------------------
+@frontend_bp.route('/users/create', methods=['GET', 'POST'])
+def create_user():
+    user_id = session.get('user_id')
+    current_user = User.query.get(user_id)
+
+    if not current_user:
+        flash("Unauthorized access.", "danger")
+        return redirect(url_for('frontend.dashboard'))
+
+    if request.method == 'POST':
+        full_name = request.form.get('full_name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        role = request.form.get('role')
+        is_approved = bool(request.form.get('is_approved'))
+        phone = request.form.get('phone')
+        address = request.form.get('address')
+        bio = request.form.get('bio')
+        profile_pic = request.files.get('profile_pic')
+
+        # Normal users cannot create superusers
+        if current_user.is_superuser:
+            is_superuser = bool(request.form.get('is_superuser'))
+        else:
+            is_superuser = False
+
+        # Check if email exists
+        if User.query.filter_by(email=email).first():
+            flash("Email already exists.", "danger")
+            return redirect(url_for('frontend.create_user'))
+
+        # Handle profile picture upload
+        profile_pic_path = None
+        if profile_pic and allowed_file(profile_pic.filename):
+            filename = secure_filename(profile_pic.filename)
+            upload_folder = os.path.join(os.getcwd(), "app", "static", "uploads")
+            os.makedirs(upload_folder, exist_ok=True)
+            profile_pic_path = os.path.join(upload_folder, filename)
+            profile_pic.save(profile_pic_path)
+            profile_pic_path = f"static/uploads/{filename}"
+
+        # Create new user
+        user = User(
+            full_name=full_name,
+            email=email,
+            role=role,
+            is_superuser=is_superuser,
+            is_approved=is_approved,
+            phone=phone,
+            address=address,
+            bio=bio,
+            profile_pic=profile_pic_path
+        )
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        flash(f"User {full_name} created successfully!", "success")
+        return redirect(url_for('frontend.approved_users'))
+
+    return render_template('create_user.html', current_user=current_user)
+
+
+    
+
