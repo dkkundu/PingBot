@@ -4,6 +4,7 @@ from app.extensions import db
 from app.notification_sender.models import AlertService, AlertConfig, AlertSample
 from app.authentication.models import User
 import os
+from datetime import datetime
 # from flask_login import login_required
 
 # alert_bp = Blueprint('alert', __name__, template_folder='../../templates/')
@@ -68,6 +69,13 @@ def delete_service(id):
     return redirect(url_for('alert.list_services'))
 
 
+@alert_bp.route('/services/<int:id>')
+def detail_service(id):
+    current_user_id = session.get('user_id')
+    current_user = User.query.get(current_user_id)
+    service = AlertService.query.get_or_404(id)
+    configs = AlertConfig.query.filter_by(service_id=service.id).all()
+    return render_template('detail_service.html', service=service, configs=configs, current_user=current_user)
 
 
 
@@ -139,6 +147,14 @@ def delete_config(id):
     flash('Alert Config deleted successfully!')
     return redirect(url_for('alert.list_configs'))
 
+@alert_bp.route('/configs/<int:id>')
+def detail_config(id):
+    config = AlertConfig.query.get_or_404(id)
+    current_user_id = session.get('user_id')
+    current_user = User.query.get(current_user_id)
+    return render_template('detail_config.html', config=config, current_user=current_user)
+
+
 
 # ---------------- ALERT SAMPLE ----------------
 @alert_bp.route('/samples')
@@ -162,6 +178,11 @@ def create_sample():
         service = AlertService.query.get(request.form['service_id'])
         config = AlertConfig.query.get(request.form['config_id'])
         user = User.query.get(request.form.get('user_id')) if request.form.get('user_id') else None
+
+        # Parse dates from form (optional, can be empty)
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
+
         new_sample = AlertSample(
             company_id=request.form.get('company_id'),
             service_id=service.id,
@@ -173,13 +194,15 @@ def create_sample():
             single_user=bool(request.form.get('single_user')),
             is_common=bool(request.form.get('is_common')),
             category=int(request.form.get('category')),
+            start_date=datetime.fromisoformat(start_date) if start_date else datetime.utcnow(),
+            end_date=datetime.fromisoformat(end_date) if end_date else None
         )
         db.session.add(new_sample)
         db.session.commit()
         flash('Alert Sample created successfully!')
         return redirect(url_for('alert.list_samples'))
-    return render_template('create_sample.html', services=services, configs=configs, users=users,current_user=current_user)
 
+    return render_template('create_sample.html', services=services, configs=configs, users=users, current_user=current_user)
 @alert_bp.route('/samples/edit/<int:id>', methods=['GET', 'POST'])
 def edit_sample(id):
     sample = AlertSample.query.get_or_404(id)
@@ -188,10 +211,15 @@ def edit_sample(id):
     users = User.query.all()
     current_user_id = session.get('user_id')
     current_user = User.query.get(current_user_id)
+
     if request.method == 'POST':
+        # Get values from form
         service = AlertService.query.get(request.form['service_id'])
         config = AlertConfig.query.get(request.form['config_id'])
         user = User.query.get(request.form.get('user_id')) if request.form.get('user_id') else None
+
+        start_date_str = request.form.get('start_date')
+        end_date_str = request.form.get('end_date')
 
         sample.company_id = request.form.get('company_id')
         sample.service_id = service.id
@@ -203,10 +231,27 @@ def edit_sample(id):
         sample.single_user = bool(request.form.get('single_user'))
         sample.is_common = bool(request.form.get('is_common'))
         sample.category = int(request.form.get('category'))
+
+        # Convert back to datetime
+        sample.start_date = datetime.strptime(start_date_str, "%Y-%m-%dT%H:%M") if start_date_str else None
+        sample.end_date = datetime.strptime(end_date_str, "%Y-%m-%dT%H:%M") if end_date_str else None
+
         db.session.commit()
         flash('Alert Sample updated successfully!')
         return redirect(url_for('alert.list_samples'))
-    return render_template('edit_sample.html', sample=sample, services=services, configs=configs, users=users,current_user=current_user)
+
+    # Pre-format the datetime values for the form
+    sample.start_date_str = sample.start_date.strftime("%Y-%m-%dT%H:%M") if sample.start_date else ""
+    sample.end_date_str = sample.end_date.strftime("%Y-%m-%dT%H:%M") if sample.end_date else ""
+
+    return render_template(
+        'edit_sample.html',
+        sample=sample,
+        services=services,
+        configs=configs,
+        users=users,
+        current_user=current_user
+    )
 
 @alert_bp.route('/samples/delete/<int:id>', methods=['POST'])
 def delete_sample(id):
@@ -218,4 +263,25 @@ def delete_sample(id):
     db.session.commit()
     flash('Alert Sample deleted successfully!')
     return redirect(url_for('alert.list_samples'))
+@alert_bp.route('/samples/<int:id>')
+def detail_sample(id):
+    current_user_id = session.get('user_id')
+    current_user = User.query.get(current_user_id)
 
+    sample = AlertSample.query.get_or_404(id)
+    service = AlertService.query.get(sample.service_id)
+    config = AlertConfig.query.get(sample.config_id)
+    user = User.query.get(sample.user_id) if sample.user_id else None
+
+    # Format dates for display
+    sample.start_date_str = sample.start_date.strftime("%Y-%m-%d %H:%M") if sample.start_date else ""
+    sample.end_date_str = sample.end_date.strftime("%Y-%m-%d %H:%M") if sample.end_date else ""
+
+    return render_template(
+        'detail_sample.html',
+        sample=sample,
+        service=service,
+        config=config,
+        user=user,
+        current_user=current_user
+    )

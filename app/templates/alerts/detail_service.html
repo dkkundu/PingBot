@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Service Details{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-6 py-12">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-10">
+        <div>
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">Service Details</h1>
+            <p class="text-gray-500 mt-2">Comprehensive information about the selected service</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="{{ url_for('alert.edit_service', id=service.id) }}"
+               class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm transition font-medium">
+                ✏ Edit
+            </a>
+            <form action="{{ url_for('alert.delete_service', id=service.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this service?');">
+                <button type="submit"
+                        class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm transition font-medium">
+                    🗑 Delete
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        <!-- Top Header Section -->
+        <div class="bg-gradient-to-r from-indigo-600 to-blue-500 px-8 py-6 text-white">
+            <h2 class="text-2xl font-bold">{{ service.name }}</h2>
+            <p class="mt-1 opacity-90">{{ service.description[:120] if service.description else 'No description available.' }}{% if service.description and service.description|length > 120 %}...{% endif %}</p>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-gray-800">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Service Code</p>
+                <p class="mt-1 text-lg font-semibold">{{ service.code }}</p>
+            </div>
+
+            <div>
+                <p class="text-sm font-medium text-gray-500">Description</p>
+                <p class="mt-1">{{ service.description or 'N/A' }}</p>
+            </div>
+
+            <!-- Additional fields can go here if needed -->
+        </div>
+    </div>
+</div>
+{% endblock %}

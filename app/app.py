@@ -7,8 +7,13 @@ from .notification_sender.views.alert_views import alert_bp
 # from app.authentication.models import User 
 
 # login_manager = LoginManager()
+
+
+
+
 def create_app():
     app = Flask(__name__, template_folder='../templates')
+    
 
     app.config['SECRET_KEY'] = 'supersecretkey'
     app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://youruser:yourpassword@127.0.0.1:3306/Notification_Application"

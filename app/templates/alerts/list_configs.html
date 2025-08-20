@@ -20,7 +20,7 @@
             <!-- Table Head -->
             <thead class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
                 <tr>
-                    <th class="px-6 py-4 font-semibold">ID</th>
+                    <th class="px-6 py-4 font-semibold">#</th>
                     <th class="px-6 py-4 font-semibold">Company ID</th>
                     <th class="px-6 py-4 font-semibold">Service</th>
                     <th class="px-6 py-4 font-semibold">Group Name</th>
@@ -33,7 +33,7 @@
             <tbody class="divide-y divide-gray-200">
                 {% for config in configs %}
                 <tr class="hover:bg-indigo-50 transition">
-                    <td class="px-6 py-4 text-gray-700">{{ config.id }}</td>
+                    <td class="px-6 py-4 text-gray-700">{{ loop.index }}</td>
                     <td class="px-6 py-4 text-gray-700">{{ config.company_id }}</td>
                     <td class="px-6 py-4 text-gray-700">{{ config.service_name }}</td>
                     <td class="px-6 py-4 text-gray-700">{{ config.group_name }}</td>
@@ -45,15 +45,19 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 flex gap-3">
+                          <a href="{{ url_for('alert.detail_config', id=config.id) }}" 
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow transition">
+                            👁️ 
+                            </a>
                         <a href="{{ url_for('alert.edit_config', id=config.id) }}" 
                            class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-4 py-2 rounded-lg text-xs font-bold shadow transition">
-                           ✏️ Edit
+                           ✏️ 
                         </a>
                         <form action="{{ url_for('alert.delete_config', id=config.id) }}" method="POST" class="inline-block">
                             <button type="submit" 
                                     class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow transition"
                                     onclick="return confirm('Are you sure?')">
-                                🗑️ Delete
+                                🗑️ 
                             </button>
                         </form>
                     </td>

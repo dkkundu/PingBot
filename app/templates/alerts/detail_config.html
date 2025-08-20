@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-6 py-12">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-10">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Alert Config Details</h1>
+            <p class="text-gray-500 mt-1">Full configuration details for monitoring service</p>
+        </div>
+        <div class="flex gap-3">
+         
+            <a href="{{ url_for('alert.edit_config', id=config.id) }}"
+               class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm transition">
+                ✏ Edit
+            </a>
+            <form action="{{ url_for('alert.delete_config', id=config.id) }}" method="POST" onsubmit="return confirm('Delete this config?');">
+                <button type="submit"
+                        class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm transition">
+                    🗑 Delete
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100">
+        <!-- Header Info -->
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-500 px-8 py-6 text-white rounded-t-xl">
+            <h2 class="text-xl font-semibold">{{ config.group_name or 'Unnamed Config' }}</h2>
+            <p class="opacity-90">{{ config.service_name }} — {{ config.company_id }}</p>
+        </div>
+
+        <!-- Details -->
+        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-800">
+            <div>
+                <p class="text-sm text-gray-500">Company ID</p>
+                <p class="text-lg font-medium">{{ config.company_id }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Service</p>
+                <p class="text-lg font-medium">{{ config.service_name }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Group ID</p>
+                <p class="text-lg font-medium">{{ config.group_id or '—' }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Auth Token</p>
+                <p class="text-lg font-mono text-gray-700">{{ config.auth_token or '—' }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">API URL</p>
+                <p class="text-lg font-mono text-gray-700">{{ config.api or '—' }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">API Key</p>
+                <p class="text-lg font-mono text-gray-700">{{ config.api_key or '—' }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Sender ID</p>
+                <p class="text-lg font-medium">{{ config.senderid or '—' }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Status</p>
+                <p>
+                    <span class="px-3 py-1 rounded-full text-sm font-bold
+                        {{ 'bg-green-100 text-green-700' if config.status else 'bg-red-100 text-red-700' }}">
+                        {{ 'Active' if config.status else 'Inactive' }}
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

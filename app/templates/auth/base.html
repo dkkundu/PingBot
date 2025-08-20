@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ title if title else "Dashboard" }}</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>[x-cloak]{ display:none !important; }</style>
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
   ::-webkit-scrollbar { width: 6px; }
@@ -71,28 +73,46 @@
                 </li>
 <!-- Alerts Section -->
 <!-- Alert Dropdown -->
-<li x-data="{ open: {{ 'true' if request.endpoint in ['alert.list_samples', 'alert.list_services', 'alert.list_configs'] else 'false' }} }" class="relative">
+<!-- Alert Dropdown -->
+<li 
+  x-data="{ 
+    alertOpen: JSON.parse(localStorage.getItem('alertOpen') || 'false'),
+    toggle() {
+      this.alertOpen = !this.alertOpen;
+      localStorage.setItem('alertOpen', this.alertOpen);
+    }
+  }" 
+  class="relative"
+>
   <!-- Button -->
-  <button @click="open = !open"
-          class="flex items-center justify-between w-full px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-200
-          {% if request.endpoint in ['alert.list_samples', 'alert.list_services', 'alert.list_configs'] %} bg-blue-600 border-l-4 border-cyan-400 {% endif %}">
+  <button
+    @click="toggle()"
+    :aria-expanded="alertOpen.toString()"
+    class="flex items-center justify-between w-full px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+  >
     <div class="flex items-center space-x-3">
       <i class="fas fa-bell text-white w-5"></i>
       <span class="font-medium text-white">Alert</span>
     </div>
-    <i :class="open ? 'fas fa-chevron-up transform rotate-180 text-white' : 'fas fa-chevron-down text-white'" class="transition-transform duration-300"></i>
+
+    <i
+      class="transition-transform duration-300 text-white fas"
+      :class="alertOpen ? 'fa-chevron-up rotate-180' : 'fa-chevron-down'"
+    ></i>
   </button>
 
   <!-- Dropdown Menu -->
-  <ul x-show="open" x-transition:enter="transition ease-out duration-300"
-      x-transition:enter-start="opacity-0 max-h-0"
-      x-transition:enter-end="opacity-100 max-h-64"
-      x-transition:leave="transition ease-in duration-200"
-      x-transition:leave-start="opacity-100 max-h-64"
-      x-transition:leave-end="opacity-0 max-h-0"
-      class="overflow-hidden mt-2 space-y-1 bg-blue-700 rounded-lg shadow-lg pl-6 py-2">
-      
-    <!-- Alert Sample -->
+  <ul
+    x-cloak
+    x-show="alertOpen"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 max-h-0"
+    x-transition:enter-end="opacity-100 max-h-64"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100 max-h-64"
+    x-transition:leave-end="opacity-0 max-h-0"
+    class="overflow-hidden mt-2 space-y-1 bg-blue-700 rounded-lg shadow-lg pl-6 py-2"
+  >
     <li>
       <a href="{{ url_for('alert.list_samples') }}"
          class="flex items-center px-4 py-2 rounded-lg hover:bg-blue-500 transition-colors duration-200
@@ -102,7 +122,6 @@
       </a>
     </li>
 
-
     <li>
       <a href="{{ url_for('alert.list_configs') }}"
          class="flex items-center px-4 py-2 rounded-lg hover:bg-blue-500 transition-colors duration-200
@@ -111,7 +130,7 @@
         <span class="ml-3 font-medium text-white">Config</span>
       </a>
     </li>
-    <!-- Alert Service -->
+
     <li>
       <a href="{{ url_for('alert.list_services') }}"
          class="flex items-center px-4 py-2 rounded-lg hover:bg-blue-500 transition-colors duration-200
@@ -120,14 +139,10 @@
         <span class="ml-3 font-medium text-white">Service</span>
       </a>
     </li>
-
-    <!-- Alert Config -->
-    
   </ul>
 </li>
 
-<!-- Alpine.js for dropdown -->
-<script src="//unpkg.com/alpinejs" defer></script>
+
 
 
     </ul>
@@ -242,6 +257,14 @@
     const arrow = alertsBtn.querySelector('svg');
     arrow.classList.toggle('rotate-180');
   });
+</script>
+
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.store('menu', {
+      alertOpen: false
+    })
+  })
 </script>
 <!-- Make sure to include Alpine.js for x-data/x-show -->
 <script src="//unpkg.com/alpinejs" defer></script>

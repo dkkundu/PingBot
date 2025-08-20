@@ -97,6 +97,21 @@
                     <label for="is_common" class="text-gray-700 font-medium text-lg">Is Common</label>
                 </div>
 
+                <!-- Start Date -->
+<div>
+    <label for="start_date" class="block text-gray-700 font-medium mb-2">Start Date</label>
+    <input type="datetime-local" name="start_date" id="start_date" 
+           value="{{ sample.start_date_str }}">
+</div>
+
+<!-- End Date -->
+<div>
+    <label for="end_date" class="block text-gray-700 font-medium mb-2">End Date</label>
+    <input type="datetime-local" name="end_date" id="end_date" 
+           value="{{ sample.end_date_str }}">
+</div>
+
+
                 <!-- Category -->
                 <div>
                     <label for="category" class="block text-gray-700 font-medium mb-2">Category</label>
