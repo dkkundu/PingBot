@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-6">
+    <div class="w-full max-w-4xl bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-12">
+
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+                Edit Alert Sample
+            </h1>
+            <p class="mt-3 text-gray-600 text-lg">Update alert sample details quickly and efficiently</p>
+        </div>
+
+        <!-- Form -->
+        <form method="POST" class="space-y-8" novalidate>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                <!-- Company ID -->
+                <div>
+                    <label for="company_id" class="block text-gray-700 font-medium mb-2">Company ID</label>
+                    <input type="text" name="company_id" id="company_id" value="{{ sample.company_id }}" required
+                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
+                        placeholder="Company ID">
+                </div>
+
+                <!-- Service -->
+                <div>
+                    <label for="service_id" class="block text-gray-700 font-medium mb-2">Service</label>
+                    <select name="service_id" id="service_id" required
+                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 py-4 text-lg">
+                        {% for service in services %}
+                            <option value="{{ service.id }}" {% if service.id == sample.service_id %}selected{% endif %}>
+                                {{ service.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Config -->
+                <div>
+                    <label for="config_id" class="block text-gray-700 font-medium mb-2">Config</label>
+                    <select name="config_id" id="config_id" required
+                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 py-4 text-lg">
+                        {% for config in configs %}
+                            <option value="{{ config.id }}" {% if config.id == sample.config_id %}selected{% endif %}>
+                                {{ config.service_name }} - {{ config.group_name or 'N/A' }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- User -->
+                <div>
+                    <label for="user_id" class="block text-gray-700 font-medium mb-2">User (Optional)</label>
+                    <select name="user_id" id="user_id"
+                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 py-4 text-lg">
+                        <option value="">None</option>
+                        {% for user in users %}
+                            <option value="{{ user.id }}" {% if user.id == sample.user_id %}selected{% endif %}>{{ user.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Device Type ID -->
+                <div>
+                    <label for="device_type_id" class="block text-gray-700 font-medium mb-2">Device Type ID</label>
+                    <input type="text" name="device_type_id" id="device_type_id" value="{{ sample.device_type_id }}"
+                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
+                        placeholder="Device Type ID">
+                </div>
+
+                <!-- Title -->
+                <div>
+                    <label for="title" class="block text-gray-700 font-medium mb-2">Title</label>
+                    <input type="text" name="title" id="title" value="{{ sample.title }}" required
+                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
+                        placeholder="Title">
+                </div>
+
+                <!-- Body -->
+                <div class="md:col-span-2">
+                    <label for="body" class="block text-gray-700 font-medium mb-2">Body</label>
+                    <textarea name="body" id="body"
+                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
+                        placeholder="Body">{{ sample.body }}</textarea>
+                </div>
+
+                <!-- Checkboxes -->
+                <div class="flex items-center gap-4">
+                    <input type="checkbox" name="single_user" id="single_user" class="h-6 w-12 rounded-full bg-gray-300 checked:bg-indigo-500 transition-colors" {% if sample.single_user %}checked{% endif %}>
+                    <label for="single_user" class="text-gray-700 font-medium text-lg">Single User</label>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <input type="checkbox" name="is_common" id="is_common" class="h-6 w-12 rounded-full bg-gray-300 checked:bg-indigo-500 transition-colors" {% if sample.is_common %}checked{% endif %}>
+                    <label for="is_common" class="text-gray-700 font-medium text-lg">Is Common</label>
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <label for="category" class="block text-gray-700 font-medium mb-2">Category</label>
+                    <input type="number" name="category" id="category" value="{{ sample.category }}" required
+                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
+                        placeholder="Category">
+                </div>
+
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-end gap-6 mt-10">
+                <a href="{{ url_for('alert.list_samples') }}" class="px-8 py-4 rounded-2xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition text-lg">Cancel</a>
+                <button type="submit" class="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl shadow-lg hover:scale-105 transform transition text-lg">Update Sample</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
