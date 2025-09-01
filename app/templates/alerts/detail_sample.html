@@ -5,8 +5,8 @@
     <!-- Page Header -->
     <div class="flex items-center justify-between mb-10">
         <div>
-            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">Alert Sample</h1>
-            <p class="text-gray-500 mt-2">Comprehensive details of the selected alert sample</p>
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">Message Details</h1>
+           
         </div>
         <div class="flex gap-3">
          
@@ -14,6 +14,12 @@
                class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm transition font-medium">
                 ✏ Edit
             </a>
+            <form action="{{ url_for('alert.test_sample_message', sample_id=sample.id) }}" method="POST" class="inline">
+                <button type="submit"
+                   class="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-sm transition font-medium">
+                    ✉️ Test Message
+                </button>
+            </form>
             <a href="{{ url_for('alert.delete_sample', id=sample.id) }}"
                class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm transition font-medium"
                onclick="return confirm('Are you sure you want to delete this alert sample?')">
@@ -32,20 +38,26 @@
 
         <!-- Details Grid -->
         <div class="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-gray-800">
-            <!-- Item -->
+            <!-- Company Name -->
             <div>
-                <p class="text-sm font-medium text-gray-500">Company ID</p>
-                <p class="mt-1 text-lg font-semibold">{{ sample.company_id }}</p>
+                <p class="text-sm font-medium text-gray-500">Company Name</p>
+                <p class="mt-1 text-lg font-semibold">{{ sample.company_name or 'N/A' }}</p>
+            </div>
+
+            <!-- Sender Name -->
+            <div>
+                <p class="text-sm font-medium text-gray-500">Sender Name</p>
+                <p class="mt-1 text-lg font-semibold">{{ sample.sender_name or 'N/A' }}</p>
             </div>
 
             <div>
                 <p class="text-sm font-medium text-gray-500">Service</p>
-                <p class="mt-1">{{ sample.service.name if sample.service else 'N/A' }}</p>
+                <p class="mt-1">{{ service.name if service else 'N/A' }}</p>
             </div>
 
             <div>
                 <p class="text-sm font-medium text-gray-500">Config</p>
-                <p class="mt-1">{{ sample.config.group_name if sample.config else 'N/A' }}</p>
+                <p class="mt-1">{{ config.group_name if config else 'N/A' }}</p>
             </div>
 
             <div>
@@ -55,52 +67,54 @@
 
             <div>
                 <p class="text-sm font-medium text-gray-500">Device Type</p>
-                <p class="mt-1">{{ sample.device_type_id }}</p>
+                <p class="mt-1">{{ sample.device_type_id or 'N/A' }}</p>
             </div>
 
+            <!-- Type -->
             <div>
-                <p class="text-sm font-medium text-gray-500">Category</p>
+                <p class="text-sm font-medium text-gray-500">Type</p>
                 <p class="mt-1">
-                    <span class="px-3 py-1 text-sm font-semibold rounded-full
-                        {% if sample.category == 'Critical' %} bg-red-100 text-red-700
-                        {% elif sample.category == 'Warning' %} bg-yellow-100 text-yellow-700
-                        {% else %} bg-green-100 text-green-700 {% endif %}">
-                        {{ sample.category }}
-                    </span>
+                    {% if sample.type == 'daily' %}
+                        Recurring
+                    {% else %}
+                        One-Time
+                    {% endif %}
                 </p>
             </div>
 
+            <!-- Recurrence Interval (if recurring) -->
+            {% if sample.type == 'daily' %}
             <div>
-                <p class="text-sm font-medium text-gray-500">Single User</p>
-                <p class="mt-1">
-                    <span class="px-3 py-1 rounded-full text-xs font-bold
-                        {{ 'bg-green-100 text-green-700' if sample.single_user else 'bg-gray-200 text-gray-700' }}">
-                        {{ 'Yes' if sample.single_user else 'No' }}
-                    </span>
-                </p>
+                <p class="text-sm font-medium text-gray-500">Recurrence Interval</p>
+                <p class="mt-1">{{ sample.recurrence_interval or 'N/A' }}</p>
             </div>
+            {% endif %}
 
             <div>
-                <p class="text-sm font-medium text-gray-500">Is Common</p>
-                <p class="mt-1">
-                    <span class="px-3 py-1 rounded-full text-xs font-bold
-                        {{ 'bg-blue-100 text-blue-700' if sample.is_common else 'bg-gray-200 text-gray-700' }}">
-                        {{ 'Yes' if sample.is_common else 'No' }}
-                    </span>
-                </p>
-            </div>
-
-            <div>
-                <p class="text-sm font-medium text-gray-500">Created At</p>
+                <p class="text-sm font-medium text-gray-500">Start Date & Time</p>
                 <p class="mt-1 text-gray-700">
-                    {{ sample.start_date.strftime('%b %d, %Y %H:%M') if sample.start_date else 'N/A' }}
+                    {{ sample.start_datetime_str or 'N/A' }}
                 </p>
             </div>
 
+            {% if sample.type == 'daily' %}
             <div>
-                <p class="text-sm font-medium text-gray-500">Updated At</p>
+                <p class="text-sm font-medium text-gray-500">End Date</p>
                 <p class="mt-1 text-gray-700">
-                    {{ sample.end_date.strftime('%b %d, %Y %H:%M') if sample.end_date else 'N/A' }}
+                    {{ sample.end_date.strftime('%Y-%m-%d') if sample.end_date else 'N/A' }}
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- File Upload -->
+            <div>
+                <p class="text-sm font-medium text-gray-500">Attached File</p>
+                <p class="mt-1">
+                    {% if sample.file_upload %}
+                        <a href="{{ url_for('static', filename='uploads/' + sample.file_upload) }}" target="_blank" class="text-indigo-500 underline">{{ sample.file_upload }}</a>
+                    {% else %}
+                        N/A
+                    {% endif %}
                 </p>
             </div>
         </div>
@@ -108,7 +122,48 @@
         <!-- Body Section -->
         <div class="bg-gray-50 px-8 py-6 border-t">
             <h3 class="font-semibold text-gray-800 text-lg mb-2">Full Message</h3>
-            <p class="text-gray-600 leading-relaxed">{{ sample.body }}</p>
+            <p class="text-gray-600 leading-relaxed">{{ sample.body | safe }}</p>
+        </div>
+
+        <!-- Logs Section -->
+        <div class="bg-white px-8 py-6 border-t">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-semibold text-gray-800 text-lg">Alert Logs</h3>
+                <a href="{{ url_for('alert.list_logs', sample_id=sample.id) }}"
+                   class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
+                    View All Logs for this Sample
+                </a>
+            </div>
+            {% if logs %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-left border border-gray-200 rounded-lg">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2 font-semibold text-gray-700">Status</th>
+                            <th class="px-4 py-2 font-semibold text-gray-700">Scheduled For</th>
+                            <th class="px-4 py-2 font-semibold text-gray-700">Queued At</th>
+                            <th class="px-4 py-2 font-semibold text-gray-700">Sent At</th>
+                            <th class="px-4 py-2 font-semibold text-gray-700">Retries</th>
+                            <th class="px-4 py-2 font-semibold text-gray-700">Error Message</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for log in logs %}
+                        <tr>
+                            <td class="px-4 py-2">{{ log.status }}</td>
+                            <td class="px-4 py-2">{{ log.scheduled_for.strftime("%I:%M %p %Y-%m-%d") if log.scheduled_for else 'N/A' }}</td>
+                            <td class="px-4 py-2">{{ log.queued_at.strftime("%I:%M %p %Y-%m-%d") if log.queued_at else 'N/A' }}</td>
+                            <td class="px-4 py-2">{{ log.sent_at.strftime("%I:%M %p %Y-%m-%d") if log.sent_at else 'N/A' }}</td>
+                            <td class="px-4 py-2">{{ log.retry_count }}</td>
+                            <td class="px-4 py-2 text-red-600">{{ log.error_message or 'N/A' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-gray-500">No logs found for this sample.</p>
+            {% endif %}
         </div>
     </div>
 </div>

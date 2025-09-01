@@ -1,103 +1,109 @@
 {% extends "base.html" %}
 
+{% block title %}Edit Alert Configuration{% endblock %}
+
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-6">
-    <div class="w-full max-w-4xl bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-12">
-        
-        <!-- Header -->
-        <div class="text-center mb-10">
-            <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">Edit Alert Config</h1>
-            <p class="mt-3 text-gray-600 text-lg">Update alert configuration details quickly and efficiently</p>
-        </div>
+<div class="flex flex-col gap-10">
 
-        <!-- Form -->
-        <form method="POST" class="space-y-8" novalidate>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+  <!-- Box 1: Edit Configuration Form -->
+  <div class="w-full max-w-6xl mx-auto bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-16 border border-gray-200">
 
-                <!-- Company ID -->
-                <div>
-                    <label for="company_id" class="block text-gray-700 font-medium mb-2">Company ID</label>
-                    <input type="text" name="company_id" id="company_id" value="{{ config.company_id }}" required
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
-                        placeholder="Company ID">
-                </div>
+      <!-- Header -->
+      <div class="text-center mb-14">
+          <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight">
+              Edit <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">Alert Configuration</span>
+          </h1>
+          <p class="mt-5 text-gray-500 text-lg max-w-2xl mx-auto">
+              Update your service alert configuration quickly and efficiently. Designed for precision and scalability.
+          </p>
+      </div>
 
-                <!-- Service -->
-                <div>
-                    <label for="service_id" class="block text-gray-700 font-medium mb-2">Service</label>
-                    <select name="service_id" id="service_id" required
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 py-4 text-lg">
-                        {% for service in services %}
-                            <option value="{{ service.id }}" {% if service.id == config.service_id %}selected{% endif %}>
-                                {{ service.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
+      <!-- Form -->
+      <form method="POST" class="space-y-12" novalidate>
 
-                <!-- Group Name -->
-                <div>
-                    <label for="group_name" class="block text-gray-700 font-medium mb-2">Group Name</label>
-                    <input type="text" name="group_name" id="group_name" value="{{ config.group_name }}"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
-                        placeholder="Group Name">
-                </div>
+          <!-- Inputs Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+              <!-- Company Name -->
+              <div>
+                  <label for="company_name" class="block text-gray-700 font-semibold mb-2 text-base">Company Name</label>
+                  <input type="text" name="company_name" id="company_name" value="{{ config.company_name }}" required
+                      class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-5 py-3.5 text-lg shadow-sm transition"
+                      placeholder="Enter Company Name">
+              </div>
 
-                <!-- Group ID -->
-                <div>
-                    <label for="group_id" class="block text-gray-700 font-medium mb-2">Group ID</label>
-                    <input type="text" name="group_id" id="group_id" value="{{ config.group_id }}"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
-                        placeholder="Group ID">
-                </div>
+              <!-- Service -->
+              <div>
+                  <label for="service_code" class="block text-gray-700 font-semibold mb-2 text-base">Select Service</label>
+                  <select name="service_code" id="service_code" required
+                      class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-5 py-3.5 text-lg shadow-sm transition">
+                      {% for service in services %}
+                          <option value="{{ service.code }}" {% if service.code == config.service.code %}selected{% endif %}>
+                              {{ service.name }}
+                          </option>
+                      {% endfor %}
+                  </select>
+              </div>
 
-                <!-- Auth Token -->
-                <div>
-                    <label for="auth_token" class="block text-gray-700 font-medium mb-2">Auth Token</label>
-                    <input type="text" name="auth_token" id="auth_token" value="{{ config.auth_token }}"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
-                        placeholder="Auth Token">
-                </div>
+              <!-- Group ID -->
+              <div>
+                  <label for="group_id" class="block text-gray-700 font-semibold mb-2 text-base">Group ID</label>
+                  <input type="text" name="group_id" id="group_id" value="{{ config.group_id }}"
+                      class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-5 py-3.5 text-lg shadow-sm transition"
+                      placeholder="Telegram Group ID (starts with -100...)">
+              </div>
 
-                <!-- Status -->
-                <div class="flex items-center gap-4">
-                    <input type="checkbox" name="status" id="status" class="h-6 w-12 rounded-full bg-gray-300 checked:bg-indigo-500 transition-colors" {% if config.status %}checked{% endif %}>
-                    <label for="status" class="text-gray-700 font-medium text-lg">Active</label>
-                </div>
+              <!-- Group Name -->
+              <div>
+                  <label for="group_name" class="block text-gray-700 font-semibold mb-2 text-base">Group Name</label>
+                  <input type="text" name="group_name" id="group_name" value="{{ config.group_name }}"
+                      class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-5 py-3.5 text-lg shadow-sm transition"
+                      placeholder="Enter Group Name">
+              </div>
 
-                <!-- API URL -->
-                <div>
-                    <label for="api" class="block text-gray-700 font-medium mb-2">API URL</label>
-                    <input type="text" name="api" id="api" value="{{ config.api }}"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
-                        placeholder="API URL">
-                </div>
+              <!-- Auth Token -->
+              <div>
+                  <label for="auth_token" class="block text-gray-700 font-semibold mb-2 text-base">Auth Token</label>
+                  <input type="text" name="auth_token" id="auth_token" value="{{ config.auth_token }}"
+                      class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-5 py-3.5 text-lg shadow-sm transition"
+                      placeholder="Enter Auth Token">
+              </div>
 
-                <!-- API Key -->
-                <div>
-                    <label for="api_key" class="block text-gray-700 font-medium mb-2">API Key</label>
-                    <input type="text" name="api_key" id="api_key" value="{{ config.api_key }}"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
-                        placeholder="API Key">
-                </div>
+              <!-- Status -->
+              <div>
+                  <label class="block text-gray-700 font-semibold mb-2 text-base">Status</label>
+                  <div class="flex gap-4">
+                      <!-- Active -->
+                      <label class="flex-1">
+                          <input type="radio" name="status" value="1" class="peer hidden" {% if config.status|int %}checked{% endif %}>
+                          <div class="flex items-center justify-center w-full px-5 py-3.5 rounded-2xl border border-gray-300 bg-gray-50 text-gray-600 font-medium cursor-pointer shadow-sm transition hover:border-indigo-400 peer-checked:bg-indigo-500 peer-checked:text-white peer-checked:border-indigo-500">
+                              Active
+                          </div>
+                      </label>
 
-                <!-- Sender ID -->
-                <div class="md:col-span-2">
-                    <label for="senderid" class="block text-gray-700 font-medium mb-2">Sender ID</label>
-                    <input type="text" name="senderid" id="senderid" value="{{ config.senderid }}"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
-                        placeholder="Sender ID">
-                </div>
+                      <!-- Inactive -->
+                      <label class="flex-1">
+                          <input type="radio" name="status" value="0" class="peer hidden" {% if not config.status|int %}checked{% endif %}>
+                          <div class="flex items-center justify-center w-full px-5 py-3.5 rounded-2xl border border-gray-300 bg-gray-50 text-gray-600 font-medium cursor-pointer shadow-sm transition hover:border-pink-400 peer-checked:bg-pink-500 peer-checked:text-white peer-checked:border-pink-500">
+                              Inactive
+                          </div>
+                      </label>
+                  </div>
+              </div>
+          </div>
 
-            </div>
+          <!-- Buttons -->
+          <div class="flex justify-end gap-6 pt-6">
+              <a href="{{ url_for('alert.list_configs') }}"
+                 class="px-8 py-3.5 rounded-2xl border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 transition text-lg shadow-sm">
+                  Cancel
+              </a>
+              <button type="submit"
+                 class="px-8 py-3.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 transform transition text-lg font-semibold">
+                  Update Configuration
+              </button>
+          </div>
 
-            <!-- Buttons -->
-            <div class="flex justify-end gap-6 mt-10">
-                <a href="{{ url_for('alert.list_configs') }}" class="px-8 py-4 rounded-2xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition text-lg">Cancel</a>
-                <button type="submit" class="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl shadow-lg hover:scale-105 transform transition text-lg">Update Config</button>
-            </div>
-        </form>
-
-    </div>
+      </form>
+  </div>
 </div>
 {% endblock %}

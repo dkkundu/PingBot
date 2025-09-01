@@ -1,287 +1,667 @@
+from sqlalchemy.orm import joinedload
 
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, current_app
 from app.extensions import db
-from app.notification_sender.models import AlertService, AlertConfig, AlertSample
+from app.notification_sender.models import AlertService, AlertConfig, AlertSample, AlertLog, TestCredentials
 from app.authentication.models import User
+from datetime import datetime, date, time
+from app.notification_sender.tasks import send_alert_task
+from app.notification_sender.telegram_bot import TelegramBot
+
+import logging
+import pytz
 import os
-from datetime import datetime
-# from flask_login import login_required
+from werkzeug.utils import secure_filename
+import re
 
-# alert_bp = Blueprint('alert', __name__, template_folder='../../templates/')
-# alert_bp = Blueprint('alert', __name__, template_folder='../templates/alerts/')
 alert_bp = Blueprint('alert', __name__, template_folder='../../templates/alerts')
+bot = TelegramBot()
+LOCAL_TZ = pytz.timezone("Asia/Dhaka")
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+if not logger.handlers:
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
 
+@alert_bp.route('/logs')
+def list_logs():
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
 
-# ---------------- ALERT SERVICE ----------------
-@alert_bp.route('/services')
+    sample_id = request.args.get('sample_id', type=int)
+    query = AlertLog.query.options(joinedload(AlertLog.sender)) # Explicitly load sender
+    if sample_id:
+        query = query.filter_by(sample_id=sample_id)
+    
+    logs_pagination = query.order_by(AlertLog.queued_at.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    logs = logs_pagination.items
 
-def list_services():
+    for log in logs:
+        if log.queued_at:
+            log.queued_at = pytz.utc.localize(log.queued_at).astimezone(LOCAL_TZ)
+        if log.sent_at:
+            log.sent_at = pytz.utc.localize(log.sent_at).astimezone(LOCAL_TZ)
+        if log.scheduled_for:
+            log.scheduled_for = pytz.utc.localize(log.scheduled_for).astimezone(LOCAL_TZ)
     current_user_id = session.get('user_id')
     current_user = User.query.get(current_user_id)
-    services = AlertService.query.all()
-    return render_template('list_services.html', services=services,current_user=current_user)
+    return render_template('list_logs.html', logs=logs, current_user=current_user, sample_id=sample_id, logs_pagination=logs_pagination)
+
+
+@alert_bp.route('/logs/<int:id>')
+def detail_log(id):
+    log = AlertLog.query.get_or_404(id)
+    if log.queued_at:
+        log.queued_at = pytz.utc.localize(log.queued_at).astimezone(LOCAL_TZ)
+    if log.sent_at:
+        log.sent_at = pytz.utc.localize(log.sent_at).astimezone(LOCAL_TZ)
+    if log.scheduled_for:
+        log.scheduled_for = pytz.utc.localize(log.scheduled_for).astimezone(LOCAL_TZ)
+    current_user_id = session.get('user_id')
+    current_user = User.query.get(current_user_id)
+
+    return render_template(
+        'detail_log.html',
+        log=log,
+        current_user=current_user
+    )
+
+
+@alert_bp.route('/logs/delete/<int:id>', methods=['POST'])
+def delete_log(id):
+    log = AlertLog.query.get_or_404(id)
+    db.session.delete(log)
+    db.session.commit()
+    flash('Alert Log deleted successfully!')
+    return redirect(url_for('alert.list_logs'))
+
+
+@alert_bp.route('/services')
+def list_services():
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+
+    services_pagination = AlertService.query.paginate(page=page, per_page=per_page, error_out=False)
+    services = services_pagination.items
+
+    current_user = User.query.get(session.get('user_id'))
+    return render_template('list_services.html', services=services, current_user=current_user, services_pagination=services_pagination)
 
 @alert_bp.route('/services/create', methods=['GET', 'POST'])
 def create_service():
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
+    current_user = User.query.get(session.get('user_id'))
     if request.method == 'POST':
         name = request.form['name']
         code = request.form['code']
         description = request.form.get('description')
-        new_service = AlertService(name=name, code=code, description=description)
-        db.session.add(new_service)
+        service = AlertService(name=name, code=code, description=description)
+        db.session.add(service)
         db.session.commit()
         flash('Alert Service created successfully!')
         return redirect(url_for('alert.list_services'))
-    return render_template('create_service.html',current_user=current_user)
+    return render_template('create_service.html', current_user=current_user)
 
 @alert_bp.route('/services/edit/<int:id>', methods=['GET', 'POST'])
 def edit_service(id):
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
     service = AlertService.query.get_or_404(id)
+    current_user = User.query.get(session.get('user_id'))
     if request.method == 'POST':
-        service.name = request.form['name']
-        service.code = request.form['code']
-        service.description = request.form.get('description')
+        name = request.form['name']
+        code = request.form['code']
+        description = request.form.get('description')
+        service = AlertService(name=name, code=code, description=description)
         db.session.commit()
         flash('Alert Service updated successfully!')
         return redirect(url_for('alert.list_services'))
-    return render_template('edit_service.html', service=service,current_user=current_user)
+    return render_template('edit_service.html', service=service, current_user=current_user)
 
 @alert_bp.route('/services/delete/<int:id>', methods=['POST'])
 def delete_service(id):
     service = AlertService.query.get_or_404(id)
-    
-    # Delete all related samples first
     for config in service.configs:
         AlertSample.query.filter_by(config_id=config.id).delete()
-    
-    # Delete related configs
+        AlertLog.query.filter_by(config_id=config.id).delete()
     AlertConfig.query.filter_by(service_id=service.id).delete()
-    
-    # Now delete the service
     db.session.delete(service)
     db.session.commit()
-    flash('Alert Service and all related configs and samples deleted successfully!')
+    flash('Service and related configs & samples deleted!')
     return redirect(url_for('alert.list_services'))
-
 
 @alert_bp.route('/services/<int:id>')
 def detail_service(id):
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
     service = AlertService.query.get_or_404(id)
+    current_user = User.query.get(session.get('user_id'))
     configs = AlertConfig.query.filter_by(service_id=service.id).all()
     return render_template('detail_service.html', service=service, configs=configs, current_user=current_user)
 
 
-
-# ---------------- ALERT CONFIG ----------------
 @alert_bp.route('/configs')
 def list_configs():
-    configs = AlertConfig.query.all()
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
-    return render_template('list_configs.html', configs=configs,current_user=current_user)
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
 
+    configs_pagination = AlertConfig.query.paginate(page=page, per_page=per_page, error_out=False)
+    configs = configs_pagination.items
+
+    current_user = User.query.get(session.get('user_id'))
+    return render_template('list_configs.html', configs=configs, current_user=current_user, configs_pagination=configs_pagination)
 @alert_bp.route('/configs/create', methods=['GET', 'POST'])
 def create_config():
     services = AlertService.query.all()
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
+    current_user = User.query.get(session.get('user_id'))
+
     if request.method == 'POST':
-        service_id = request.form['service_id']
-        service = AlertService.query.get(service_id)
-        new_config = AlertConfig(
-            company_id=request.form['company_id'],
+        service_code = request.form['service_code']
+        service = AlertService.query.filter_by(code=service_code).first()
+        if not service:
+            flash('Invalid Service Code provided.', 'error')
+            return redirect(url_for('alert.create_config'))
+        
+        status_value = bool(int(request.form.get('status')))
+
+        config = AlertConfig(
+            company_name=request.form.get('company_name'),
             service_id=service.id,
             service_name=service.name,
             group_name=request.form.get('group_name'),
             group_id=request.form.get('group_id'),
             auth_token=request.form.get('auth_token'),
-            status=bool(request.form.get('status')),
+            status=status_value,
             api=request.form.get('api'),
             api_key=request.form.get('api_key'),
             senderid=request.form.get('senderid')
         )
-        db.session.add(new_config)
+
+        db.session.add(config)
         db.session.commit()
         flash('Alert Config created successfully!')
         return redirect(url_for('alert.list_configs'))
-    return render_template('create_config.html', services=services,current_user=current_user)
+
+    return render_template('create_config.html', services=services, current_user=current_user)
 
 @alert_bp.route('/configs/edit/<int:id>', methods=['GET', 'POST'])
 def edit_config(id):
     config = AlertConfig.query.get_or_404(id)
     services = AlertService.query.all()
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
+    current_user = User.query.get(session.get('user_id'))
+
     if request.method == 'POST':
-        service_id = request.form['service_id']
-        service = AlertService.query.get(service_id)
-        config.company_id = request.form['company_id']
+        service_code = request.form['service_code']
+        service = AlertService.query.filter_by(code=service_code).first()
+        if not service:
+            flash('Invalid Service Code provided.', 'error')
+            return redirect(url_for('alert.edit_config', id=id))
+
+        config.company_name = request.form.get('company_name')
         config.service_id = service.id
         config.service_name = service.name
         config.group_name = request.form.get('group_name')
         config.group_id = request.form.get('group_id')
         config.auth_token = request.form.get('auth_token')
-        config.status = bool(request.form.get('status'))
+        config.status = bool(int(request.form.get('status')))
         config.api = request.form.get('api')
         config.api_key = request.form.get('api_key')
         config.senderid = request.form.get('senderid')
+
         db.session.commit()
         flash('Alert Config updated successfully!')
         return redirect(url_for('alert.list_configs'))
-    return render_template('edit_config.html', config=config, services=services,current_user=current_user)
+
+    # Ensure config.service is available for the template
+    config.service = AlertService.query.get(config.service_id)
+    return render_template('edit_config.html', config=config, services=services, current_user=current_user)
+
 
 @alert_bp.route('/configs/delete/<int:id>', methods=['POST'])
 def delete_config(id):
     config = AlertConfig.query.get_or_404(id)
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
+    AlertSample.query.filter_by(config_id=config.id).delete()
+    AlertLog.query.filter_by(config_id=config.id).delete()
     db.session.delete(config)
     db.session.commit()
-    flash('Alert Config deleted successfully!')
+    flash('Alert Config and related logs deleted!')
     return redirect(url_for('alert.list_configs'))
 
 @alert_bp.route('/configs/<int:id>')
 def detail_config(id):
     config = AlertConfig.query.get_or_404(id)
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
+    current_user = User.query.get(session.get('user_id'))
     return render_template('detail_config.html', config=config, current_user=current_user)
 
-
-
-# ---------------- ALERT SAMPLE ----------------
+# ---------------- ALERT SAMPLES ----------------
 @alert_bp.route('/samples')
 def list_samples():
-    print("Blueprint template folder:", alert_bp.template_folder)
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
 
-    samples = AlertSample.query.all()
-    return render_template('list_samples.html', samples=samples, current_user=current_user)
+    samples_pagination = AlertSample.query.order_by(AlertSample.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    samples = samples_pagination.items
+
+    current_user = User.query.get(session.get('user_id'))
+
+    for sample in samples:
+        if sample.start_date and sample.start_time:
+            combined_start_datetime_utc = datetime.combine(sample.start_date, sample.start_time).replace(tzinfo=pytz.utc)
+            sample.start_datetime_local = combined_start_datetime_utc.astimezone(LOCAL_TZ)
+        else:
+            sample.start_datetime_local = None
+
+    return render_template('list_samples.html', samples=samples, current_user=current_user, samples_pagination=samples_pagination)
+
 
 @alert_bp.route('/samples/create', methods=['GET', 'POST'])
 def create_sample():
     services = AlertService.query.all()
     configs = AlertConfig.query.all()
     users = User.query.all()
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
+    current_user = User.query.get(session.get('user_id'))
+
+    for config_item in configs:
+        config_item.service = AlertService.query.get(config_item.service_id)
 
     if request.method == 'POST':
-        service = AlertService.query.get(request.form['service_id'])
+        service_code = request.form['service_code']
+        service = AlertService.query.filter_by(code=service_code).first()
+        if not service:
+            flash('Invalid Service Code provided.', 'error')
+            return redirect(url_for('alert.create_sample'))
+
         config = AlertConfig.query.get(request.form['config_id'])
         user = User.query.get(request.form.get('user_id')) if request.form.get('user_id') else None
 
-        # Parse dates from form (optional, can be empty)
-        start_date = request.form.get('start_date')
-        end_date = request.form.get('end_date')
+        file = request.files.get('file_upload')
+        filename = None
+        if file:
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+
+        start_date_str = request.form.get('start_date')
+        start_time_str = request.form.get('start_time')
+        end_date_str = request.form.get('end_date')
+
+        start_datetime = None
+        if start_date_str and start_time_str:
+            start_datetime = datetime.strptime(f"{start_date_str} {start_time_str}", "%Y-%m-%d %H:%M")
+            start_datetime = LOCAL_TZ.localize(start_datetime)
+
+        end_date = None
+        if end_date_str:
+            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+
+        is_recurring = 'is_recurring' in request.form
+
+        # Debugging: Log the received recurrence_interval
+        received_recurrence_interval = request.form.get('recurrence_interval')
+        logger.info(f"Received recurrence_interval from form (create_sample): {received_recurrence_interval}")
+
+        sender_name_from_form = request.form.get('sender_name')
+        if sender_name_from_form:
+            final_sender_name = sender_name_from_form
+        elif current_user and current_user.full_name:
+            final_sender_name = current_user.full_name
+        else:
+            final_sender_name = "System"
 
         new_sample = AlertSample(
-            company_id=request.form.get('company_id'),
+            company_name=request.form.get('company_name'),
+            sender_name=final_sender_name,
             service_id=service.id,
             config_id=config.id,
             user_id=user.id if user else None,
-            device_type_id=request.form.get('device_type_id'),
+            device_type_id=int(request.form.get('device_type_id')) if request.form.get('device_type_id') else None,
             title=request.form['title'],
             body=request.form.get('body'),
-            single_user=bool(request.form.get('single_user')),
-            is_common=bool(request.form.get('is_common')),
-            category=int(request.form.get('category')),
-            start_date=datetime.fromisoformat(start_date) if start_date else datetime.utcnow(),
-            end_date=datetime.fromisoformat(end_date) if end_date else None
+            file_upload=filename,
+            start_date=start_datetime.astimezone(pytz.utc).date() if start_datetime else None,
+            start_time=start_datetime.astimezone(pytz.utc).time() if start_datetime else None,
+            end_date=end_date,
+            is_recurring=is_recurring,
+            recurrence_interval=received_recurrence_interval if is_recurring else None,
+            type="Recurring" if is_recurring else "One-Time"
         )
         db.session.add(new_sample)
         db.session.commit()
-        flash('Alert Sample created successfully!')
+
+        log = AlertLog(
+            sample_id=new_sample.id,
+            service_id=new_sample.service_id,
+            config_id=new_sample.config_id,
+            sender_id=current_user.id if current_user else None,
+            sender_name=new_sample.sender_name,
+            target_user_id=user.id if user else None,
+            audience="all",
+            status="queued",
+            scheduled_for=start_datetime.astimezone(pytz.utc) if start_datetime else None,
+            queued_at=datetime.now(pytz.utc)
+        )
+        db.session.add(log)
+        db.session.commit()
+
         return redirect(url_for('alert.list_samples'))
 
     return render_template('create_sample.html', services=services, configs=configs, users=users, current_user=current_user)
+
+
 @alert_bp.route('/samples/edit/<int:id>', methods=['GET', 'POST'])
 def edit_sample(id):
     sample = AlertSample.query.get_or_404(id)
     services = AlertService.query.all()
     configs = AlertConfig.query.all()
     users = User.query.all()
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
+    current_user = User.query.get(session.get('user_id'))
+
+    log = AlertLog.query.filter_by(sample_id=sample.id).order_by(AlertLog.queued_at.desc()).first()
+
+    for config_item in configs:
+        config_item.service = AlertService.query.get(config_item.service_id)
 
     if request.method == 'POST':
-        # Get values from form
-        service = AlertService.query.get(request.form['service_id'])
+        service_code = request.form['service_code']
+        service = AlertService.query.filter_by(code=service_code).first()
+        if not service:
+            flash('Invalid Service Code provided.', 'error')
+            return redirect(url_for('alert.edit_sample', id=id))
+
         config = AlertConfig.query.get(request.form['config_id'])
         user = User.query.get(request.form.get('user_id')) if request.form.get('user_id') else None
 
-        start_date_str = request.form.get('start_date')
-        end_date_str = request.form.get('end_date')
+        file = request.files.get('file_upload')
+        if file:
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+            sample.file_upload = filename
 
-        sample.company_id = request.form.get('company_id')
+        sender_name_from_form = request.form.get('sender_name')
+        if sender_name_from_form:
+            final_sender_name = sender_name_from_form
+        elif current_user and current_user.full_name:
+            final_sender_name = current_user.full_name
+        else:
+            final_sender_name = "System"
+
+        sample.company_name = request.form.get('company_name')
+        sample.sender_name = final_sender_name,
+
         sample.service_id = service.id
         sample.config_id = config.id
-        sample.user_id = user.id if user else None
-        sample.device_type_id = request.form.get('device_type_id')
         sample.title = request.form['title']
         sample.body = request.form.get('body')
-        sample.single_user = bool(request.form.get('single_user'))
-        sample.is_common = bool(request.form.get('is_common'))
-        sample.category = int(request.form.get('category'))
+        
+        is_recurring = 'is_recurring' in request.form
+        sample.is_recurring = is_recurring
+        
+        # Set recurrence_interval if it's a recurring type, otherwise None
+        if sample.is_recurring:
+            sample.recurrence_interval = request.form.get('recurrence_interval') # Get value from the input field
+        else:
+            sample.recurrence_interval = None
+            
+        # Debugging: Log the received recurrence_interval
+        received_recurrence_interval = request.form.get('recurrence_interval')
+        logger.info(f"Received recurrence_interval from form (edit_sample): {received_recurrence_interval}")
 
-        # Convert back to datetime
-        sample.start_date = datetime.strptime(start_date_str, "%Y-%m-%dT%H:%M") if start_date_str else None
-        sample.end_date = datetime.strptime(end_date_str, "%Y-%m-%dT%H:%M") if end_date_str else None
+        sample.type = "Recurring" if is_recurring else "One-Time"
+
+        start_date_str = request.form.get('start_date')
+        start_time_str = request.form.get('start_time')
+        end_date_str = request.form.get('end_date')
+
+        start_datetime = None
+        if start_date_str and start_time_str:
+            start_datetime = datetime.strptime(f"{start_date_str} {start_time_str}", "%Y-%m-%d %H:%M")
+            start_datetime = LOCAL_TZ.localize(start_datetime)
+
+        end_date = None
+        if end_date_str:
+            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+
+        sample.start_date=start_datetime.astimezone(pytz.utc).date() if start_datetime else None
+        sample.start_time=start_datetime.astimezone(pytz.utc).time() if start_datetime else None
+        sample.end_date=end_date
 
         db.session.commit()
+
+        new_log = AlertLog(
+            sample_id=sample.id,
+            service_id=sample.service_id,
+            config_id=sample.config_id,
+            sender_id=current_user.id if current_user else None,
+            sender_name=sample.sender_name,
+            target_user_id=user.id if user else None,
+            audience="all",
+            status="queued",
+            scheduled_for=start_datetime.astimezone(pytz.utc) if start_datetime else None,
+            queued_at=datetime.now(pytz.utc)
+        )
+        db.session.add(new_log)
+        db.session.commit()
+
         flash('Alert Sample updated successfully!')
         return redirect(url_for('alert.list_samples'))
 
-    # Pre-format the datetime values for the form
-    sample.start_date_str = sample.start_date.strftime("%Y-%m-%dT%H:%M") if sample.start_date else ""
-    sample.end_date_str = sample.end_date.strftime("%Y-%m-%dT%H:%M") if sample.end_date else ""
+    # Convert UTC times from DB to local timezone for display in form
+    if sample.start_date and sample.start_time:
+        combined_start_datetime_utc = datetime.combine(sample.start_date, sample.start_time).replace(tzinfo=pytz.utc)
+        local_start_datetime = combined_start_datetime_utc.astimezone(LOCAL_TZ)
+        sample.start_date_str = local_start_datetime.strftime("%Y-%m-%d")
+        sample.start_time_str = local_start_datetime.strftime("%H:%M")
+    else:
+        sample.start_date_str = ""
+        sample.start_time_str = ""
 
-    return render_template(
-        'edit_sample.html',
-        sample=sample,
-        services=services,
-        configs=configs,
-        users=users,
-        current_user=current_user
-    )
+    if sample.end_date:
+        sample.end_date_str = sample.end_date.strftime("%Y-%m-%d")
+    else:
+        sample.end_date_str = ""
+
+    sample.service = AlertService.query.get(sample.service_id)
+
+    return render_template('edit_sample.html', sample=sample, services=services, configs=configs, users=users, current_user=current_user)
+
 
 @alert_bp.route('/samples/delete/<int:id>', methods=['POST'])
 def delete_sample(id):
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
     sample = AlertSample.query.get_or_404(id)
     
+    # Delete related logs first
+    AlertLog.query.filter_by(sample_id=sample.id).delete()
+    
+    # Delete the sample itself
     db.session.delete(sample)
     db.session.commit()
-    flash('Alert Sample deleted successfully!')
+    
+    flash('🗑️ Alert Sample and its logs deleted successfully!', 'success')
     return redirect(url_for('alert.list_samples'))
+
+
+
 @alert_bp.route('/samples/<int:id>')
 def detail_sample(id):
-    current_user_id = session.get('user_id')
-    current_user = User.query.get(current_user_id)
-
     sample = AlertSample.query.get_or_404(id)
     service = AlertService.query.get(sample.service_id)
     config = AlertConfig.query.get(sample.config_id)
     user = User.query.get(sample.user_id) if sample.user_id else None
+    current_user_id = session.get('user_id')
+    current_user = User.query.get(current_user_id)
 
-    # Format dates for display
-    sample.start_date_str = sample.start_date.strftime("%Y-%m-%d %H:%M") if sample.start_date else ""
-    sample.end_date_str = sample.end_date.strftime("%Y-%m-%d %H:%M") if sample.end_date else ""
+    start_datetime = None
+    if sample.start_date and sample.start_time:
+        # Combine date and time to a naive datetime
+        naive_start_datetime = datetime.combine(sample.start_date, sample.start_time)
+        # Localize it as UTC, then convert to LOCAL_TZ
+        start_datetime = pytz.utc.localize(naive_start_datetime).astimezone(LOCAL_TZ)
+    sample.start_datetime_str = start_datetime.strftime("%I:%M %p %Y-%m-%d") if start_datetime else ""
 
-    return render_template(
-        'detail_sample.html',
-        sample=sample,
-        service=service,
-        config=config,
-        user=user,
-        current_user=current_user
-    )
+    logs = AlertLog.query.filter_by(sample_id=sample.id).order_by(AlertLog.queued_at.desc()).all()
+    return render_template('detail_sample.html', sample=sample, service=service, config=config, user=user, current_user=current_user, logs=logs)
+
+# Helper function to manage AlertConfig status based on TestCredentials
+def update_alert_config_status(service_id, is_test_active):
+    config = AlertConfig.query.filter_by(service_id=service_id).first()
+    if config:
+        config.status = not is_test_active  # If test is active, config is inactive, and vice-versa
+        db.session.commit()
+        logger.info(f"AlertConfig for service_id {service_id} status updated to {config.status} based on TestCredentials.")
+
+# ---------------- TEST CREDENTIALS ----------------
+@alert_bp.route('/test_credentials')
+def list_test_credentials():
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+
+    test_credentials_pagination = TestCredentials.query.paginate(page=page, per_page=per_page, error_out=False)
+    test_credentials = test_credentials_pagination.items
+
+    current_user = User.query.get(session.get('user_id'))
+    return render_template('list_test_credentials.html', test_credentials=test_credentials, current_user=current_user, test_credentials_pagination=test_credentials_pagination)
+
+@alert_bp.route('/test_credentials/create', methods=['GET', 'POST'])
+def create_test_credential():
+    services = AlertService.query.all()
+    current_user = User.query.get(session.get('user_id'))
+
+    if request.method == 'POST':
+        service_code = request.form['service_code']
+        service = AlertService.query.filter_by(code=service_code).first()
+        if not service:
+            flash('Invalid Service Code provided.', 'error')
+            return redirect(url_for('alert.create_test_credential'))
+        
+        is_active = 'is_active' in request.form
+
+        test_credential = TestCredentials(
+            service_code=service.code,
+            service_name=service.name,
+            group_name=request.form.get('group_name'),
+            group_id=request.form.get('group_id'),
+            auth_token=request.form.get('auth_token'),
+            is_active=is_active
+        )
+
+        db.session.add(test_credential)
+        db.session.commit()
+
+        # Update AlertConfig status based on new TestCredential's active status
+        update_alert_config_status(service.id, is_active)
+
+        flash('Test Credential created successfully!', 'success')
+        return redirect(url_for('alert.list_test_credentials'))
+
+    return render_template('create_test_credential.html', services=services, current_user=current_user)
+
+@alert_bp.route('/test_credentials/edit/<int:id>', methods=['GET', 'POST'])
+def edit_test_credential(id):
+    test_credential = TestCredentials.query.get_or_404(id)
+    services = AlertService.query.all()
+    current_user = User.query.get(session.get('user_id'))
+
+    if request.method == 'POST':
+        service_code = request.form['service_code']
+        service = AlertService.query.filter_by(code=service_code).first()
+        if not service:
+            flash('Invalid Service provided.', 'error')
+            return redirect(url_for('alert.edit_test_credential', id=id))
+        
+        is_active = 'is_active' in request.form
+
+        test_credential.service_code = service.code
+        test_credential.service_name = service.name
+        test_credential.group_name = request.form.get('group_name')
+        test_credential.group_id = request.form.get('group_id')
+        test_credential.auth_token = request.form.get('auth_token')
+        test_credential.is_active = is_active
+
+        db.session.commit()
+
+        # Update AlertConfig status based on updated TestCredential's active status
+        update_alert_config_status(service.id, is_active)
+
+        flash('Test Credential updated successfully!', 'success')
+        return redirect(url_for('alert.list_test_credentials'))
+
+    return render_template('edit_test_credential.html', test_credential=test_credential, services=services, current_user=current_user)
+
+@alert_bp.route('/test_credentials/delete/<int:id>', methods=['POST'])
+def delete_test_credential(id):
+    test_credential = TestCredentials.query.get_or_404(id)
+    
+    # Get service_id from AlertService using service_code before deleting test_credential
+    service = AlertService.query.filter_by(code=test_credential.service_code).first()
+    service_id = service.id if service else None
+
+    db.session.delete(test_credential)
+    db.session.commit()
+
+    # After deleting test credential, activate the corresponding AlertConfig
+    if service_id:
+        update_alert_config_status(service_id, False) # False because test is no longer active
+
+    flash('Test Credential deleted successfully!', 'success')
+    return redirect(url_for('alert.list_test_credentials'))
+
+@alert_bp.route('/samples/test_message/<int:sample_id>', methods=['POST'])
+def test_sample_message(sample_id):
+    sample = AlertSample.query.get_or_404(sample_id)
+    
+    # Find the active TestCredentials for this sample's service
+    service = AlertService.query.get(sample.service_id)
+    test_credential = TestCredentials.query.filter_by(
+        service_code=service.code,
+        is_active=True
+    ).first()
+
+    if not test_credential:
+        flash('No active Test Credentials found for this service.', 'danger')
+        return redirect(url_for('alert.detail_sample', id=sample_id))
+
+    if not test_credential.auth_token or not test_credential.group_id:
+        flash('Test Credentials are incomplete (missing auth token or group ID).', 'danger')
+        return redirect(url_for('alert.detail_sample', id=sample_id))
+
+    try:
+        # Construct the message with the new format
+        cleaned_body = sample.body.replace('<p>', '').replace('</p>', '')
+        cleaned_body = re.sub(r'<img[^>]+>', '', cleaned_body)
+
+        # Get current time in LOCAL_TZ
+        now_local = datetime.now(LOCAL_TZ)
+        formatted_time = now_local.strftime("%B %d, %Y at %I:%M %p")
+
+        # Placeholder values for fields not directly available in AlertSample
+        author = sample.sender_name if sample.sender_name else "N/A"
+        status = "Unknown" # Or derive from sample.category if applicable
+
+        message = f"""🔔 Alert
+
+🕒 Time: {formatted_time}
+📸 Author: {author}
+
+----------------------------------------
+
+📢 Message: {cleaned_body}"""
+        
+        file_path = None
+        if sample.file_upload:
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], sample.file_upload)
+            if not os.path.exists(file_path):
+                logger.warning(f"File not found for test message: {file_path}")
+                file_path = None # Don't try to send if file doesn't exist
+
+        response = bot.group_message(test_credential.auth_token, test_credential.group_id, message, file_path=file_path)
+
+        if response and "error" in response:
+            flash(f"Test message failed: {response['error']}", 'danger')
+        elif response and "status_code" in response and response["status_code"] != 200:
+            flash(f"Test message failed: API Error - {response['text']}", 'danger')
+        else:
+            flash('Test message sent successfully to test group!', 'success')
+
+    except Exception as e:
+        flash(f"An unexpected error occurred during test message sending: {str(e)}", 'danger')
+        logger.exception("Error sending test message:")
+
+    return redirect(url_for('alert.detail_sample', id=sample_id))

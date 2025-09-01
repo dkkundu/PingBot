@@ -1,17 +1,20 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session, current_app
+from datetime import datetime
+import pytz # Added import for pytz
+from sqlalchemy import func
 from app.authentication.models import User
 from app.extensions import db
 import os
-
 from werkzeug.utils import secure_filename
+from app.notification_sender.models import AlertConfig, AlertLog,AlertSample,AlertService
+from app.notification_sender.views.alert_views import LOCAL_TZ # Import LOCAL_TZ
 
 frontend_bp = Blueprint('frontend', __name__, template_folder='../../templates/auth')
 
-UPLOAD_FOLDER = "/static/uploads"  # Make sure this folder exists
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif','webp'}
+from flask import current_app
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 
 
@@ -48,8 +51,6 @@ def logout():
 
 
 # -------------------- Dashboard --------------------
-
-
 @frontend_bp.route('/')
 def dashboard():
     user_id = session.get('user_id')
@@ -59,23 +60,105 @@ def dashboard():
         flash("You must be logged in to view this page.", "danger")
         return redirect(url_for('frontend.login'))
 
-    # Fetch all approved users (so everyone can see total users)
     approved_users = User.query.filter_by(is_approved=True).all()
 
-    # Optionally, fetch pending users only for admin
     pending_users = []
     if current_user.role == 'admin':
         pending_users = User.query.filter_by(is_approved=False).all()
+
+    today = datetime.now(LOCAL_TZ).date() # Get today's date in local timezone
+
+    # Define today's start and end in local timezone
+    local_today_start = LOCAL_TZ.localize(datetime.combine(today, datetime.min.time()))
+    local_today_end = LOCAL_TZ.localize(datetime.combine(today, datetime.max.time()))
+
+    # Convert to UTC for database query
+    utc_today_start = local_today_start.astimezone(pytz.utc)
+    utc_today_end = local_today_end.astimezone(pytz.utc)
+
+    # Calculate total messages scheduled for today (based on AlertLog entries)
+    total_scheduled_messages_today = AlertLog.query.filter(
+        AlertLog.scheduled_for >= utc_today_start,
+        AlertLog.scheduled_for <= utc_today_end
+    ).count()
+
+    # Calculate sent messages for today (based on AlertLog entries)
+    sent_messages_today = AlertLog.query.filter(
+        AlertLog.scheduled_for >= utc_today_start,
+        AlertLog.scheduled_for <= utc_today_end,
+        AlertLog.status == 'sent'
+    ).count()
+
+    # Calculate counts for pie chart
+    failed_messages_today = AlertLog.query.filter(
+        AlertLog.scheduled_for >= utc_today_start,
+        AlertLog.scheduled_for <= utc_today_end,
+        AlertLog.status == 'failed'
+    ).count()
+
+    waiting_messages_today = AlertLog.query.filter(
+        AlertLog.scheduled_for >= utc_today_start,
+        AlertLog.scheduled_for <= utc_today_end,
+        AlertLog.status.in_(['queued', 'scheduled'])
+    ).count()
+
+    # Total messages for pie chart (sum of sent, failed, waiting)
+    total_messages_for_pie_chart = sent_messages_today + failed_messages_today + waiting_messages_today
+
+    # Get the count of group names for each service
+    service_group_counts = db.session.query(
+        AlertConfig.service_name,
+        func.count(AlertConfig.group_name)
+    ).filter(AlertConfig.group_name.isnot(None)).group_by(AlertConfig.service_name).all()
+
+    # Hourly message counts for chart
+    hourly_data = {}
+    for i in range(24): # Initialize all hours to 0
+        hourly_data[i] = {'total': 0, 'sent': 0}
+
+    # Get all AlertLog entries for today
+    today_logs = AlertLog.query.filter(
+        AlertLog.scheduled_for >= utc_today_start,
+        AlertLog.scheduled_for <= utc_today_end
+    ).all()
+
+    for log in today_logs:
+        # Convert scheduled_for to local timezone to get the local hour
+        local_scheduled_for = log.scheduled_for.astimezone(LOCAL_TZ)
+        hour = local_scheduled_for.hour
+        hourly_data[hour]['total'] += 1
+        if log.status == 'sent':
+            hourly_data[hour]['sent'] += 1
+
+    # Convert hourly_data to a list of values for Chart.js
+    chart_labels = []
+    for i in range(24):
+        if i == 0:
+            chart_labels.append('12 AM')
+        elif i == 12:
+            chart_labels.append('12 PM')
+        elif i < 12:
+            chart_labels.append(f'{i} AM')
+        else:
+            chart_labels.append(f'{i - 12} PM')
+    chart_total_data = [hourly_data[i]['total'] for i in range(24)]
+    chart_sent_data = [hourly_data[i]['sent'] for i in range(24)]
 
     return render_template(
         'dashboard.html',
         current_user=current_user,
         approved_users=approved_users,
-        pending_users=pending_users
+        pending_users=pending_users,
+        sent_messages_today=sent_messages_today,
+        total_scheduled_messages_today=total_scheduled_messages_today,
+        service_group_counts=service_group_counts,
+        chart_labels=chart_labels,
+        chart_total_data=chart_total_data,
+        chart_sent_data=chart_sent_data,
+        failed_messages_today=failed_messages_today,
+        waiting_messages_today=waiting_messages_today,
+        total_messages_for_pie_chart=total_messages_for_pie_chart
     )
-
-
-
 
 
 # -------------------- Admin Pages --------------------
@@ -91,9 +174,6 @@ def pending_users():
     pending = User.query.filter_by(is_approved=False).all()
     return render_template('pending_users.html', users=pending, current_user=current_user)
 
-    # return render_template('pending_users.html', users=pending)
-
-
 
 @frontend_bp.route('/users/approved')
 def approved_users():
@@ -104,11 +184,9 @@ def approved_users():
         flash("You must be logged in to view this page.", "danger")
         return redirect(url_for('frontend.login'))
 
-    # Fetch approved users ordered by newest id first
     approved = User.query.filter_by(is_approved=True).order_by(User.id.desc()).all()
 
     return render_template('approved_users.html', users=approved, current_user=current_user)
-
 
 
 @frontend_bp.route('/users/approve/<int:user_id>')
@@ -119,7 +197,8 @@ def approve_user(user_id):
         user.is_rejected = False
         db.session.commit()
         flash(f"{user.email} approved!", "success")
-    return redirect(url_for('frontend.pending_users'))  # <-- redirect here
+    return redirect(url_for('frontend.pending_users'))
+
 
 @frontend_bp.route('/users/reject/<int:user_id>')
 def reject_user(user_id):
@@ -130,7 +209,7 @@ def reject_user(user_id):
         flash(f"{user.email} rejected and removed!", "warning")
     else:
         flash("User not found!", "danger")
-    return redirect(url_for('frontend.pending_users'))  # <-- redirect here
+    return redirect(url_for('frontend.pending_users'))
 
 
 @frontend_bp.route('/profile', methods=['GET'])
@@ -161,22 +240,19 @@ def edit_profile():
         return redirect(url_for('frontend.login'))
 
     if request.method == 'POST':
-        # Update fields
         user.full_name = request.form.get('full_name')
-        # user.email = request.form.get('email')
         user.phone = request.form.get('phone')
         user.address = request.form.get('address')
         user.bio = request.form.get('bio')
 
-        # Handle profile picture upload
         profile_pic = request.files.get('profile_pic')
         if profile_pic and allowed_file(profile_pic.filename):
             filename = secure_filename(profile_pic.filename)
-            upload_folder = os.path.join(os.getcwd(), "app", "static", "uploads")
+            upload_folder = current_app.config['UPLOAD_FOLDER']
             os.makedirs(upload_folder, exist_ok=True)
             profile_pic_path = os.path.join(upload_folder, filename)
             profile_pic.save(profile_pic_path)
-            user.profile_pic = f"static/uploads/{filename}"
+            user.profile_pic = f"uploads/{filename}"
 
         db.session.commit()
         flash("Profile updated successfully!", "success")
@@ -202,17 +278,14 @@ def change_password():
         new_password = request.form.get('new_password')
         confirm_password = request.form.get('confirm_password')
 
-        # Check current password
         if not user.check_password(current_password):
             flash("Current password is incorrect!", "danger")
             return redirect(url_for('frontend.change_password'))
 
-        # Check new passwords match
         if new_password != confirm_password:
             flash("New passwords do not match!", "danger")
             return redirect(url_for('frontend.change_password'))
 
-        # Update password
         user.set_password(new_password)
         db.session.commit()
         flash("Password changed successfully!", "success")
@@ -222,9 +295,6 @@ def change_password():
 
 
 # -------------------- Admin: Edit User --------------------
-
-
-
 @frontend_bp.route('/user/edit/<int:user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):
     current_user_id = session.get('user_id')
@@ -234,21 +304,18 @@ def edit_user(user_id):
         flash("You must be logged in.", "danger")
         return redirect(url_for('frontend.login'))
 
-    # Get the user to edit
     user = User.query.get(user_id)
     if not user:
         flash("User not found.", "danger")
         return redirect(url_for('frontend.approved_users'))
 
     if request.method == 'POST':
-        # Normal users can update these fields
         user.full_name = request.form.get('full_name', user.full_name)
         user.phone = request.form.get('phone', user.phone)
         user.address = request.form.get('address', user.address)
         user.bio = request.form.get('bio', user.bio)
         user.role = request.form.get('role', user.role)
 
-        # Only admin can update sensitive fields
         if current_user.is_superuser:
             user.email = request.form.get('email', user.email)
             user.is_superuser = request.form.get('is_superuser') == 'on'
@@ -256,17 +323,15 @@ def edit_user(user_id):
             if request.form.get('is_approved') is not None:
                 user.is_approved = request.form.get('is_approved') == 'on'
 
-        # Handle profile picture
         profile_pic = request.files.get('profile_pic')
         if profile_pic and allowed_file(profile_pic.filename):
             filename = secure_filename(profile_pic.filename)
-            upload_folder = os.path.join(os.getcwd(), "app", "static", "uploads")
+            upload_folder = current_app.config['UPLOAD_FOLDER']
             os.makedirs(upload_folder, exist_ok=True)
             profile_pic_path = os.path.join(upload_folder, filename)
             profile_pic.save(profile_pic_path)
-            user.profile_pic = f"static/uploads/{filename}"
+            user.profile_pic = f"uploads/{filename}"
 
-        # Update password if provided
         new_password = request.form.get('password')
         if new_password:
             user.set_password(new_password)
@@ -274,7 +339,6 @@ def edit_user(user_id):
         try:
             db.session.commit()
             flash("User updated successfully!", "success")
-            # Redirect to user details if admin edited a pending user
             if current_user.is_superuser and not user.is_approved:
                 return redirect(url_for('frontend.user_details', user_id=user.id))
             else:
@@ -302,12 +366,6 @@ def user_details(user_id):
         flash("User not found.", "warning")
         return redirect(url_for('frontend.dashboard'))
 
-    # Only prevent non-logged-in users (everyone else can view)
-    # Remove restriction for normal users to see others
-    # if not current_user.is_superuser and current_user.id != user.id:
-    #     flash("Unauthorized access.", "danger")
-    #     return redirect(url_for('frontend.dashboard'))
-
     profile = getattr(user, 'profile', None)
     if profile is None:
         profile = type('Profile', (), {})()
@@ -327,11 +385,7 @@ def user_details(user_id):
     )
 
 
-
-
 # -------------------- Admin: Delete User --------------------
-
-
 @frontend_bp.route('/user/delete/<int:user_id>')
 def delete_user(user_id):
     current_user_id = session.get('user_id')
@@ -346,27 +400,19 @@ def delete_user(user_id):
         flash("User not found.", "danger")
         return redirect(url_for('frontend.approved_users'))
 
-    # Prevent deleting self
     if current_user.id == user.id:
         flash("You cannot delete yourself.", "warning")
         return redirect(url_for('frontend.approved_users'))
 
-    # Normal user restrictions: cannot delete superuser
     if not current_user.is_superuser and user.is_superuser:
         flash("You cannot delete a superuser.", "danger")
         return redirect(url_for('frontend.approved_users'))
 
-    # Delete the user
     db.session.delete(user)
     db.session.commit()
     flash("User deleted successfully!", "warning")
 
-    # Redirect to approved users page for everyone
     return redirect(url_for('frontend.approved_users'))
-
-
-
-
 
 
 # --------------------  Create User --------------------
@@ -390,28 +436,24 @@ def create_user():
         bio = request.form.get('bio')
         profile_pic = request.files.get('profile_pic')
 
-        # Normal users cannot create superusers
         if current_user.is_superuser:
             is_superuser = bool(request.form.get('is_superuser'))
         else:
             is_superuser = False
 
-        # Check if email exists
         if User.query.filter_by(email=email).first():
             flash("Email already exists.", "danger")
             return redirect(url_for('frontend.create_user'))
 
-        # Handle profile picture upload
         profile_pic_path = None
         if profile_pic and allowed_file(profile_pic.filename):
             filename = secure_filename(profile_pic.filename)
-            upload_folder = os.path.join(os.getcwd(), "app", "static", "uploads")
+            upload_folder = current_app.config['UPLOAD_FOLDER']
             os.makedirs(upload_folder, exist_ok=True)
             profile_pic_path = os.path.join(upload_folder, filename)
             profile_pic.save(profile_pic_path)
-            profile_pic_path = f"static/uploads/{filename}"
+            profile_pic_path = f"uploads/{filename}"
 
-        # Create new user
         user = User(
             full_name=full_name,
             email=email,
@@ -432,7 +474,3 @@ def create_user():
         return redirect(url_for('frontend.approved_users'))
 
     return render_template('create_user.html', current_user=current_user)
-
-
-    
-
