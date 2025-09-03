@@ -1,50 +1,117 @@
-# app/app.py
-from flask import Flask
+import os
+from flask import Flask, send_from_directory
+from dotenv import load_dotenv
+from urllib.parse import quote_plus
 from .extensions import db, migrate, jwt
 from .authentication.views.auth_frontend import frontend_bp
 from .notification_sender.views.alert_views import alert_bp
-# from flask_login import LoginManager
-# from app.authentication.models import User 
+from .logging_config import flask_logger
 
-# login_manager = LoginManager()
+# Optional: Celery setup
+from celery import Celery
 
+load_dotenv()
 
-
+celery_app = Celery(
+    "app",
+    broker=os.getenv("CELERY_BROKER_URL"),
+    backend=os.getenv("CELERY_BACKEND_URL")
+)
 
 def create_app():
     app = Flask(__name__, template_folder='../templates')
-    
+    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, '..', 'media', 'uploads')
 
-    app.config['SECRET_KEY'] = 'supersecretkey'
-    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://youruser:yourpassword@127.0.0.1:3306/Notification_Application"
+    # Ensure upload folder exists
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+    # Database configuration with URL-encoding for password
+    db_user = os.getenv("MYSQL_USER", "osman")
+    db_password = quote_plus(os.getenv("MYSQL_PASSWORD", "osmanosman"))  # Encode special chars like @
+    db_host = os.getenv("MYSQL_HOST", "localhost")
+    db_port = os.getenv("MYSQL_PORT", "3306")
+    db_name = os.getenv("MYSQL_DATABASE", "Notification_Application")
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+        "SQLALCHEMY_DATABASE_URI",
+        f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+    )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['JWT_SECRET_KEY'] = "jwt-secret-key"
-    
+    app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "supersecretkey")
+    app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY", "jwt-secret-key")
+    app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+    # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    #ogin_manager = LoginManager()
-    # login_manager.init_app(app)
-    # login_manager.login_view = 'login' l 
-    
+
+    # Register blueprints
     app.register_blueprint(frontend_bp)
     app.register_blueprint(alert_bp, url_prefix='/alerts')
-    
-    
-    
-    # login_manager = LoginManager()
-    # login_manager.login_view = 'frontend.login'  # <-- set your correct login endpoint
-    # login_manager.login_message_category = "warning"  # optional: for flash message styling
-    # login_manager.login_message = "Please log in to access this page."  # optional custom message
-    # login_manager.init_app(app)  # Redirect non-logged-in users to this view
 
-    # @login_manager.user_loader
-    # def load_user(user_id):
-    #     return User.query.get(int(user_id))
+    flask_logger.info("Flask app started successfully ✅")
 
-    
     @app.route('/')
     def index():
         return {"message": "App is running!"}
 
+    @app.route('/media/uploads/<filename>')
+    def uploaded_file(filename):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
     return app
+
+
+
+
+
+
+
+
+# import os
+# from flask import Flask, send_from_directory
+# from dotenv import load_dotenv
+# from .extensions import db, migrate, jwt
+# from .authentication.views.auth_frontend import frontend_bp
+# from .notification_sender.views.alert_views import alert_bp
+# from .logging_config import setup_logger 
+# from .logging_config import flask_logger 
+
+# load_dotenv()
+
+# def create_app():
+#     app = Flask(__name__, template_folder='../templates')
+#     app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, '..', 'media', 'uploads')
+
+#     # Ensure the folder exists
+#     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True) 
+#     app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "supersecretkey")
+#     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URI")
+#     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#     app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY", "jwt-secret-key")
+#     app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+#     # Initialize extensions
+#     db.init_app(app)
+#     migrate.init_app(app, db)
+#     jwt.init_app(app)
+#     # app.config.from_object("config.Config")
+#     # Register blueprints
+#     app.register_blueprint(frontend_bp)
+#     app.register_blueprint(alert_bp, url_prefix='/alerts')
+    
+#     # app.logger = setup_logger("NotificationApp", "flask_app.log")
+#     flask_logger.info("Flask app started successfully ✅")
+#     # flask_logger.warning("⚠️ Flask warning example")
+#     # flask_logger.error("❌ Flask error example")
+
+#     @app.route('/')
+#     def index():
+#         return {"message": "App is running!"}
+
+#     @app.route('/media/uploads/<filename>')
+#     def uploaded_file(filename):
+#         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+#     return app

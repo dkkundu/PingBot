@@ -33,6 +33,15 @@
                     <input type="text" name="code" id="code" required
                         class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-3 text-lg"
                         placeholder="Enter Service Code">
+                    <div class="mt-2 text-sm text-gray-600">
+                        Suggested codes:
+                        {% for code in suggested_codes %}
+                            <span class="inline-block bg-gray-200 text-gray-800 px-2 py-1 rounded-full cursor-pointer hover:bg-gray-300 transition mr-2"
+                                  onclick="document.getElementById('code').value = '{{ code }}'">
+                                {{ code }}
+                            </span>
+                        {% endfor %}
+                    </div>
                 </div>
 
                 <!-- Description -->

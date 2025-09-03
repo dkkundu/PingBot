@@ -9,7 +9,7 @@ class User(db.Model):
     full_name = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)  # Used for login
     role = db.Column(db.String(50), nullable=False, default="employee")  # roles: admin, employee
-
+    telegram_chat_id = db.Column(db.String(50), nullable=True)
     # Optional details
     phone = db.Column(db.String(20), nullable=True)
     address = db.Column(db.String(250), nullable=True)

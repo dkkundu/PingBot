@@ -3,6 +3,8 @@
 __pycache__/
 *.py[codz]
 *$py.class
+# Ignore uploaded files
+media/uploads/
 
 # C extensions
 *.so

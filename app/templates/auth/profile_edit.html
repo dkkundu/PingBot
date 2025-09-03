@@ -16,7 +16,7 @@
       <div class="flex flex-col items-center justify-center space-y-4">
         <div class="w-40 h-40 relative">
           {% if user.profile_pic %}
-          <img id="profilePreview" src="{{ url_for('static', filename=user.profile_pic.split('static/')[-1]) }}" 
+          <img id="profilePreview" src="{{ url_for('uploaded_file', filename=user.profile_pic.split('media/uploads/')[-1]) }}" 
                class="w-40 h-40 rounded-full object-cover shadow-lg border border-gray-200">
           {% else %}
           <div id="profilePreview" class="w-40 h-40 rounded-full bg-gray-300 flex items-center justify-center text-4xl text-gray-600 font-bold">

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="text-2xl font-bold mb-6 text-gray-800">Users</h2>
+
 
 
 <div class="mb-4 flex justify-end">
@@ -37,7 +37,7 @@
                 <td class="py-3 px-6">{{ user.bio }}</td>
                 <td class="py-3 px-6">
                     {% if user.profile_pic %}
-                    <img src="{{ url_for('static', filename=user.profile_pic.split('static/')[1]) }}" alt="Profile Picture" class="h-12 w-12 rounded-full object-cover">
+                    <img src="{{ url_for('uploaded_file', filename=user.profile_pic.split('media/uploads/')[-1]) }}" alt="Profile Picture" class="h-12 w-12 rounded-full object-cover">
                     {% else %}
                     <span class="text-gray-400">No Image</span>
                     {% endif %}
@@ -73,4 +73,34 @@
 {% else %}
 <p class="text-gray-500">No approved users found.</p>
 {% endif %}
+
+<!-- Pagination Controls -->
+<div class="flex justify-center mt-8 space-x-2">
+    {% if approved_users_pagination.has_prev %}
+        <a href="{{ url_for('frontend.approved_users', page=approved_users_pagination.prev_num, per_page=approved_users_pagination.per_page) }}"
+           class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">Previous</a>
+    {% else %}
+        <span class="px-4 py-2 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed">Previous</span>
+    {% endif %}
+
+    {% for page_num in approved_users_pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+        {% if page_num %}
+            {% if approved_users_pagination.page == page_num %}
+                <span class="px-4 py-2 bg-blue-600 text-white rounded-lg">{{ page_num }}</span>
+            {% else %}
+                <a href="{{ url_for('frontend.approved_users', page=page_num, per_page=approved_users_pagination.per_page) }}"
+                   class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+            <span class="px-4 py-2 text-gray-500">...</span>
+        {% endif %}
+    {% endfor %}
+
+    {% if approved_users_pagination.has_next %}
+        <a href="{{ url_for('frontend.approved_users', page=approved_users_pagination.next_num, per_page=approved_users_pagination.per_page) }}"
+           class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">Next</a>
+    {% else %}
+        <span class="px-4 py-2 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed">Next</span>
+    {% endif %}
+</div>
 {% endblock %}

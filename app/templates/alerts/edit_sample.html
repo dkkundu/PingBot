@@ -1,134 +1,215 @@
 {% extends "base.html" %}
 
+{% block title %}Edit Alert Sample{% endblock %}
+
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-6">
-    <div class="w-full max-w-4xl bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-12">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-10">
+    <div class="w-full max-w-5xl bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-14 border border-gray-200">
 
         <!-- Header -->
-        <div class="text-center mb-10">
-            <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-                Edit Alert Sample
+        <div class="text-center mb-14">
+            <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight">
+                Edit <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">Message</span>
             </h1>
-            <p class="mt-3 text-gray-600 text-lg">Update alert sample details quickly and efficiently</p>
+            <p class="mt-5 text-gray-500 text-lg max-w-2xl mx-auto">
+                Update alert sample details quickly and efficiently.
+            </p>
         </div>
 
         <!-- Form -->
-        <form method="POST" class="space-y-8" novalidate>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <form method="POST" enctype="multipart/form-data" class="space-y-12" novalidate>
 
-                <!-- Company ID -->
+            <!-- Inputs Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <!-- Sender Name -->
                 <div>
-                    <label for="company_id" class="block text-gray-700 font-medium mb-2">Company ID</label>
-                    <input type="text" name="company_id" id="company_id" value="{{ sample.company_id }}" required
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
-                        placeholder="Company ID">
+                    <label for="sender_name" class="block text-gray-700 font-semibold mb-2">Sender</label>
+                    <input type="text" name="sender_name" id="sender_name" value="{{ sample.sender_name or '' }}"
+                        class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-4 py-3 text-lg shadow-sm transition"
+                        placeholder="Enter Sender Name">
+                </div>
+
+                <!-- Company Name -->
+                <div>
+                    <label for="company_name" class="block text-gray-700 font-semibold mb-2">Company Name</label>
+                    <input type="text" name="company_name" id="company_name" value="{{ sample.company_name or '' }}" required
+                        class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-5 py-3.5 text-lg shadow-sm transition"
+                        placeholder="Enter Company Name">
                 </div>
 
                 <!-- Service -->
                 <div>
-                    <label for="service_id" class="block text-gray-700 font-medium mb-2">Service</label>
-                    <select name="service_id" id="service_id" required
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 py-4 text-lg">
+                    <label for="service_code" class="block text-gray-700 font-semibold mb-2">Select Service</label>
+                    <select name="service_code" id="service_id"
+                        class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-5 py-3.5 text-lg shadow-sm transition">
                         {% for service in services %}
-                            <option value="{{ service.id }}" {% if service.id == sample.service_id %}selected{% endif %}>
-                                {{ service.name }}
-                            </option>
+                            <option value="{{ service.code }}" {% if service.code == sample.service.code %}selected{% endif %}>{{ service.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
 
-                <!-- Config -->
+                <!-- Alert Config -->
                 <div>
-                    <label for="config_id" class="block text-gray-700 font-medium mb-2">Config</label>
-                    <select name="config_id" id="config_id" required
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 py-4 text-lg">
+                    <label for="config_id" class="block text-gray-700 font-semibold mb-2">Alert Config (BOT info)</label>
+                    <select name="config_id" id="config_select"
+                        class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-5 py-3.5 text-lg shadow-sm transition">
                         {% for config in configs %}
-                            <option value="{{ config.id }}" {% if config.id == sample.config_id %}selected{% endif %}>
-                                {{ config.service_name }} - {{ config.group_name or 'N/A' }}
+                            <option value="{{ config.id }}" data-group="{{ config.group_id }}" data-token="{{ config.auth_token }}" data-service="{{ config.service.code }}"
+                                {% if config.id == sample.config_id %}selected{% endif %}>
+                                {{ config.group_name or 'N/A' }}
                             </option>
                         {% endfor %}
                     </select>
                 </div>
 
-                <!-- User -->
-                <div>
-                    <label for="user_id" class="block text-gray-700 font-medium mb-2">User (Optional)</label>
-                    <select name="user_id" id="user_id"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 py-4 text-lg">
-                        <option value="">None</option>
-                        {% for user in users %}
-                            <option value="{{ user.id }}" {% if user.id == sample.user_id %}selected{% endif %}>{{ user.username }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <!-- Device Type ID -->
-                <div>
-                    <label for="device_type_id" class="block text-gray-700 font-medium mb-2">Device Type ID</label>
-                    <input type="text" name="device_type_id" id="device_type_id" value="{{ sample.device_type_id }}"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
-                        placeholder="Device Type ID">
-                </div>
-
-                <!-- Title -->
-                <div>
-                    <label for="title" class="block text-gray-700 font-medium mb-2">Title</label>
-                    <input type="text" name="title" id="title" value="{{ sample.title }}" required
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
-                        placeholder="Title">
-                </div>
-
-                <!-- Body -->
-                <div class="md:col-span-2">
-                    <label for="body" class="block text-gray-700 font-medium mb-2">Body</label>
-                    <textarea name="body" id="body"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
-                        placeholder="Body">{{ sample.body }}</textarea>
-                </div>
-
-                <!-- Checkboxes -->
-                <div class="flex items-center gap-4">
-                    <input type="checkbox" name="single_user" id="single_user" class="h-6 w-12 rounded-full bg-gray-300 checked:bg-indigo-500 transition-colors" {% if sample.single_user %}checked{% endif %}>
-                    <label for="single_user" class="text-gray-700 font-medium text-lg">Single User</label>
-                </div>
-
-                <div class="flex items-center gap-4">
-                    <input type="checkbox" name="is_common" id="is_common" class="h-6 w-12 rounded-full bg-gray-300 checked:bg-indigo-500 transition-colors" {% if sample.is_common %}checked{% endif %}>
-                    <label for="is_common" class="text-gray-700 font-medium text-lg">Is Common</label>
-                </div>
+                
 
                 <!-- Start Date -->
-<div>
-    <label for="start_date" class="block text-gray-700 font-medium mb-2">Start Date</label>
-    <input type="datetime-local" name="start_date" id="start_date" 
-           value="{{ sample.start_date_str }}">
-</div>
-
-<!-- End Date -->
-<div>
-    <label for="end_date" class="block text-gray-700 font-medium mb-2">End Date</label>
-    <input type="datetime-local" name="end_date" id="end_date" 
-           value="{{ sample.end_date_str }}">
-</div>
-
-
-                <!-- Category -->
                 <div>
-                    <label for="category" class="block text-gray-700 font-medium mb-2">Category</label>
-                    <input type="number" name="category" id="category" value="{{ sample.category }}" required
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-4 text-lg"
-                        placeholder="Category">
+                    <label for="start_date" class="block text-gray-700 font-semibold mb-2">Start Date</label>
+                    <input type="date" name="start_date" id="start_date" value="{{ sample.start_date_str or '' }}"
+                        class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-lg shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition">
                 </div>
 
+                <!-- Start Time -->
+                <div>
+                    <label for="start_time" class="block text-gray-700 font-semibold mb-2">Start Time</label>
+                    <input type="time" name="start_time" id="start_time" value="{{ sample.start_time_str or '' }}"
+                        class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-lg shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition">
+                </div>
+
+                <!-- Is Recurring Checkbox -->
+                <div>
+                    <label for="is_recurring" class="block text-gray-700 font-semibold mb-2">Is Recurring</label>
+                    <label class="switch">
+                      <input type="checkbox" name="is_recurring" id="is_recurring" {% if sample.is_recurring %}checked{% endif %}>
+                      <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <!-- Recurrence Interval -->
+                <div id="recurrence_interval_group">
+                    <label for="recurrence_interval" class="block text-gray-700 font-semibold mb-2">Recurrence Interval</label>
+                    <select name="recurrence_interval" id="recurrence_interval"
+                           class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-lg shadow-sm transition">
+                        <option value="daily" {% if sample.recurrence_interval == 'daily' %}selected{% endif %}>Daily</option>
+                        <option value="weekly" {% if sample.recurrence_interval == 'weekly' %}selected{% endif %}>Weekly</option>
+                        <option value="monthly" {% if sample.recurrence_interval == 'monthly' %}selected{% endif %}>Monthly</option>
+                    </select>
+                </div>
+
+                <!-- End Date -->
+                <div id="end_date_container">
+                    <label for="end_date" class="block text-gray-700 font-semibold mb-2">End Date</label>
+                    <input type="date" name="end_date" id="end_date" value="{{ sample.end_date_str or '' }}"
+                        class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-lg shadow-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition">
+                </div>
+
+            </div>
+
+            <!-- Message Box -->
+            <div class="mt-8 p-6 bg-gray-50 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+                <h2 class="text-2xl font-semibold text-gray-800">Message</h2>
+                <!-- Title -->
+                <div>
+                    <label for="title" class="block text-gray-700 font-semibold mb-2">Title</label>
+                    <input type="text" name="title" id="title" value="{{ sample.title or '' }}" required
+                        class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-5 py-3.5 text-lg shadow-sm transition"
+                        placeholder="Enter title">
+                </div>
+                <!-- Body -->
+                <div>
+                    <label for="body" class="block text-gray-700 font-semibold mb-2">Body</label>
+                    <div id="body_editor" style="height: 200px;"></div>
+                    <textarea name="body" style="display:none;"></textarea>
+                </div>
+            </div>
+
+            <!-- File Upload -->
+            <div class="mt-6">
+                <label for="file_upload" class="block text-gray-700 font-semibold mb-2">Attach File (Optional)</label>
+                <input type="file" name="file_upload" id="file_upload"
+                    class="w-full rounded-2xl border border-gray-300 bg-white px-5 py-3.5 text-lg shadow-sm transition">
+                {% if sample.file_upload %}
+                    <p class="mt-2 text-gray-500">Current file: <a href="{{ url_for('uploaded_file', filename=sample.file_upload) }}" target="_blank" class="text-indigo-500 underline">{{ sample.file_upload }}</a></p>
+                {% endif %}
             </div>
 
             <!-- Buttons -->
-            <div class="flex justify-end gap-6 mt-10">
-                <a href="{{ url_for('alert.list_samples') }}" class="px-8 py-4 rounded-2xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition text-lg">Cancel</a>
-                <button type="submit" class="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl shadow-lg hover:scale-105 transform transition text-lg">Update Sample</button>
+            <div class="flex justify-end gap-6 pt-6">
+                <a href="{{ url_for('alert.list_samples') }}"
+                   class="px-8 py-3.5 rounded-2xl border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 transition text-lg shadow-sm">
+                    Cancel
+                </a>
+                <button type="submit"
+                   class="px-8 py-3.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 transform transition text-lg font-semibold">
+                    Update Sample
+                </button>
             </div>
-        </form>
 
+        </form>
     </div>
 </div>
+
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    var quill = new Quill('#body_editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, false] }],
+                ['bold', 'italic', 'underline'],
+                ['image', 'code-block']
+            ]
+        }
+    });
+
+    // Set initial content for edit page
+    quill.root.innerHTML = `{{ sample.body | safe }}`;
+
+    // On form submit, update the hidden textarea with Quill's HTML content
+    document.querySelector('form').onsubmit = function() {
+        let content = quill.root.innerHTML;
+        // Remove the specific unwanted HTML snippet
+        const unwantedHtml = '<p><span style="background-color: rgba(255, 255, 255, 0.9); color: rgb(55, 65, 81);">Recurrence Interval</span></p>';
+        content = content.replace(unwantedHtml, '');
+        document.querySelector('textarea[name="body"]').value = content;
+    };
+
+// ===== Show/Hide End Date and Recurrence Interval based on Is Recurring =====
+const isRecurringCheckbox = document.getElementById('is_recurring');
+const endDateContainer = document.getElementById('end_date_container');
+const recurrenceIntervalGroup = document.getElementById('recurrence_interval_group');
+
+function updateDateTimeFields() {
+    if (isRecurringCheckbox.checked) {
+        endDateContainer.style.display = 'block';
+        recurrenceIntervalGroup.style.display = 'block';
+    } else {
+        endDateContainer.style.display = 'none';
+        recurrenceIntervalGroup.style.display = 'none';
+    }
+}
+
+isRecurringCheckbox.addEventListener('change', updateDateTimeFields);
+updateDateTimeFields();
+
+// Service -> Config auto filter
+const serviceSelect = document.getElementById('service_id');
+const configSelect = document.getElementById('config_select');
+
+function updateConfigs() {
+    const selectedServiceId = serviceSelect.value;
+    Array.from(configSelect.options).forEach(opt => {
+        opt.style.display = (opt.dataset.service === selectedServiceId) ? 'block' : 'none';
+    });
+    const firstVisible = Array.from(configSelect.options).find(opt => opt.style.display === 'block');
+    if (firstVisible) configSelect.value = firstVisible.value;
+}
+serviceSelect.addEventListener('change', updateConfigs);
+updateConfigs();
+</script>
+
 {% endblock %}

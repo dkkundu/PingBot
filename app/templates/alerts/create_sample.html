@@ -1,135 +1,244 @@
 {% extends "base.html" %}
 
-{% block title %}Create Alert Sample{% endblock %}
+{% block title %}Create Message{% endblock %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-6">
-    <div class="w-full max-w-4xl bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-10">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-10">
+    <div class="w-full max-w-5xl bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-14 border border-gray-200">
 
         <!-- Header -->
-        <div class="text-center mb-10">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">Create Alert Sample</h1>
-            <p class="mt-3 text-gray-600 text-lg">Fill in the details to create a new alert sample efficiently</p>
+        <div class="text-center mb-14">
+            <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight">
+                Create <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">Message</span>
+            </h1>
+          
         </div>
 
         <!-- Form -->
-        <form method="POST" class="space-y-8" novalidate>
+        <form method="POST" enctype="multipart/form-data" class="space-y-12" novalidate>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
-                <!-- Company ID -->
+                <!-- Company Name -->
                 <div>
-                    <label for="company_id" class="block text-gray-700 font-medium mb-2">Company ID</label>
-                    <input type="text" name="company_id" id="company_id" required
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-3 text-lg"
-                        placeholder="Enter Company ID">
+                    <label for="company_name" class="block text-gray-700 font-semibold mb-2">Company Name</label>
+                    <input type="text" name="company_name" id="company_name" required
+                           class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-4 py-3 text-lg shadow-sm transition"
+                           placeholder="Enter Company Name">
                 </div>
 
                 <!-- Service -->
                 <div>
-                    <label for="service_id" class="block text-gray-700 font-medium mb-2">Service</label>
-                    <select name="service_id" id="service_id" required
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 py-3 text-lg">
+                    <label for="service_code" class="block text-gray-700 font-semibold mb-2">Select Service</label>
+                    <select name="service_code" id="service_id" required
+                            class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-4 py-3 text-lg shadow-sm transition">
                         {% for service in services %}
-                            <option value="{{ service.id }}">{{ service.name }}</option>
+                            <option value="{{ service.code }}">{{ service.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
 
                 <!-- Config -->
                 <div>
-                    <label for="config_id" class="block text-gray-700 font-medium mb-2">Config</label>
-                    <select name="config_id" id="config_id" required
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 py-3 text-lg">
+                    <label for="config_id" class="block text-gray-700 font-semibold mb-2">Alert Config (BOT info)</label>
+                    <select name="config_id" id="config_select" required
+                            class="w-full rounded-2xl border border-gray-300 bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 px-4 py-3 text-lg shadow-sm transition">
                         {% for config in configs %}
-                            <option value="{{ config.id }}">{{ config.service_name }} - {{ config.group_name or 'N/A' }}</option>
+                            <option value="{{ config.id }}"
+                                    data-group="{{ config.group_id }}"
+                                    data-token="{{ config.auth_token }}"
+                                    data-service="{{ config.service.code }}">
+                                {{ config.group_name or 'N/A' }}
+                            </option>
                         {% endfor %}
                     </select>
                 </div>
+                 <!-- Sender Name -->
+                    <div>
+                        <label for="sender_name" class="block text-gray-700 font-semibold mb-2 text-base">Sender Name</label>
+                        <input type="text" name="sender_name" id="sender_name"
+                            class="w-full rounded-2xl border border-gray-300 bg-white px-5 py-3.5 text-lg shadow-sm transition"
+                            placeholder="Enter sender name (default: System)">
+                    </div>
 
-                <!-- User -->
+
+              
+
+                
+
+                <!-- Start Date -->
                 <div>
-                    <label for="user_id" class="block text-gray-700 font-medium mb-2">User (Optional)</label>
-                    <select name="user_id" id="user_id"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 py-3 text-lg">
-                        <option value="">None</option>
-                        {% for user in users %}
-                            <option value="{{ user.id }}">{{ user.username }}</option>
-                        {% endfor %}
+                    <label for="start_date" class="block text-gray-700 font-semibold mb-2">Start Date</label>
+                    <input type="date" name="start_date" id="start_date" required
+                           class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-lg shadow-sm transition">
+                </div>
+
+                <!-- Start Time -->
+                <div>
+                    <label for="start_time" class="block text-gray-700 font-semibold mb-2">Start Time</label>
+                    <input type="time" name="start_time" id="start_time" required
+                           class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-lg shadow-sm transition">
+                </div>
+
+                <!-- Is Recurring Checkbox -->
+                <div>
+                    <label for="is_recurring" class="block text-gray-700 font-semibold mb-2">Is Recurring</label>
+                    <label class="switch">
+                      <input type="checkbox" name="is_recurring" id="is_recurring">
+                      <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <!-- Recurrence Interval -->
+                <div id="recurrence_interval_group" style="display: none;">
+                    <label for="recurrence_interval" class="block text-gray-700 font-semibold mb-2">Recurrence Interval</label>
+                    <select name="recurrence_interval" id="recurrence_interval"
+                           class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-lg shadow-sm transition">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
                     </select>
-                </div>
-
-                <!-- Device Type ID -->
-                <div>
-                    <label for="device_type_id" class="block text-gray-700 font-medium mb-2">Device Type ID</label>
-                    <input type="text" name="device_type_id" id="device_type_id"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-3 text-lg"
-                        placeholder="Enter Device Type ID">
-                </div>
-
-                <!-- Title -->
-                <div>
-                    <label for="title" class="block text-gray-700 font-medium mb-2">Title</label>
-                    <input type="text" name="title" id="title" required
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-3 text-lg"
-                        placeholder="Enter Title">
-                </div>
-
-                <!-- Body -->
-                <div class="md:col-span-2">
-                    <label for="body" class="block text-gray-700 font-medium mb-2">Body</label>
-                    <textarea name="body" id="body" rows="4"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-3 text-lg"
-                        placeholder="Enter message body"></textarea>
-                </div>
-
-                <!-- Single User & Is Common -->
-                <div class="flex items-center gap-6">
-                    <div class="flex items-center gap-2">
-                        <input type="checkbox" name="single_user" id="single_user" class="h-6 w-6 rounded-lg text-indigo-500">
-                        <label for="single_user" class="text-gray-700 font-medium text-lg">Single User</label>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <input type="checkbox" name="is_common" id="is_common" class="h-6 w-6 rounded-lg text-indigo-500">
-                        <label for="is_common" class="text-gray-700 font-medium text-lg">Is Common</label>
-                    </div>
-                </div>
-
-              <!-- Start Date -->
-                <div>
-                    <label for="start_date" class="block text-gray-700 font-medium mb-2">Start Date</label>
-                    <input type="datetime-local" name="start_date" id="start_date"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-3 text-lg"
-                        placeholder="Select Start Date">
                 </div>
 
                 <!-- End Date -->
-                <div>
-                    <label for="end_date" class="block text-gray-700 font-medium mb-2">End Date</label>
-                    <input type="datetime-local" name="end_date" id="end_date"
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-3 text-lg"
-                        placeholder="Select End Date">
+                <div id="end_date_container">
+                    <label for="end_date" class="block text-gray-700 font-semibold mb-2">End Date</label>
+                    <input type="date" name="end_date" id="end_date"
+                           class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-lg shadow-sm transition">
                 </div>
 
-
-
-                <!-- Category -->
-                <div>
-                    <label for="category" class="block text-gray-700 font-medium mb-2">Category</label>
-                    <input type="number" name="category" id="category" required
-                        class="w-full rounded-2xl border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 pl-4 pr-4 py-3 text-lg"
-                        placeholder="Enter Category">
-                </div>
+                
 
             </div>
 
-            <!-- Buttons -->
-            <div class="flex justify-end gap-6 mt-6">
-                <a href="{{ url_for('alert.list_samples') }}" class="px-6 py-3 rounded-2xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition text-lg">Cancel</a>
-                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl shadow-lg hover:scale-105 transform transition text-lg">Create Sample</button>
+        <!-- Message Box -->
+        <div class="bg-gray-50 border border-gray-300 rounded-2xl p-6 shadow-sm mt-8">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Message</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="title" class="block text-gray-700 font-semibold mb-2">Title</label>
+                    <input type="text" name="title" id="title" required
+                           class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-lg shadow-sm transition"
+                           placeholder="Enter Title">
+                </div>
+                <div>
+                    <label for="body" class="block text-gray-700 font-semibold mb-2">Body</label>
+                    <div id="body_editor" style="height: 200px;"></div>
+                    <textarea name="body" style="display:none;"></textarea>
+                </div>
             </div>
+        </div>
 
-        </form>
-    </div>
+        <!-- File Upload -->
+        <div class="mt-6">
+            <label for="file_upload" class="block text-gray-700 font-semibold mb-2">Attach File (Optional)</label>
+            <input type="file" name="file_upload" id="file_upload"
+                   class="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-lg shadow-sm transition">
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-end gap-6 pt-6">
+            <a href="{{ url_for('alert.list_samples') }}"
+               class="px-8 py-3.5 rounded-2xl border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 transition text-lg shadow-sm">
+                Cancel
+            </a>
+            <button type="submit"
+                    class="px-8 py-3.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 transform transition text-lg font-semibold">
+                Create Sample
+            </button>
+        </div>
+
+    </form>
 </div>
+</div>
+
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    var quill = new Quill('#body_editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, false] }],
+                ['bold', 'italic', 'underline'],
+                ['image', 'code-block']
+            ]
+        }
+    });
+
+    // On form submit, update the hidden textarea with Quill's HTML content
+    document.querySelector('form').onsubmit = function() {
+        let content = quill.root.innerHTML;
+        // Remove the specific unwanted HTML snippet
+        const unwantedHtml = '<p><span style="background-color: rgba(255, 255, 255, 0.9); color: rgb(55, 65, 81);">Recurrence Interval</span></p>';
+        content = content.replace(unwantedHtml, '');
+        document.querySelector('textarea[name="body"]').value = content;
+    };
+
+// ===== Service -> Config auto-update =====
+const configSelect = document.getElementById('config_select');
+const serviceSelect = document.getElementById('service_id');
+
+function updateConfigs() {
+    const selectedServiceId = serviceSelect.value;
+    let hasVisible = false;
+
+    Array.from(configSelect.options).forEach(option => {
+        if (option.dataset.service === selectedServiceId) {
+            option.style.display = 'block';
+            hasVisible = true;
+        } else {
+            option.style.display = 'none';
+        }
+    });
+
+    const oldPlaceholder = configSelect.querySelector('option[data-placeholder]');
+    if (oldPlaceholder) oldPlaceholder.remove();
+
+    if (hasVisible) {
+        const firstVisible = Array.from(configSelect.options).find(opt => opt.style.display === 'block');
+        if (firstVisible) configSelect.value = firstVisible.value;
+    } else {
+        const placeholder = document.createElement('option');
+        placeholder.text = 'No Config Available';
+        placeholder.disabled = true;
+        placeholder.selected = true;
+        placeholder.dataset.placeholder = 'true';
+        configSelect.appendChild(placeholder);
+    }
+}
+
+function updateSendType() {
+    const selected = configSelect.selectedOptions[0];
+    const token = selected?.dataset.token;
+    const groupOption = document.querySelector('#send_type option[value="group"]');
+    if (groupOption) groupOption.disabled = !token;
+}
+
+serviceSelect.addEventListener('change', () => {
+    updateConfigs();
+    updateSendType();
+});
+configSelect.addEventListener('change', updateSendType);
+updateConfigs();
+updateSendType();
+
+// ===== Show/Hide End Date and Recurrence Interval based on Is Recurring =====
+const isRecurringCheckbox = document.getElementById('is_recurring');
+const endDateContainer = document.getElementById('end_date_container');
+const recurrenceIntervalGroup = document.getElementById('recurrence_interval_group');
+
+function updateDateTimeFields() {
+    if (isRecurringCheckbox.checked) {
+        endDateContainer.style.display = 'block';
+        recurrenceIntervalGroup.style.display = 'block';
+    } else {
+        endDateContainer.style.display = 'none';
+        recurrenceIntervalGroup.style.display = 'none';
+    }
+}
+
+isRecurringCheckbox.addEventListener('change', updateDateTimeFields);
+updateDateTimeFields();
+</script>
 {% endblock %}

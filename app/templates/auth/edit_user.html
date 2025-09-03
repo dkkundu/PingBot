@@ -77,7 +77,7 @@
                 <div class="flex items-center space-x-6">
                     <div class="relative">
                         {% if user.profile_pic %}
-                        <img id="profilePreview" src="{{ url_for('static', filename=user.profile_pic.split('static/')[-1]) }}" 
+                        <img id="profilePreview" src="{{ url_for('uploaded_file', filename=user.profile_pic.split('media/uploads/')[-1]) }}" 
                              alt="Profile Pic" class="h-28 w-28 rounded-full object-cover border-4 border-indigo-500 shadow-lg">
                         {% else %}
                         <div id="profilePreview" class="h-28 w-28 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xl font-semibold border-4 border-gray-300 shadow-lg">

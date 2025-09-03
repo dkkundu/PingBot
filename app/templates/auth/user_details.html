@@ -9,7 +9,7 @@
             <!-- Profile Picture -->
             <div class="flex-shrink-0 mb-6 md:mb-0">
                 {% if user.profile_pic %}
-                <img src="{{ url_for('static', filename=user.profile_pic.split('static/')[-1]) }}" 
+                <img src="{{ url_for('uploaded_file', filename=user.profile_pic.split('media/uploads/')[-1]) }}" 
                      alt="Profile Picture" 
                      class="h-40 w-40 rounded-full object-cover border-4 border-indigo-500 shadow-lg hover:scale-105 transition-transform duration-300">
                 {% else %}

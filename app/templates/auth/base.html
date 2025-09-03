@@ -5,7 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ title if title else "Dashboard" }}</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>[x-cloak]{ display:none !important; }</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<style>
+[x-cloak]{ display:none !important; }
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
@@ -113,12 +176,14 @@
     x-transition:leave-end="opacity-0 max-h-0"
     class="overflow-hidden mt-2 space-y-1 bg-blue-700 rounded-lg shadow-lg pl-6 py-2"
   >
+
+
     <li>
       <a href="{{ url_for('alert.list_samples') }}"
          class="flex items-center px-4 py-2 rounded-lg hover:bg-blue-500 transition-colors duration-200
          {% if request.endpoint == 'alert.list_samples' %} bg-blue-500 border-l-4 border-cyan-400 {% endif %}">
         <i class="fas fa-bell w-5 text-white"></i>
-        <span class="ml-3 font-medium text-white">Sample</span>
+        <span class="ml-3 font-medium text-white">Message</span>
       </a>
     </li>
 
@@ -137,6 +202,22 @@
          {% if request.endpoint == 'alert.list_services' %} bg-blue-500 border-l-4 border-cyan-400 {% endif %}">
         <i class="fas fa-server w-5 text-white"></i>
         <span class="ml-3 font-medium text-white">Service</span>
+      </a>
+    </li>
+      <li>
+      <a href="{{ url_for('alert.list_logs') }}"
+         class="flex items-center px-4 py-2 rounded-lg hover:bg-blue-500 transition-colors duration-200
+         {% if request.endpoint == 'alert.list_logs' %} bg-blue-500 border-l-4 border-cyan-400 {% endif %}">
+        <i class="fas fa-clipboard-list w-5 text-white"></i>
+        <span class="ml-3 font-medium text-white">Logs</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('alert.list_test_credentials') }}"
+         class="flex items-center px-4 py-2 rounded-lg hover:bg-blue-500 transition-colors duration-200
+         {% if request.endpoint == 'alert.list_test_credentials' %} bg-blue-500 border-l-4 border-cyan-400 {% endif %}">
+        <i class="fas fa-flask w-5 text-white"></i>
+        <span class="ml-3 font-medium text-white">Test Config</span>
       </a>
     </li>
   </ul>
@@ -165,7 +246,7 @@
             class="flex items-center gap-3 focus:outline-none group">
       
       {% if current_user.profile_pic %}
-      <img src="{{ url_for('static', filename=current_user.profile_pic.split('static/')[-1]) }}" 
+      <img src="{{ url_for('uploaded_file', filename=current_user.profile_pic.split('media/uploads/')[-1]) }}" 
            alt="Profile Picture" 
            class="w-10 h-10 rounded-full object-cover border">
       {% else %}
@@ -221,11 +302,11 @@
   </div>
 </header>
 
-    <!-- Flash messages -->
+    
     
 
     <!-- Page content -->
-    <main class="flex-1 p-6 overflow-y-auto">
+    <main class="flex-1 p-4 overflow-y-auto min-w-0">
       {% block content %}{% endblock %}
     </main>
   </div>
@@ -259,13 +340,7 @@
   });
 </script>
 
-<script>
-  document.addEventListener('alpine:init', () => {
-    Alpine.store('menu', {
-      alertOpen: false
-    })
-  })
-</script>
+
 <!-- Make sure to include Alpine.js for x-data/x-show -->
 <script src="//unpkg.com/alpinejs" defer></script>
 </html>

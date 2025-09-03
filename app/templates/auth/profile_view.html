@@ -17,7 +17,7 @@
             <!-- Profile Pic -->
             <div class="absolute -top-16 flex items-center">
                 {% if user.profile_pic %}
-                <img src="{{ url_for('static', filename=user.profile_pic.split('static/')[-1]) }}"
+                <img src="{{ url_for('uploaded_file', filename=user.profile_pic.split('media/uploads/')[-1]) }}"
                      alt="Profile Picture"
                      class="w-32 h-32 rounded-full border-4 border-white shadow-xl object-cover ring-4 ring-white">
                 {% else %}

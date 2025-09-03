@@ -1,32 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="text-2xl font-bold mb-6 text-gray-800">Welcome, {{ current_user.full_name }}!</h2>
 
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-    <!-- Total Users (visible to everyone) -->
-    <div class="p-6 rounded-2xl shadow-lg bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white hover:scale-105 transform transition duration-300">
+    
+
+    <!-- Scheduled Messages -->
+    <div class="p-6 rounded-2xl shadow-lg bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white hover:scale-105 transform transition duration-300">
         <div class="flex items-center justify-between">
-            <h3 class="font-semibold text-lg">Total Users</h3>
+            <h3 class="font-semibold text-lg">Messages Sent Today</h3>
             <svg class="w-8 h-8 text-white opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5V10H2v10h5m10 0v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h10M7 16h10M4 6h16a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
             </svg>
         </div>
-        <p class="text-3xl font-bold mt-4">{{ approved_users|length }}</p>
+        <p class="text-3xl font-bold mt-4">{{ sent_messages_today }}/{{ total_scheduled_messages_today }}</p>
+        <p class="text-sm mt-2 opacity-80">Sent today: {{ sent_messages_today }}</p>
     </div>
 
-    {% if current_user.role == 'admin' %}
-    <!-- Pending Users (admin only) -->
-    <div class="p-6 rounded-2xl shadow-lg bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-white hover:scale-105 transform transition duration-300">
+    <!-- Service Group Counts -->
+    <div class="p-6 rounded-2xl shadow-lg bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white hover:scale-105 transform transition duration-300">
         <div class="flex items-center justify-between">
-            <h3 class="font-semibold text-lg">Pending Users</h3>
+            <h3 class="font-semibold text-lg">Service Group Counts</h3>
             <svg class="w-8 h-8 text-white opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6 1V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a3.002 3.002 0 013.428 0M11 16a3 3 0 11-6 0 3 3 0 016 0zm6 0a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
         </div>
-        <p class="text-3xl font-bold mt-4">{{ pending_users|length }}</p>
+        <ul class="list-disc list-inside text-sm mt-2 opacity-80">
+            {% if service_group_counts %}
+                {% for service_name, count in service_group_counts %}
+                    <li>{{ service_name }}: {{ count }}</li>
+                {% endfor %}
+            {% else %}
+                <li>No services with groups configured.</li>
+            {% endif %}
+        </ul>
     </div>
-    {% endif %}
 
     <!-- Profile -->
     <div class="p-6 rounded-2xl shadow-lg bg-gradient-to-r from-green-400 via-teal-500 to-blue-500 text-white hover:scale-105 transform transition duration-300">
@@ -39,5 +47,196 @@
         <p class="mt-4">Update your information anytime from the Profile page.</p>
     </div>
 
-</div>
+    <!-- Message Activity Chart -->
+    <div class="col-span-2 p-6 rounded-2xl shadow-lg bg-white text-gray-800">
+        <h3 class="font-semibold text-lg mb-4">Message Activity by Hour (Today)</h3>
+        <canvas id="messageActivityChart"></canvas>
+    </div>
+
+    <!-- Message Status Pie Chart -->
+    <div class="col-span-1 p-6 rounded-2xl shadow-lg bg-white text-gray-800">
+        <h3 class="font-semibold text-lg mb-4">Message Status (Today)</h3>
+        <canvas id="messageStatusPieChart"></canvas>
+    </div>
+
+</div> {# Close the grid div #}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Bar Chart Data
+        const chartLabels = {{ chart_labels | tojson }};
+        const totalMessagesToday = {{ total_scheduled_messages_today | tojson }}; // Get total for the day
+
+        const chartTotalData = {{ chart_total_data | tojson }}.map(value => totalMessagesToday > 0 ? (value / totalMessagesToday * 100) : 0);
+        const chartSentData = {{ chart_sent_data | tojson }}.map(value => totalMessagesToday > 0 ? (value / totalMessagesToday * 100) : 0);
+
+        const barCtx = document.getElementById('messageActivityChart').getContext('2d');
+        // Register the datalabels plugin
+        Chart.register(ChartDataLabels);
+
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: chartLabels,
+                datasets: [
+                    {
+                        label: 'Total Scheduled',
+                        data: chartTotalData,
+                        backgroundColor: 'rgba(153, 102, 255, 0.8)', // Purple
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        hoverBackgroundColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 0
+                    },
+                    {
+                        label: 'Sent',
+                        data: chartSentData,
+                        backgroundColor: 'rgba(255, 159, 64, 0.8)', // Orange
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        hoverBackgroundColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        min: 0, // Ensure it starts at 0
+                        max: 100, // Set max to 100%
+                        ticks: {
+                            display: true, // Show Y-axis tick labels
+                            callback: function(value, index, ticks) {
+                                return value + '% '; // Append percentage sign
+                            }
+                        },
+                        grid: {
+                            display: false // Disable Y-axis grid lines
+                        },
+                        title: {
+                            display: false, // Hide Y-axis title
+                            text: 'Percentage of Messages' // Update title for clarity
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            display: true, // Show X-axis tick labels
+                        },
+                        title: {
+                            display: false, // Hide X-axis title
+                            text: 'Hour of Day'
+                        },
+                        grid: {
+                            display: false // Disable X-axis grid lines
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    datalabels: { // Datalabels plugin configuration
+                        display: false // Hide all datalabels
+                    }
+                }
+            }
+        });
+
+        // Pie Chart Data
+        const sentCount = {{ sent_messages_today | tojson }};
+        const failedCount = {{ failed_messages_today | tojson }};
+        const waitingCount = {{ waiting_messages_today | tojson }};
+        const totalPieChartMessages = {{ total_messages_for_pie_chart | tojson }};
+
+        const pieCtx = document.getElementById('messageStatusPieChart').getContext('2d');
+
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Sent', 'Failed', 'Waiting'],
+                datasets: [{
+                    data: [sentCount, failedCount, waitingCount],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.8)', // Green for Sent
+                        'rgba(255, 99, 132, 0.8)', // Red for Failed
+                        'rgba(255, 205, 86, 0.8)'  // Yellow for Waiting
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 205, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom', // Position legend at the bottom
+                        labels: {
+                            boxWidth: 15, // Smaller color boxes
+                            padding: 15, // Padding between legend items
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                if (data.labels.length && data.datasets.length) {
+                                    return data.labels.map(function(label, i) {
+                                        const dataset = data.datasets[0]; // Assuming single dataset for pie chart
+                                        const value = dataset.data[i];
+                                        const total = dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = total > 0 ? (value / total * 100).toFixed(1) : 0;
+
+                                        return {
+                                            text: `${label}: ${percentage}%`, // Customize text here
+                                            fillStyle: dataset.backgroundColor[i],
+                                            strokeStyle: dataset.borderColor[i],
+                                            lineWidth: dataset.borderWidth,
+                                            hidden: chart.getDatasetMeta(0).data[i].hidden,
+                                            index: i
+                                        };
+                                    });
+                                }
+                                return [];
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? (value / total * 100).toFixed(1) : 0;
+                                return `${label}: (${percentage}%)`;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        color: '#fff', // White color for labels
+                        formatter: (value, context) => {
+                            const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? (value / total * 100).toFixed(1) : 0;
+                            return percentage > 0 ? `${percentage}%` : ''; // Only show percentage if > 0
+                        },
+                        font: {
+                            weight: 'bold',
+                            size: 14
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}
