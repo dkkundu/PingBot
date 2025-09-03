@@ -197,7 +197,6 @@ def approved_users():
 
     return render_template('approved_users.html', users=approved_users, current_user=current_user, approved_users_pagination=approved_users_pagination)
 
-
 @frontend_bp.route('/users/approve/<int:user_id>')
 def approve_user(user_id):
     user = User.query.get(user_id)
