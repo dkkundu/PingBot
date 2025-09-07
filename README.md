@@ -87,10 +87,10 @@ docker exec -it notification_app_web flask db upgrade
 
 ### Technologies
 
-Backend: Flask, SQLAlchemy, Flask-Migrate, Flask-JWT-Extended, Celery, Redis, PyMySQL, Pytz, Werkzeug
-Frontend: Jinja2, HTML5, Tailwind CSS, JavaScript
-Database: MySQL
-Containerization: Docker, Docker Compose
+Backend: Flask, SQLAlchemy, Flask-Migrate, Flask-JWT-Extended, Celery, Redis, PyMySQL, Pytz, Werkzeug<br>
+Frontend: Jinja2, HTML5, Tailwind CSS, JavaScript<br>
+Database: MySQL<br>
+Containerization: Docker, Docker Compose<br>
 Other Libraries: python-dotenv, click, requests
 
 ### MIT License
