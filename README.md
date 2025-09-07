@@ -82,7 +82,7 @@ docker exec -it notification_app_web flask db upgrade
 
   ## or 
  export FLASK_APP=app.app:create_app
- flask create-admin osman@gmail.com admin@123 "Admin User"
+ flask create-admin <email>  <password> "<full_name>"
 ```
 ### Run this application :
 ```
