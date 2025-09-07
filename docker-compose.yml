@@ -12,14 +12,18 @@ services:
       - ./app:/app/app
       - ${LOG_DIR_HOST}:${LOG_DIR}
       - ${IMAGE_DIR_HOST}:${IMAGE_DIR}
-    networks:
-      - app_network
     command: >
       bash -c "
       echo 'Starting Gunicorn...';
       gunicorn -w 4 -b 0.0.0.0:5001 'app.app:create_app()'
       "
+    networks:
+      - sslsentinel_ping_bot
 
 networks:
-  app_network:
+  sslsentinel_ping_bot:
     driver: bridge
+    ipam:
+      config:
+        - subnet: ${DOCKER_FULL_SUBNET}
+          gateway: ${DOCKER_GATEWAY}
