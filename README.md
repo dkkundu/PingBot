@@ -84,7 +84,13 @@ docker exec -it notification_app_web flask db upgrade
  export FLASK_APP=app.app:create_app
  flask create-admin osman@gmail.com admin@123 "Admin User"
 ```
-
+### Run this application :
+```
+  python run.py
+or
+  flask run
+```
+ 
 ### Technologies
 
 Backend: Flask, SQLAlchemy, Flask-Migrate, Flask-JWT-Extended, Celery, Redis, PyMySQL, Pytz, Werkzeug<br>
