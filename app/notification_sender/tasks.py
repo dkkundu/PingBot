@@ -1,10 +1,11 @@
+
 import os
 import pytz
 import re
 import html
 import json
 from app.notification_sender.telegram_bot import TelegramBot
-from app.notification_sender.models import AlertSample, AlertLog, AlertConfig
+from app.notification_sender.models import AlertSample, AlertLog, AlertConfig, TestCredentials
 from app.authentication.models import User
 from app.notification_sender.message_geneator import get_messages
 from app.extensions import db
@@ -176,3 +177,51 @@ def check_scheduled_alerts():
             
             celery_logger.info(f"Dispatching alert from log {log.id} for sample {log.sample_id}")
             send_alert_task.delay(log.sample_id, log_id=log.id)
+
+@celery.task(bind=True, max_retries=3)
+def send_test_alert_task(self, sample_id, test_credential_id):
+    """
+    Celery task to send a test alert.
+    """
+    from app.app import create_app
+    app = create_app()
+    with app.app_context():
+        sample = AlertSample.query.get(sample_id)
+        test_credential = TestCredentials.query.get(test_credential_id)
+
+        if not sample:
+            celery_logger.error(f"Sample {sample_id} not found")
+            return "Sample not found"
+        
+        if not test_credential:
+            celery_logger.error(f"Test Credential {test_credential_id} not found")
+            return "Test Credential not found"
+
+        try:
+            message = get_messages(sample)
+            
+            # Define file paths
+            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], sample.photo_upload) if sample.photo_upload else None
+            document_path = os.path.join(app.config['UPLOAD_FOLDER'], sample.document_upload) if sample.document_upload else None
+
+            # --- Sending Logic ---
+            final_photo_path = photo_path if (photo_path and os.path.exists(photo_path)) else None
+
+            celery_logger.info(f"Sending test message for sample {sample.id} with photo: {final_photo_path}")
+            response = telegram_bot.group_message(
+                auth_token=test_credential.auth_token,
+                chat_id=test_credential.group_id,
+                message=message,
+                file_path=final_photo_path
+            )
+
+            if "error" in response:
+                raise Exception(f"Failed to send message: {response['error']}")
+
+            celery_logger.info(f"Test alert for sample {sample.id} processed successfully.")
+            return f"Test alert for sample {sample.id} sent"
+
+        except Exception as exc:
+            celery_logger.exception(f"Error sending test alert for sample {sample_id}: {exc}")
+            # We don't want to retry test messages
+            return f"Error sending test alert for sample {sample_id}: {exc}"

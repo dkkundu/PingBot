@@ -111,10 +111,10 @@ class AlertLog(db.Model):
 
     # Audience & state
     audience = db.Column(db.String(20), nullable=False, default="all")  # "single" | "common" | "all"
-    status   = db.Column(db.String(20), nullable=False, default="queued")  # "queued" | "scheduled" | "sent" | "failed" | "skipped"
+    status   = db.Column(db.String(20), nullable=False, default="queued", index=True)  # "queued" | "scheduled" | "sent" | "failed" | "skipped"
 
     # Timing
-    scheduled_for = db.Column(db.DateTime, nullable=True)
+    scheduled_for = db.Column(db.DateTime, nullable=True, index=True)
     queued_at     = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(pytz.utc), index=True)
     sent_at       = db.Column(db.DateTime, nullable=True)
 
