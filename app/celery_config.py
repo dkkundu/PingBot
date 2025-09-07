@@ -3,7 +3,10 @@ from celery import Celery
 
 # ---------------- INIT CELERY ----------------
 
-using_redis_password = bool(int(os.getenv("USING_REDIS_PASSWORD")))
+def str_to_bool(val: str) -> bool:
+    return str(val).lower() in ("1", "true", "yes", "on")
+
+using_redis_password = str_to_bool(os.getenv("USING_REDIS_PASSWORD", "false"))
 
 if using_redis_password:
     celery = Celery(
@@ -19,11 +22,6 @@ else:
     )
 
 
-# celery = Celery(a
-#     "notification_app",
-#     broker=os.getenv("CELERY_BROKER_URL"),
-#     backend=os.getenv("CELERY_BACKEND_URL")
-# )
 
 # ---------------- CONFIGURE TIMEZONE ----------------
 celery.conf.update(
