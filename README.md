@@ -33,7 +33,7 @@ Before you begin, ensure you have installed the following:
 
  # Flask Configuration
  ```
-APP_IMAGE=notification_app<br>
+APP_IMAGE=notification_app <br>
 APP_PORT=5001<br>
 APP_CONTAINER_NAME=notification_app_web<br>
 FLASK_APP=app.app:create_app<br>
