@@ -9,18 +9,16 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/app
-      - uploads_data:/app/media/uploads
+      - ./app:/app/app
+      - ${LOG_DIR_HOST}:${LOG_DIR}
+      - ${IMAGE_DIR_HOST}:${IMAGE_DIR}
     networks:
       - app_network
     command: >
       bash -c "
       echo 'Starting Gunicorn...';
-      gunicorn -w 4 -b 0.0.0.0:5001 app.app:create_app
+      gunicorn -w 4 -b 0.0.0.0:5001 'app.app:create_app()'
       "
-
-volumes:
-  uploads_data:
 
 networks:
   app_network:

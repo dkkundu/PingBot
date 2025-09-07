@@ -7,6 +7,8 @@ from .authentication.views.auth_frontend import frontend_bp
 from .notification_sender.views.alert_views import alert_bp
 from .logging_config import flask_logger
 from .celery_config import celery as celery_app
+import click
+from app.authentication.models import User
 
 def create_app():
     app = Flask(__name__, template_folder='../templates')
@@ -52,5 +54,35 @@ def create_app():
     @app.route('/media/uploads/<filename>')
     def uploaded_file(filename):
         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+    # Custom CLI command to create an admin user
+    @app.cli.command("create-admin")
+    @click.argument("email")
+    @click.argument("password")
+    @click.argument("full_name")
+    def create_admin(email, password, full_name):
+        """Create an admin user with the provided email, password, and full name."""
+        from app.authentication.models import User
+        from app.extensions import db
+
+        # Check if user already exists
+        if User.query.filter_by(email=email).first():
+            print(f"Error: User with email {email} already exists.")
+            return
+
+        # Create new admin user
+        new_user = User(
+            full_name=full_name,
+            email=email,
+            role="admin",
+            is_superuser=True,
+            is_approved=True
+        )
+        new_user.set_password(password)
+
+        # Add and commit to the database
+        db.session.add(new_user)
+        db.session.commit()
+        print(f"Admin user {full_name} ({email}) created successfully!")
 
     return app
