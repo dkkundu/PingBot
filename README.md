@@ -1,12 +1,10 @@
 # PingBot
 PingBot will start with Telegram auto-messaging but may support other messaging platforms in the future
 
-# PingBot
-
 The **PingBot** is a full-stack web application built with Flask, providing a centralized platform for managing and sending automated notifications. It supports user authentication with different roles (admin, employee) and includes an approval workflow for new users. Core functionalities include defining alert services, creating service configurations, generating alert messages, and sending notifications efficiently using **Celery** for background task processing. The application is containerized using **Docker** and **Docker Compose** for easy deployment and environment management.
 
 
-## Features
+### Features
  **User Authentication & Authorization:** Secure login, registration, user roles (admin, employee), with admin approval for new users.  
  **User Management:** Admins can view, approve, edit, and delete user accounts.  
  **Profile Management:** Users can view and edit profiles, change passwords, and upload profile pictures.  
@@ -67,16 +65,16 @@ BOT_PRIVATE_API=YOUR_BOT_PRIVATE_API
 
 
 ### Build and Run with Docker Compose:
-
+```
  docker-compose up --build -d
-
+```
 
 ### Initialize Database Migrations:
-
+```
 docker exec -it notification_app_web flask db init
 docker exec -it notification_app_web flask db migrate -m "Initial migration"
 docker exec -it notification_app_web flask db upgrade
-
+```
 ### Create an Admin User :
 
 ```
