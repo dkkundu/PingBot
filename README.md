@@ -118,5 +118,3 @@ SOFTWARE.
 
 
 
-git clone https://github.com/yourusername/Notification_Application.git
-cd Notification_Application
