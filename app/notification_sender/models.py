@@ -60,8 +60,9 @@ class AlertSample(db.Model):
     body = db.Column(db.Text(length=4294967295), nullable=True) # Use LONGTEXT for large content
     category = db.Column(db.Integer, nullable=True)
 
-    # File upload field
-    file_upload = db.Column(db.String(255), nullable=True)  # store filename or file path
+    # File uploads
+    photo_upload = db.Column(db.String(255), nullable=True)  # For image files
+    document_upload = db.Column(db.String(255), nullable=True) # For other document types
 
     # Scheduling fields
     start_date = db.Column(db.Date, default=lambda: datetime.now(pytz.utc).date(), nullable=False)

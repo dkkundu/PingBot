@@ -13,3 +13,11 @@ celery.conf.update(
     timezone=os.getenv("TZ", "UTC"),
     enable_utc=True
 )
+
+# ---------------- BEAT SCHEDULE ----------------
+celery.conf.beat_schedule = {
+    'check-scheduled-alerts-every-minute': {
+        'task': 'app.notification_sender.tasks.check_scheduled_alerts',
+        'schedule': 60.0,
+    },
+}

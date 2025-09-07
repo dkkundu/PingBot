@@ -31,7 +31,7 @@
         <!-- Top Header Section -->
         <div class="bg-gradient-to-r from-indigo-600 to-blue-500 px-8 py-6 text-white">
             <h2 class="text-2xl font-bold">{{ sample.title }}</h2>
-            <p class="mt-1 opacity-90">{{ sample.body[:120] }}{% if sample.body|length > 120 %}...{% endif %}</p>
+            <p class="mt-1 opacity-90">{{ (sample.body | striptags)[:120] }}{% if sample.body|length > 120 %}...{% endif %}</p>
         </div>
 
         <!-- Details Grid -->
@@ -104,23 +104,23 @@
             </div>
             {% endif %}
 
-            <!-- File Upload -->
+            <!-- Attached Photo -->
             <div>
-                <p class="text-sm font-medium text-gray-500">Attached File</p>
-                <p class="mt-1">
-                    {% if sample.file_upload %}
-                        <a href="{{ url_for('uploaded_file', filename=sample.file_upload) }}" target="_blank" class="text-indigo-500 underline">{{ sample.file_upload }}</a>
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </p>
+                <p class="text-sm font-medium text-gray-500">Attached Photo</p>
+                <p class="mt-1 font-semibold">{{ sample.photo_upload or 'N/A' }}</p>
+            </div>
+
+            <!-- Attached Document -->
+            <div>
+                <p class="text-sm font-medium text-gray-500">Attached Document</p>
+                <p class="mt-1 font-semibold">{{ sample.document_upload or 'N/A' }}</p>
             </div>
         </div>
 
         <!-- Body Section -->
         <div class="bg-gray-50 px-8 py-6 border-t">
             <h3 class="font-semibold text-gray-800 text-lg mb-2">Full Message</h3>
-            <p class="text-gray-600 leading-relaxed">{{ sample.body | safe }}</p>
+            <p class="text-gray-600 leading-relaxed">{{ sample.body | striptags }}</p>
         </div>
 
         <!-- Logs Section -->

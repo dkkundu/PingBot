@@ -124,11 +124,12 @@ def dashboard():
 
     for log in today_logs:
         # Convert scheduled_for to local timezone to get the local hour
-        local_scheduled_for = log.scheduled_for.astimezone(LOCAL_TZ)
-        hour = local_scheduled_for.hour
-        hourly_data[hour]['total'] += 1
-        if log.status == 'sent':
-            hourly_data[hour]['sent'] += 1
+        if log.scheduled_for:
+            local_scheduled_for = pytz.utc.localize(log.scheduled_for).astimezone(LOCAL_TZ)
+            hour = local_scheduled_for.hour
+            hourly_data[hour]['total'] += 1
+            if log.status == 'sent':
+                hourly_data[hour]['sent'] += 1
 
     # Convert hourly_data to a list of values for Chart.js
     chart_labels = []
@@ -177,7 +178,9 @@ def pending_users():
     pending_users_pagination = User.query.filter_by(is_approved=False).order_by(User.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
     pending_users = pending_users_pagination.items
 
-    return render_template('pending_users.html', users=pending_users, current_user=current_user, pending_users_pagination=pending_users_pagination)
+    start_index = (page - 1) * per_page
+
+    return render_template('pending_users.html', users=pending_users, current_user=current_user, pending_users_pagination=pending_users_pagination, start_index=start_index)
 
 
 @frontend_bp.route('/users/approved')
@@ -195,7 +198,9 @@ def approved_users():
     approved_users_pagination = User.query.filter_by(is_approved=True).order_by(User.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
     approved_users = approved_users_pagination.items
 
-    return render_template('approved_users.html', users=approved_users, current_user=current_user, approved_users_pagination=approved_users_pagination)
+    start_index = (page - 1) * per_page
+
+    return render_template('approved_users.html', users=approved_users, current_user=current_user, approved_users_pagination=approved_users_pagination, start_index=start_index)
 
 @frontend_bp.route('/users/approve/<int:user_id>')
 def approve_user(user_id):

@@ -50,13 +50,12 @@
     <!-- Flash Messages outside the login card -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
+        {% set category, msg = messages[-1] %}
         <div class="w-full max-w-md space-y-2">
-            {% for category, msg in messages %}
-                <div class="px-6 py-3 rounded-lg text-white
-                    {% if category == 'success' %}bg-green-500{% elif category == 'danger' %}bg-red-500{% else %}bg-yellow-500{% endif %} shadow-md">
-                    {{ msg }}
-                </div>
-            {% endfor %}
+            <div class="px-6 py-3 rounded-lg text-white
+                {% if category == 'success' %}bg-green-500{% elif category == 'danger' %}bg-red-500{% else %}bg-yellow-500{% endif %} shadow-md">
+                {{ msg }}
+            </div>
         </div>
     {% endif %}
     {% endwith %}
@@ -98,5 +97,17 @@
             <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Forgot your password?</a>
         </div>
     </div>
+<script>
+    const flashMessage = document.getElementById('flash-message-container');
+    if (flashMessage) {
+        setTimeout(() => {
+            flashMessage.style.transition = 'opacity 1s ease-out';
+            flashMessage.style.opacity = '0';
+            setTimeout(() => {
+                flashMessage.style.display = 'none';
+            }, 1000); // Wait for the transition to finish
+        }, 3000); // Start fading out after 3 seconds, so total time is 4 seconds
+    }
+</script>
 </body>
 </html>

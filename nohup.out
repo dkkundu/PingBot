@@ -1,0 +1,1219 @@
+ 
+ -------------- celery@osman-HP-Pavilion-Laptop-14-bf0xx v5.3.6 (emerald-rush)
+--- ***** ----- 
+-- ******* ---- Linux-6.14.0-29-generic-x86_64-with-glibc2.39 2025-09-03 17:34:26
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         notification_app:0x7072b949c5c0
+- ** ---------- .> transport:   redis://10.123.140.101:6380/0
+- ** ---------- .> results:     redis://10.123.140.101:6380/0
+- *** --- * --- .> concurrency: 4 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . app.notification_sender.tasks.check_scheduled_alerts
+  . app.notification_sender.tasks.send_alert_task
+
+[2025-09-03 17:34:26,922: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-09-03 17:34:26,930: INFO/MainProcess] Connected to redis://10.123.140.101:6380/0
+[2025-09-03 17:34:26,931: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-09-03 17:34:26,933: INFO/MainProcess] mingle: searching for neighbors
+[2025-09-03 17:34:27,943: INFO/MainProcess] mingle: all alone
+[2025-09-03 17:34:27,953: INFO/MainProcess] celery@osman-HP-Pavilion-Laptop-14-bf0xx ready.
+[2025-09-03 17:34:28,522: INFO/Beat] beat: Starting...
+[2025-09-03 17:34:28,536: ERROR/Beat] Removing corrupted schedule file 'celerybeat-schedule': error(11, 'Resource temporarily unavailable')
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/beat.py", line 531, in setup_schedule
+    self._store = self._open_schedule()
+                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/beat.py", line 521, in _open_schedule
+    return self.persistence.open(self.schedule_filename, writeback=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/shelve.py", line 243, in open
+    return DbfilenameShelf(filename, flag, protocol, writeback)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/shelve.py", line 227, in __init__
+    Shelf.__init__(self, dbm.open(filename, flag), protocol, writeback)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/dbm/__init__.py", line 95, in open
+    return mod.open(file, flag, mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_gdbm.error: [Errno 11] Resource temporarily unavailable: 'celerybeat-schedule'
+ 
+ -------------- celery@osman-HP-Pavilion-Laptop-14-bf0xx v5.3.6 (emerald-rush)
+--- ***** ----- 
+-- ******* ---- Linux-6.14.0-29-generic-x86_64-with-glibc2.39 2025-09-03 17:34:56
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         notification_app:0x77f69f736f00
+- ** ---------- .> transport:   redis://10.123.140.101:6380/0
+- ** ---------- .> results:     redis://10.123.140.101:6380/0
+- *** --- * --- .> concurrency: 4 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . app.notification_sender.tasks.check_scheduled_alerts
+  . app.notification_sender.tasks.send_alert_task
+
+[2025-09-03 17:34:56,840: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-09-03 17:34:56,850: INFO/MainProcess] Connected to redis://10.123.140.101:6380/0
+[2025-09-03 17:34:56,851: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-09-03 17:34:56,853: INFO/MainProcess] mingle: searching for neighbors
+[2025-09-03 17:34:57,873: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/control.py:56: DuplicateNodenameWarning: Received multiple replies from node name: celery@osman-HP-Pavilion-Laptop-14-bf0xx.
+Please make sure you give each node a unique nodename using
+the celery worker `-n` option.
+  warnings.warn(DuplicateNodenameWarning(
+
+[2025-09-03 17:34:57,873: INFO/MainProcess] mingle: all alone
+[2025-09-03 17:34:57,882: INFO/MainProcess] celery@osman-HP-Pavilion-Laptop-14-bf0xx ready.
+[2025-09-03 17:34:58,652: INFO/Beat] beat: Starting...
+[2025-09-03 17:34:58,667: ERROR/Beat] Removing corrupted schedule file 'celerybeat-schedule': error(11, 'Resource temporarily unavailable')
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/beat.py", line 531, in setup_schedule
+    self._store = self._open_schedule()
+                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/beat.py", line 521, in _open_schedule
+    return self.persistence.open(self.schedule_filename, writeback=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/shelve.py", line 243, in open
+    return DbfilenameShelf(filename, flag, protocol, writeback)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/shelve.py", line 227, in __init__
+    Shelf.__init__(self, dbm.open(filename, flag), protocol, writeback)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/dbm/__init__.py", line 95, in open
+    return mod.open(file, flag, mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_gdbm.error: [Errno 11] Resource temporarily unavailable: 'celerybeat-schedule'
+ 
+ -------------- celery@osman-HP-Pavilion-Laptop-14-bf0xx v5.3.6 (emerald-rush)
+--- ***** ----- 
+-- ******* ---- Linux-6.14.0-29-generic-x86_64-with-glibc2.39 2025-09-03 17:35:01
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         notification_app:0x7f97ceb6bef0
+- ** ---------- .> transport:   redis://10.123.140.101:6380/0
+- ** ---------- .> results:     redis://10.123.140.101:6380/0
+- *** --- * --- .> concurrency: 4 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . app.notification_sender.tasks.check_scheduled_alerts
+  . app.notification_sender.tasks.send_alert_task
+
+[2025-09-03 17:35:01,856: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-09-03 17:35:01,866: INFO/MainProcess] Connected to redis://10.123.140.101:6380/0
+[2025-09-03 17:35:01,867: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-09-03 17:35:01,869: INFO/MainProcess] mingle: searching for neighbors
+[2025-09-03 17:35:02,882: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/control.py:56: DuplicateNodenameWarning: Received multiple replies from node name: celery@osman-HP-Pavilion-Laptop-14-bf0xx.
+Please make sure you give each node a unique nodename using
+the celery worker `-n` option.
+  warnings.warn(DuplicateNodenameWarning(
+
+[2025-09-03 17:35:02,882: INFO/MainProcess] mingle: all alone
+[2025-09-03 17:35:02,895: INFO/MainProcess] celery@osman-HP-Pavilion-Laptop-14-bf0xx ready.
+[2025-09-03 17:35:03,514: INFO/Beat] beat: Starting...
+[2025-09-03 17:35:03,528: ERROR/Beat] Removing corrupted schedule file 'celerybeat-schedule': error(11, 'Resource temporarily unavailable')
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/beat.py", line 531, in setup_schedule
+    self._store = self._open_schedule()
+                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/beat.py", line 521, in _open_schedule
+    return self.persistence.open(self.schedule_filename, writeback=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/shelve.py", line 243, in open
+    return DbfilenameShelf(filename, flag, protocol, writeback)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/shelve.py", line 227, in __init__
+    Shelf.__init__(self, dbm.open(filename, flag), protocol, writeback)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/dbm/__init__.py", line 95, in open
+    return mod.open(file, flag, mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_gdbm.error: [Errno 11] Resource temporarily unavailable: 'celerybeat-schedule'
+[2025-09-03 17:35:28,553: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:35:51,452: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[2a232066-2ad5-4469-975a-4acf924edeab] received
+2025-09-03 17:35:51 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:35:51,553: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:35:51,710: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[2a232066-2ad5-4469-975a-4acf924edeab] succeeded in 0.2552591620005842s: None
+[2025-09-03 17:35:58,693: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:36:03,546: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:36:03,563: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[0a9be9bb-fccd-436c-8816-8731a949dd01] received
+2025-09-03 17:36:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:36:03,590: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:36:03,699: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[0a9be9bb-fccd-436c-8816-8731a949dd01] succeeded in 0.13480063599854475s: None
+[2025-09-03 17:36:28,540: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:36:58,671: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:36:58,673: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[37fd833e-e854-4f6c-900b-e3883b23fda3] received
+2025-09-03 17:36:58 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:36:58,718: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:36:58,848: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[37fd833e-e854-4f6c-900b-e3883b23fda3] succeeded in 0.17402815999957966s: None
+[2025-09-03 17:37:03,532: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:37:03,729: INFO/MainProcess] Task app.notification_sender.tasks.send_alert_task[91bbaf54-8298-49ef-8033-31fe4f2899d7] received
+2025-09-03 17:37:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:37:03,792: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+2025-09-03 17:37:03 [INFO] [CeleryWorker] Original cleaned_body: 👋 Dear Team,
+This is to formally notify you that a scheduled notification will be sent through the 📡 Notification_Application system. Please be advised of the following details:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [e.g., System update / Alert distribution / Project reminder]
+ 👥 Recipients: [Specify group/individuals]
+⚠️ Kindly ensure you take note of this notification and act accordingly.
+ If you have any ❓ questions or face any ⚡ issues receiving the message, please contact the system administrator at [Insert Contact Info].
+🙏 We appreciate your attention and cooperation.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+ 📡 Notification_Application
+[2025-09-03 17:37:03,876: INFO/ForkPoolWorker-4] Original cleaned_body: 👋 Dear Team,
+This is to formally notify you that a scheduled notification will be sent through the 📡 Notification_Application system. Please be advised of the following details:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [e.g., System update / Alert distribution / Project reminder]
+ 👥 Recipients: [Specify group/individuals]
+⚠️ Kindly ensure you take note of this notification and act accordingly.
+ If you have any ❓ questions or face any ⚡ issues receiving the message, please contact the system administrator at [Insert Contact Info].
+🙏 We appreciate your attention and cooperation.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+ 📡 Notification_Application
+2025-09-03 17:37:03 [INFO] [CeleryWorker] sample.file_upload: photo-1484788984921-03950022c9ef.jpeg
+[2025-09-03 17:37:03,877: INFO/ForkPoolWorker-4] sample.file_upload: photo-1484788984921-03950022c9ef.jpeg
+2025-09-03 17:37:03 [INFO] [CeleryWorker] cleaned_body after img tag removal: 👋 Dear Team,
+This is to formally notify you that a scheduled notification will be sent through the 📡 Notification_Application system. Please be advised of the following details:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [e.g., System update / Alert distribution / Project reminder]
+ 👥 Recipients: [Specify group/individuals]
+⚠️ Kindly ensure you take note of this notification and act accordingly.
+ If you have any ❓ questions or face any ⚡ issues receiving the message, please contact the system administrator at [Insert Contact Info].
+🙏 We appreciate your attention and cooperation.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+ 📡 Notification_Application
+[2025-09-03 17:37:03,877: INFO/ForkPoolWorker-4] cleaned_body after img tag removal: 👋 Dear Team,
+This is to formally notify you that a scheduled notification will be sent through the 📡 Notification_Application system. Please be advised of the following details:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [e.g., System update / Alert distribution / Project reminder]
+ 👥 Recipients: [Specify group/individuals]
+⚠️ Kindly ensure you take note of this notification and act accordingly.
+ If you have any ❓ questions or face any ⚡ issues receiving the message, please contact the system administrator at [Insert Contact Info].
+🙏 We appreciate your attention and cooperation.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+ 📡 Notification_Application
+2025-09-03 17:37:03 [INFO] [CeleryWorker] Final message payload text: 🔔 Alert
+
+🕒 Time: September 03, 2025 at 05:37 PM
+📸 Author: saurov
+
+----------------------------------------
+
+📢 Message: 👋 Dear Team,
+This is to formally notify you that a scheduled notification will be sent through the 📡 Notification_Application system. Please be advised of the following details:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [e.g., System update / Alert distribution / Project reminder]
+ 👥 Recipients: [Specify group/individuals]
+⚠️ Kindly ensure you take note of this notification and act accordingly.
+ If you have any ❓ questions or face any ⚡ issues receiving the message, please contact the system administrator at [Insert Contact Info].
+🙏 We appreciate your attention and cooperation.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+ 📡 Notification_Application
+[2025-09-03 17:37:03,877: INFO/ForkPoolWorker-4] Final message payload text: 🔔 Alert
+
+🕒 Time: September 03, 2025 at 05:37 PM
+📸 Author: saurov
+
+----------------------------------------
+
+📢 Message: 👋 Dear Team,
+This is to formally notify you that a scheduled notification will be sent through the 📡 Notification_Application system. Please be advised of the following details:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [e.g., System update / Alert distribution / Project reminder]
+ 👥 Recipients: [Specify group/individuals]
+⚠️ Kindly ensure you take note of this notification and act accordingly.
+ If you have any ❓ questions or face any ⚡ issues receiving the message, please contact the system administrator at [Insert Contact Info].
+🙏 We appreciate your attention and cooperation.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+ 📡 Notification_Application
+2025-09-03 17:37:03 [INFO] [CeleryWorker] Sending group message to PingBot
+[2025-09-03 17:37:03,877: INFO/ForkPoolWorker-4] Sending group message to PingBot
+2025-09-03 17:37:03 [INFO] [TelegramBot] Attempting to send photo from: /home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/../media/uploads/photo-1484788984921-03950022c9ef.jpeg to chat_id: -4893790782
+[2025-09-03 17:37:03,877: INFO/ForkPoolWorker-4] Attempting to send photo from: /home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/../media/uploads/photo-1484788984921-03950022c9ef.jpeg to chat_id: -4893790782
+2025-09-03 17:37:03 [INFO] [TelegramBot] Sending group message to -4893790782. Payload: {"chat_id": "-4893790782", "caption": "\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:37 PM\n\ud83d\udcf8 Author: saurov\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udc4b Dear Team,\nThis is to formally notify you that a scheduled notification will be sent through the \ud83d\udce1 Notification_Application system. Please be advised of the following details:\n\ud83d\uddd3\ufe0f Date & Time: [Insert Date & Time]\n \ud83c\udfaf Purpose: [e.g., System update / Alert distribution / Project reminder]\n \ud83d\udc65 Recipients: [Specify group/individuals]\n\u26a0\ufe0f Kindly ensure you take note of this notification and act accordingly.\n If you have any \u2753 questions or face any \u26a1 issues receiving the message, please contact the system administrator at [Insert Contact Info].\n\ud83d\ude4f We appreciate your attention and cooperation.\nSincerely,\n \u270d\ufe0f [Your Name]\n \ud83d\udee0\ufe0f System Administrator\n \ud83d\udce1 Notification_Application"}
+[2025-09-03 17:37:03,878: INFO/ForkPoolWorker-4] Sending group message to -4893790782. Payload: {"chat_id": "-4893790782", "caption": "\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:37 PM\n\ud83d\udcf8 Author: saurov\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udc4b Dear Team,\nThis is to formally notify you that a scheduled notification will be sent through the \ud83d\udce1 Notification_Application system. Please be advised of the following details:\n\ud83d\uddd3\ufe0f Date & Time: [Insert Date & Time]\n \ud83c\udfaf Purpose: [e.g., System update / Alert distribution / Project reminder]\n \ud83d\udc65 Recipients: [Specify group/individuals]\n\u26a0\ufe0f Kindly ensure you take note of this notification and act accordingly.\n If you have any \u2753 questions or face any \u26a1 issues receiving the message, please contact the system administrator at [Insert Contact Info].\n\ud83d\ude4f We appreciate your attention and cooperation.\nSincerely,\n \u270d\ufe0f [Your Name]\n \ud83d\udee0\ufe0f System Administrator\n \ud83d\udce1 Notification_Application"}
+2025-09-03 17:37:06 [INFO] [TelegramBot] Group API response: {"ok":true,"result":{"message_id":293,"from":{"id":7251107233,"is_bot":true,"first_name":"PingBot","username":"ping732_bot"},"chat":{"id":-4893790782,"title":"PingBot","type":"group","all_members_are_administrators":true,"accepted_gift_types":{"unlimited_gifts":false,"limited_gifts":false,"unique_gifts":false,"premium_subscription":false}},"date":1756899426,"photo":[{"file_id":"AgACAgUAAxkDAAOjaLPeUkd2UIsyLCZPLAVOOec3ICwAAqfFMRtux6FVbKKM-Vb2R0kBAAMCAANzAAM2BA","file_unique_id":"AQADp8UxG27HoVV4","file_size":1334,"width":90,"height":56},{"file_id":"AgACAgUAAxkDAAOjaLPeUkd2UIsyLCZPLAVOOec3ICwAAqfFMRtux6FVbKKM-Vb2R0kBAAMCAANtAAM2BA","file_unique_id":"AQADp8UxG27HoVVy","file_size":19214,"width":320,"height":199},{"file_id":"AgACAgUAAxkDAAOjaLPeUkd2UIsyLCZPLAVOOec3ICwAAqfFMRtux6FVbKKM-Vb2R0kBAAMCAAN4AAM2BA","file_unique_id":"AQADp8UxG27HoVV9","file_size":69207,"width":800,"height":498},{"file_id":"AgACAgUAAxkDAAOjaLPeUkd2UIsyLCZPLAVOOec3ICwAAqfFMRtux6FVbKKM-Vb2R0kBAAMCAAN5AAM2BA","file_unique_id":"AQADp8UxG27HoVV-","file_size":142614,"width":1280,"height":797},{"file_id":"AgACAgUAAxkDAAOjaLPeUkd2UIsyLCZPLAVOOec3ICwAAqfFMRtux6FVbKKM-Vb2R0kBAAMCAAN3AAM2BA","file_unique_id":"AQADp8UxG27HoVV8","file_size":435693,"width":2560,"height":1594}],"caption":"\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:37 PM\n\ud83d\udcf8 Author: saurov\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udc4b Dear Team,\nThis is to formally notify you that a scheduled notification will be sent through the \ud83d\udce1 Notification_Application system. Please be advised of the following details:\n\ud83d\uddd3\ufe0f Date & Time: [Insert Date & Time]\n \ud83c\udfaf Purpose: [e.g., System update / Alert distribution / Project reminder]\n \ud83d\udc65 Recipients: [Specify group/individuals]\n\u26a0\ufe0f Kindly ensure you take note of this notification and act accordingly.\n If you have any \u2753 questions or face any \u26a1 issues receiving the message, please contact the system administrator at [Insert Contact Info].\n\ud83d\ude4f We appreciate your attention and cooperation.\nSincerely,\n \u270d\ufe0f [Your Name]\n \ud83d\udee0\ufe0f System Administrator\n \ud83d\udce1 Notification_Application"}}
+[2025-09-03 17:37:06,897: INFO/ForkPoolWorker-4] Group API response: {"ok":true,"result":{"message_id":293,"from":{"id":7251107233,"is_bot":true,"first_name":"PingBot","username":"ping732_bot"},"chat":{"id":-4893790782,"title":"PingBot","type":"group","all_members_are_administrators":true,"accepted_gift_types":{"unlimited_gifts":false,"limited_gifts":false,"unique_gifts":false,"premium_subscription":false}},"date":1756899426,"photo":[{"file_id":"AgACAgUAAxkDAAOjaLPeUkd2UIsyLCZPLAVOOec3ICwAAqfFMRtux6FVbKKM-Vb2R0kBAAMCAANzAAM2BA","file_unique_id":"AQADp8UxG27HoVV4","file_size":1334,"width":90,"height":56},{"file_id":"AgACAgUAAxkDAAOjaLPeUkd2UIsyLCZPLAVOOec3ICwAAqfFMRtux6FVbKKM-Vb2R0kBAAMCAANtAAM2BA","file_unique_id":"AQADp8UxG27HoVVy","file_size":19214,"width":320,"height":199},{"file_id":"AgACAgUAAxkDAAOjaLPeUkd2UIsyLCZPLAVOOec3ICwAAqfFMRtux6FVbKKM-Vb2R0kBAAMCAAN4AAM2BA","file_unique_id":"AQADp8UxG27HoVV9","file_size":69207,"width":800,"height":498},{"file_id":"AgACAgUAAxkDAAOjaLPeUkd2UIsyLCZPLAVOOec3ICwAAqfFMRtux6FVbKKM-Vb2R0kBAAMCAAN5AAM2BA","file_unique_id":"AQADp8UxG27HoVV-","file_size":142614,"width":1280,"height":797},{"file_id":"AgACAgUAAxkDAAOjaLPeUkd2UIsyLCZPLAVOOec3ICwAAqfFMRtux6FVbKKM-Vb2R0kBAAMCAAN3AAM2BA","file_unique_id":"AQADp8UxG27HoVV8","file_size":435693,"width":2560,"height":1594}],"caption":"\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:37 PM\n\ud83d\udcf8 Author: saurov\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udc4b Dear Team,\nThis is to formally notify you that a scheduled notification will be sent through the \ud83d\udce1 Notification_Application system. Please be advised of the following details:\n\ud83d\uddd3\ufe0f Date & Time: [Insert Date & Time]\n \ud83c\udfaf Purpose: [e.g., System update / Alert distribution / Project reminder]\n \ud83d\udc65 Recipients: [Specify group/individuals]\n\u26a0\ufe0f Kindly ensure you take note of this notification and act accordingly.\n If you have any \u2753 questions or face any \u26a1 issues receiving the message, please contact the system administrator at [Insert Contact Info].\n\ud83d\ude4f We appreciate your attention and cooperation.\nSincerely,\n \u270d\ufe0f [Your Name]\n \ud83d\udee0\ufe0f System Administrator\n \ud83d\udce1 Notification_Application"}}
+2025-09-03 17:37:06 [INFO] [CeleryWorker] Alert 141 sent successfully.
+[2025-09-03 17:37:06,914: INFO/ForkPoolWorker-4] Alert 141 sent successfully.
+[2025-09-03 17:37:06,918: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.send_alert_task[91bbaf54-8298-49ef-8033-31fe4f2899d7] succeeded in 3.188163759998133s: 'Alert 141 sent'
+[2025-09-03 17:37:28,540: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:37:51,451: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[8bf8204d-007b-4f90-89d7-49e02d4a99ce] received
+2025-09-03 17:37:51 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:37:51,508: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:37:51,620: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[8bf8204d-007b-4f90-89d7-49e02d4a99ce] succeeded in 0.16697601300256792s: None
+[2025-09-03 17:37:58,671: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:38:03,532: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:38:03,536: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[01bc9657-47eb-45f9-851d-af7a9dd0fe59] received
+2025-09-03 17:38:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:38:03,581: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:38:03,689: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[01bc9657-47eb-45f9-851d-af7a9dd0fe59] succeeded in 0.14937498400104232s: None
+[2025-09-03 17:38:28,540: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:38:28,544: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[4820361f-9421-480e-a0ea-d96fec75cb01] received
+2025-09-03 17:38:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:38:28,570: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:38:28,679: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[4820361f-9421-480e-a0ea-d96fec75cb01] succeeded in 0.13407538100000238s: None
+[2025-09-03 17:38:58,671: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:38:58,674: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[dde562aa-f539-49ce-903e-b42bf1f20c6f] received
+2025-09-03 17:38:58 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:38:58,719: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:38:58,929: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[dde562aa-f539-49ce-903e-b42bf1f20c6f] succeeded in 0.2504285700015316s: None
+[2025-09-03 17:39:03,532: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:39:28,541: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:39:51,456: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[58015c22-7ba8-419d-86d8-9d00264c7fc2] received
+2025-09-03 17:39:51 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:39:51,492: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:39:51,601: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[58015c22-7ba8-419d-86d8-9d00264c7fc2] succeeded in 0.14280248700015363s: None
+[2025-09-03 17:39:58,671: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:40:03,532: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:40:03,536: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[c30cfcd4-947b-4d27-a143-0fa60496ae7d] received
+2025-09-03 17:40:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:40:03,564: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:40:03,676: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[c30cfcd4-947b-4d27-a143-0fa60496ae7d] succeeded in 0.13907655799994245s: None
+[2025-09-03 17:40:28,540: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:40:28,544: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[a1931d58-4482-4876-9ba0-4ab86386b0cc] received
+2025-09-03 17:40:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:40:28,566: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:40:28,677: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[a1931d58-4482-4876-9ba0-4ab86386b0cc] succeeded in 0.1324247219999961s: None
+[2025-09-03 17:40:58,671: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:40:58,674: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[40b12795-e9ea-416d-94bf-febd6b492a14] received
+2025-09-03 17:40:58 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:40:58,708: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:40:58,873: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[40b12795-e9ea-416d-94bf-febd6b492a14] succeeded in 0.19747579799877713s: None
+[2025-09-03 17:41:03,532: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:41:28,541: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:41:51,452: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[ff4a4467-0c93-4b25-b4b0-6da7c3a1b821] received
+2025-09-03 17:41:51 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:41:51,491: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:41:51,604: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[ff4a4467-0c93-4b25-b4b0-6da7c3a1b821] succeeded in 0.14940660999855027s: None
+[2025-09-03 17:41:58,671: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:42:03,533: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:42:03,542: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[dac6b0dc-ea8d-456b-b803-25bd2c202f73] received
+2025-09-03 17:42:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:42:03,572: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:42:03,681: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[dac6b0dc-ea8d-456b-b803-25bd2c202f73] succeeded in 0.13778098600232624s: None
+[2025-09-03 17:42:28,541: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:42:28,551: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[529703fa-e1d6-4878-a4a8-57b817ff2def] received
+2025-09-03 17:42:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:42:28,594: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:42:28,704: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[529703fa-e1d6-4878-a4a8-57b817ff2def] succeeded in 0.15041614400252s: None
+[2025-09-03 17:42:51,448: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[171feb8d-b3d0-4217-99b1-76b67d56dc08] received
+2025-09-03 17:42:51 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:42:51,470: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:42:51,580: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[171feb8d-b3d0-4217-99b1-76b67d56dc08] succeeded in 0.13110195600165753s: None
+[2025-09-03 17:42:58,671: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:42:58,673: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[08656294-5b20-40ac-9941-4afa2cc620a9] received
+2025-09-03 17:42:58 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:42:58,694: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:42:58,815: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[08656294-5b20-40ac-9941-4afa2cc620a9] succeeded in 0.14130937599838944s: None
+[2025-09-03 17:43:03,533: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:43:03,537: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[63deb0c2-2a98-4ad1-be90-be85406e3e96] received
+2025-09-03 17:43:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:43:03,577: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:43:03,697: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[63deb0c2-2a98-4ad1-be90-be85406e3e96] succeeded in 0.1590094110033533s: None
+[2025-09-03 17:43:28,541: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:43:51,451: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[9386d683-ca8a-4ef4-9c48-92c585787a69] received
+2025-09-03 17:43:51 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:43:51,490: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:43:51,604: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[9386d683-ca8a-4ef4-9c48-92c585787a69] succeeded in 0.1501794659998268s: None
+[2025-09-03 17:43:58,672: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:44:03,533: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:44:03,542: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[f1790676-18ca-48f4-9b3a-6b3121b3db7f] received
+2025-09-03 17:44:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:44:03,580: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:44:03,687: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[f1790676-18ca-48f4-9b3a-6b3121b3db7f] succeeded in 0.14128018799965503s: None
+[2025-09-03 17:44:28,542: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:44:28,549: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[0b9d6fc4-49c5-4f6e-9cc2-eb63625927ef] received
+2025-09-03 17:44:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:44:28,587: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:44:28,701: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[0b9d6fc4-49c5-4f6e-9cc2-eb63625927ef] succeeded in 0.14864072300042608s: None
+[2025-09-03 17:44:51,452: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[849cf801-4f77-47f7-b9ab-eb79438a6a8e] received
+2025-09-03 17:44:51 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:44:51,483: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:44:51,593: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[849cf801-4f77-47f7-b9ab-eb79438a6a8e] succeeded in 0.13979210700199474s: None
+[2025-09-03 17:44:58,672: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:44:58,678: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[60ef3220-22b2-4ec7-a1f4-6f53c87b4753] received
+2025-09-03 17:44:58 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:44:58,706: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:44:58,813: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[60ef3220-22b2-4ec7-a1f4-6f53c87b4753] succeeded in 0.1334146810004313s: None
+[2025-09-03 17:45:03,533: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:45:03,537: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[9d35c2e0-bc3c-46ec-b378-4e0e183a82a6] received
+2025-09-03 17:45:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:45:03,562: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:45:03,669: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[9d35c2e0-bc3c-46ec-b378-4e0e183a82a6] succeeded in 0.13133531200219295s: None
+[2025-09-03 17:45:28,542: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:45:58,672: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:46:03,533: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:46:28,542: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:46:28,550: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[33c37029-3194-4871-bf0c-50b51eb069e8] received
+2025-09-03 17:46:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:46:28,583: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:46:28,695: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[33c37029-3194-4871-bf0c-50b51eb069e8] succeeded in 0.14304851399720064s: None
+[2025-09-03 17:46:51,454: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[3daeec6d-b2d7-4604-8dc4-1afbc74106a1] received
+2025-09-03 17:46:51 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:46:51,485: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:46:51,596: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[3daeec6d-b2d7-4604-8dc4-1afbc74106a1] succeeded in 0.14001847300096415s: None
+[2025-09-03 17:46:58,673: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:46:58,680: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[0d81c220-3b06-4601-8390-a04743857f3c] received
+2025-09-03 17:46:58 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:46:58,729: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:46:58,837: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[0d81c220-3b06-4601-8390-a04743857f3c] succeeded in 0.15496902100130683s: None
+[2025-09-03 17:47:03,534: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:47:03,541: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[1b9d0164-97cf-47e6-a72e-bc4c38cffd8c] received
+2025-09-03 17:47:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:47:03,569: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:47:03,676: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[1b9d0164-97cf-47e6-a72e-bc4c38cffd8c] succeeded in 0.13399657400077558s: None
+[2025-09-03 17:47:28,543: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:47:28,550: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[663d013c-027d-43fb-b5a8-acb6db601174] received
+2025-09-03 17:47:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:47:28,587: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:47:28,697: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[663d013c-027d-43fb-b5a8-acb6db601174] succeeded in 0.14533528700121678s: None
+[2025-09-03 17:47:58,673: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:48:03,534: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:48:03,755: INFO/MainProcess] Task app.notification_sender.tasks.send_alert_task[0370b435-66c1-4fa7-a70e-c31b9129221e] received
+2025-09-03 17:48:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:48:03,786: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+2025-09-03 17:48:03 [INFO] [CeleryWorker] Original cleaned_body: 📢 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.
+During this period, please direct all urgent matters to Md. Bablur Rahman.
+We wish you a pleasant and restful vacation!
+[2025-09-03 17:48:03,811: INFO/ForkPoolWorker-2] Original cleaned_body: 📢 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.
+During this period, please direct all urgent matters to Md. Bablur Rahman.
+We wish you a pleasant and restful vacation!
+2025-09-03 17:48:03 [INFO] [CeleryWorker] sample.file_upload: pexels-photo-614810.webp
+[2025-09-03 17:48:03,812: INFO/ForkPoolWorker-2] sample.file_upload: pexels-photo-614810.webp
+2025-09-03 17:48:03 [INFO] [CeleryWorker] cleaned_body after img tag removal: 📢 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.
+During this period, please direct all urgent matters to Md. Bablur Rahman.
+We wish you a pleasant and restful vacation!
+[2025-09-03 17:48:03,812: INFO/ForkPoolWorker-2] cleaned_body after img tag removal: 📢 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.
+During this period, please direct all urgent matters to Md. Bablur Rahman.
+We wish you a pleasant and restful vacation!
+2025-09-03 17:48:03 [INFO] [CeleryWorker] Final message payload text: 🔔 Alert
+
+🕒 Time: September 03, 2025 at 05:48 PM
+📸 Author: osman
+
+----------------------------------------
+
+📢 Message: 📢 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.
+During this period, please direct all urgent matters to Md. Bablur Rahman.
+We wish you a pleasant and restful vacation!
+[2025-09-03 17:48:03,812: INFO/ForkPoolWorker-2] Final message payload text: 🔔 Alert
+
+🕒 Time: September 03, 2025 at 05:48 PM
+📸 Author: osman
+
+----------------------------------------
+
+📢 Message: 📢 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.
+During this period, please direct all urgent matters to Md. Bablur Rahman.
+We wish you a pleasant and restful vacation!
+2025-09-03 17:48:03 [INFO] [CeleryWorker] Sending group message to PingBot
+[2025-09-03 17:48:03,812: INFO/ForkPoolWorker-2] Sending group message to PingBot
+2025-09-03 17:48:03 [INFO] [TelegramBot] Attempting to send photo from: /home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/../media/uploads/pexels-photo-614810.webp to chat_id: -4893790782
+[2025-09-03 17:48:03,812: INFO/ForkPoolWorker-2] Attempting to send photo from: /home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/../media/uploads/pexels-photo-614810.webp to chat_id: -4893790782
+2025-09-03 17:48:03 [INFO] [TelegramBot] Sending group message to -4893790782. Payload: {"chat_id": "-4893790782", "caption": "\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:48 PM\n\ud83d\udcf8 Author: osman\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udce2 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.\nDuring this period, please direct all urgent matters to Md. Bablur Rahman.\nWe wish you a pleasant and restful vacation!"}
+[2025-09-03 17:48:03,813: INFO/ForkPoolWorker-2] Sending group message to -4893790782. Payload: {"chat_id": "-4893790782", "caption": "\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:48 PM\n\ud83d\udcf8 Author: osman\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udce2 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.\nDuring this period, please direct all urgent matters to Md. Bablur Rahman.\nWe wish you a pleasant and restful vacation!"}
+2025-09-03 17:48:04 [INFO] [TelegramBot] Group API response: {"ok":true,"result":{"message_id":294,"from":{"id":7251107233,"is_bot":true,"first_name":"PingBot","username":"ping732_bot"},"chat":{"id":-4893790782,"title":"PingBot","type":"group","all_members_are_administrators":true,"accepted_gift_types":{"unlimited_gifts":false,"limited_gifts":false,"unique_gifts":false,"premium_subscription":false}},"date":1756900084,"photo":[{"file_id":"AgACAgUAAxkDAAN_aLAKpEMDRo8SCLKvD75Op9wydpYAAsvFMRv-WYFVfDfX80GRBTEBAAMCAANzAAM2BA","file_unique_id":"AQADy8UxG_5ZgVV4","file_size":1158,"width":90,"height":77},{"file_id":"AgACAgUAAxkDAAN_aLAKpEMDRo8SCLKvD75Op9wydpYAAsvFMRv-WYFVfDfX80GRBTEBAAMCAANtAAM2BA","file_unique_id":"AQADy8UxG_5ZgVVy","file_size":10427,"width":320,"height":273},{"file_id":"AgACAgUAAxkDAAN_aLAKpEMDRo8SCLKvD75Op9wydpYAAsvFMRv-WYFVfDfX80GRBTEBAAMCAAN4AAM2BA","file_unique_id":"AQADy8UxG_5ZgVV9","file_size":19107,"width":500,"height":427}],"caption":"\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:48 PM\n\ud83d\udcf8 Author: osman\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udce2 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.\nDuring this period, please direct all urgent matters to Md. Bablur Rahman.\nWe wish you a pleasant and restful vacation!"}}
+[2025-09-03 17:48:04,968: INFO/ForkPoolWorker-2] Group API response: {"ok":true,"result":{"message_id":294,"from":{"id":7251107233,"is_bot":true,"first_name":"PingBot","username":"ping732_bot"},"chat":{"id":-4893790782,"title":"PingBot","type":"group","all_members_are_administrators":true,"accepted_gift_types":{"unlimited_gifts":false,"limited_gifts":false,"unique_gifts":false,"premium_subscription":false}},"date":1756900084,"photo":[{"file_id":"AgACAgUAAxkDAAN_aLAKpEMDRo8SCLKvD75Op9wydpYAAsvFMRv-WYFVfDfX80GRBTEBAAMCAANzAAM2BA","file_unique_id":"AQADy8UxG_5ZgVV4","file_size":1158,"width":90,"height":77},{"file_id":"AgACAgUAAxkDAAN_aLAKpEMDRo8SCLKvD75Op9wydpYAAsvFMRv-WYFVfDfX80GRBTEBAAMCAANtAAM2BA","file_unique_id":"AQADy8UxG_5ZgVVy","file_size":10427,"width":320,"height":273},{"file_id":"AgACAgUAAxkDAAN_aLAKpEMDRo8SCLKvD75Op9wydpYAAsvFMRv-WYFVfDfX80GRBTEBAAMCAAN4AAM2BA","file_unique_id":"AQADy8UxG_5ZgVV9","file_size":19107,"width":500,"height":427}],"caption":"\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:48 PM\n\ud83d\udcf8 Author: osman\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udce2 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.\nDuring this period, please direct all urgent matters to Md. Bablur Rahman.\nWe wish you a pleasant and restful vacation!"}}
+2025-09-03 17:48:04 [INFO] [CeleryWorker] Alert 111 sent successfully.
+[2025-09-03 17:48:04,990: INFO/ForkPoolWorker-2] Alert 111 sent successfully.
+[2025-09-03 17:48:04,992: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.send_alert_task[0370b435-66c1-4fa7-a70e-c31b9129221e] succeeded in 1.2358089810004458s: 'Alert 111 sent'
+[2025-09-03 17:48:28,543: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:48:28,552: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[4d1061c9-0326-40e9-ab77-b00776449148] received
+2025-09-03 17:48:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:48:28,594: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:48:28,753: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[4d1061c9-0326-40e9-ab77-b00776449148] succeeded in 0.19685453599959146s: None
+[2025-09-03 17:48:51,457: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[fc8ab438-eb02-4247-9e34-3f1f5c9b25e4] received
+2025-09-03 17:48:51 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:48:51,501: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:48:51,599: INFO/MainProcess] Task app.notification_sender.tasks.send_alert_task[f45567f8-14b7-4743-a6e5-fcb9076994fa] received
+2025-09-03 17:48:51 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:48:51,619: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+2025-09-03 17:48:51 [INFO] [CeleryWorker] Original cleaned_body: 📢 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.
+During this period, please direct all urgent matters to Md. Bablur Rahman.
+We wish you a pleasant and restful vacation!
+[2025-09-03 17:48:51,635: INFO/ForkPoolWorker-4] Original cleaned_body: 📢 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.
+During this period, please direct all urgent matters to Md. Bablur Rahman.
+We wish you a pleasant and restful vacation!
+2025-09-03 17:48:51 [INFO] [CeleryWorker] sample.file_upload: pexels-photo-614810.webp
+[2025-09-03 17:48:51,635: INFO/ForkPoolWorker-4] sample.file_upload: pexels-photo-614810.webp
+2025-09-03 17:48:51 [INFO] [CeleryWorker] cleaned_body after img tag removal: 📢 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.
+During this period, please direct all urgent matters to Md. Bablur Rahman.
+We wish you a pleasant and restful vacation!
+[2025-09-03 17:48:51,635: INFO/ForkPoolWorker-4] cleaned_body after img tag removal: 📢 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.
+During this period, please direct all urgent matters to Md. Bablur Rahman.
+We wish you a pleasant and restful vacation!
+2025-09-03 17:48:51 [INFO] [CeleryWorker] Final message payload text: 🔔 Alert
+
+🕒 Time: September 03, 2025 at 05:48 PM
+📸 Author: osman
+
+----------------------------------------
+
+📢 Message: 📢 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.
+During this period, please direct all urgent matters to Md. Bablur Rahman.
+We wish you a pleasant and restful vacation!
+[2025-09-03 17:48:51,636: INFO/ForkPoolWorker-4] Final message payload text: 🔔 Alert
+
+🕒 Time: September 03, 2025 at 05:48 PM
+📸 Author: osman
+
+----------------------------------------
+
+📢 Message: 📢 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.
+During this period, please direct all urgent matters to Md. Bablur Rahman.
+We wish you a pleasant and restful vacation!
+2025-09-03 17:48:51 [INFO] [CeleryWorker] Sending group message to PingBot
+[2025-09-03 17:48:51,636: INFO/ForkPoolWorker-4] Sending group message to PingBot
+2025-09-03 17:48:51 [INFO] [TelegramBot] Attempting to send photo from: /home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/../media/uploads/pexels-photo-614810.webp to chat_id: -4893790782
+[2025-09-03 17:48:51,636: INFO/ForkPoolWorker-4] Attempting to send photo from: /home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/../media/uploads/pexels-photo-614810.webp to chat_id: -4893790782
+2025-09-03 17:48:51 [INFO] [TelegramBot] Sending group message to -4893790782. Payload: {"chat_id": "-4893790782", "caption": "\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:48 PM\n\ud83d\udcf8 Author: osman\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udce2 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.\nDuring this period, please direct all urgent matters to Md. Bablur Rahman.\nWe wish you a pleasant and restful vacation!"}
+[2025-09-03 17:48:51,636: INFO/ForkPoolWorker-4] Sending group message to -4893790782. Payload: {"chat_id": "-4893790782", "caption": "\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:48 PM\n\ud83d\udcf8 Author: osman\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udce2 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.\nDuring this period, please direct all urgent matters to Md. Bablur Rahman.\nWe wish you a pleasant and restful vacation!"}
+[2025-09-03 17:48:51,645: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[fc8ab438-eb02-4247-9e34-3f1f5c9b25e4] succeeded in 0.18394854799771565s: None
+2025-09-03 17:48:52 [INFO] [TelegramBot] Group API response: {"ok":true,"result":{"message_id":296,"from":{"id":7251107233,"is_bot":true,"first_name":"PingBot","username":"ping732_bot"},"chat":{"id":-4893790782,"title":"PingBot","type":"group","all_members_are_administrators":true,"accepted_gift_types":{"unlimited_gifts":false,"limited_gifts":false,"unique_gifts":false,"premium_subscription":false}},"date":1756900132,"photo":[{"file_id":"AgACAgUAAxkDAAN_aLAKpEMDRo8SCLKvD75Op9wydpYAAsvFMRv-WYFVfDfX80GRBTEBAAMCAANzAAM2BA","file_unique_id":"AQADy8UxG_5ZgVV4","file_size":1158,"width":90,"height":77},{"file_id":"AgACAgUAAxkDAAN_aLAKpEMDRo8SCLKvD75Op9wydpYAAsvFMRv-WYFVfDfX80GRBTEBAAMCAANtAAM2BA","file_unique_id":"AQADy8UxG_5ZgVVy","file_size":10427,"width":320,"height":273},{"file_id":"AgACAgUAAxkDAAN_aLAKpEMDRo8SCLKvD75Op9wydpYAAsvFMRv-WYFVfDfX80GRBTEBAAMCAAN4AAM2BA","file_unique_id":"AQADy8UxG_5ZgVV9","file_size":19107,"width":500,"height":427}],"caption":"\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:48 PM\n\ud83d\udcf8 Author: osman\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udce2 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.\nDuring this period, please direct all urgent matters to Md. Bablur Rahman.\nWe wish you a pleasant and restful vacation!"}}
+[2025-09-03 17:48:52,767: INFO/ForkPoolWorker-4] Group API response: {"ok":true,"result":{"message_id":296,"from":{"id":7251107233,"is_bot":true,"first_name":"PingBot","username":"ping732_bot"},"chat":{"id":-4893790782,"title":"PingBot","type":"group","all_members_are_administrators":true,"accepted_gift_types":{"unlimited_gifts":false,"limited_gifts":false,"unique_gifts":false,"premium_subscription":false}},"date":1756900132,"photo":[{"file_id":"AgACAgUAAxkDAAN_aLAKpEMDRo8SCLKvD75Op9wydpYAAsvFMRv-WYFVfDfX80GRBTEBAAMCAANzAAM2BA","file_unique_id":"AQADy8UxG_5ZgVV4","file_size":1158,"width":90,"height":77},{"file_id":"AgACAgUAAxkDAAN_aLAKpEMDRo8SCLKvD75Op9wydpYAAsvFMRv-WYFVfDfX80GRBTEBAAMCAANtAAM2BA","file_unique_id":"AQADy8UxG_5ZgVVy","file_size":10427,"width":320,"height":273},{"file_id":"AgACAgUAAxkDAAN_aLAKpEMDRo8SCLKvD75Op9wydpYAAsvFMRv-WYFVfDfX80GRBTEBAAMCAAN4AAM2BA","file_unique_id":"AQADy8UxG_5ZgVV9","file_size":19107,"width":500,"height":427}],"caption":"\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:48 PM\n\ud83d\udcf8 Author: osman\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udce2 Notice: Md.Osman Gani will be on vacation from 27-08-2025 to 29-08-2025.\nDuring this period, please direct all urgent matters to Md. Bablur Rahman.\nWe wish you a pleasant and restful vacation!"}}
+2025-09-03 17:48:52 [INFO] [CeleryWorker] Alert 111 sent successfully.
+[2025-09-03 17:48:52,819: INFO/ForkPoolWorker-4] Alert 111 sent successfully.
+[2025-09-03 17:48:52,822: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.send_alert_task[f45567f8-14b7-4743-a6e5-fcb9076994fa] succeeded in 1.222476843999175s: 'Alert 111 sent'
+[2025-09-03 17:48:58,673: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:49:03,534: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:49:03,543: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[ec01b503-fabf-4888-b859-24c8128a0694] received
+2025-09-03 17:49:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:49:03,598: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:49:03,773: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[ec01b503-fabf-4888-b859-24c8128a0694] succeeded in 0.22702392499923008s: None
+[2025-09-03 17:49:28,543: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:49:28,553: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[05695d9d-15e0-45bc-9c01-f4ad9b130f1c] received
+2025-09-03 17:49:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:49:28,592: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:49:28,701: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[05695d9d-15e0-45bc-9c01-f4ad9b130f1c] succeeded in 0.1442389389994787s: None
+[2025-09-03 17:49:58,673: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:49:58,679: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[53f80f5d-33ce-472d-8900-43ebb406e099] received
+2025-09-03 17:49:58 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:49:58,734: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:49:58,900: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[53f80f5d-33ce-472d-8900-43ebb406e099] succeeded in 0.22008393599753617s: None
+[2025-09-03 17:50:03,535: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:50:28,543: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:50:58,676: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:51:03,535: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:51:03,541: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[263e28a2-cba9-4b8b-af0b-52b694ab8b53] received
+2025-09-03 17:51:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:51:03,580: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:51:03,698: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[263e28a2-cba9-4b8b-af0b-52b694ab8b53] succeeded in 0.15465154599951347s: None
+[2025-09-03 17:51:28,544: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:51:28,554: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[188d0df3-c1fd-47ea-8bcb-e3247e861f45] received
+2025-09-03 17:51:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:51:28,635: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:51:28,755: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[188d0df3-c1fd-47ea-8bcb-e3247e861f45] succeeded in 0.19880434600054286s: None
+[2025-09-03 17:51:53,642: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[b5ee1944-4e57-4592-b7b4-ec330a8909f7] received
+2025-09-03 17:51:53 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:51:53,677: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:51:53,795: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[b5ee1944-4e57-4592-b7b4-ec330a8909f7] succeeded in 0.15201559300112422s: None
+[2025-09-03 17:51:58,676: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:51:58,686: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[40ed9ca8-52f7-4ce4-a7b0-a8ed6888bf2c] received
+2025-09-03 17:51:58 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:51:58,760: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:51:58,877: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[40ed9ca8-52f7-4ce4-a7b0-a8ed6888bf2c] succeeded in 0.1883736379968468s: None
+[2025-09-03 17:52:03,535: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:52:03,537: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[ef9fde14-6232-4025-873f-ced638f83b01] received
+2025-09-03 17:52:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:52:03,558: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:52:03,779: INFO/MainProcess] Task app.notification_sender.tasks.send_alert_task[028e60f3-e3c4-4fc3-b5b9-b6dc29374387] received
+[2025-09-03 17:52:03,780: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[ef9fde14-6232-4025-873f-ced638f83b01] succeeded in 0.24281125900233747s: None
+2025-09-03 17:52:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:52:03,822: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+2025-09-03 17:52:03 [INFO] [CeleryWorker] Original cleaned_body: 👋 Dear Team,
+This is to formally notify you that a scheduled notification will be sent through the 📡 Notification_Application system. Please be advised of the following details:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [e.g., System update / Alert distribution / Project reminder]
+ 👥 Recipients: [Specify group/individuals]
+⚠️ Kindly ensure you take note of this notification and act accordingly.
+ If you have any ❓ questions or face any ⚡ issues receiving the message, please contact the system administrator at [Insert Contact Info].
+🙏 We appreciate your attention and cooperation.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+ 📡 Notification_Application
+Would you like me to format this exactly into your send_alert_task message body (so it goes out through Telegram automatically with these icons), or keep it as a standalone template you can copy-paste manually?
+You said:
+
+give a little message formal
+ChatGPT said:
+
+Got it 👍 Here’s a short and formal version you can use:
+📌 Notice – Scheduled Notification
+Dear Team,
+ A scheduled notification will be sent through the 📡 Notification_Application system on:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [Insert Purpose]
+Please take note and act accordingly. For any issues, contact the system administrator.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+Do you want me to make this even shorter (just 2–3 lines) for quick alerts in Telegram?
+[2025-09-03 17:52:03,841: INFO/ForkPoolWorker-4] Original cleaned_body: 👋 Dear Team,
+This is to formally notify you that a scheduled notification will be sent through the 📡 Notification_Application system. Please be advised of the following details:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [e.g., System update / Alert distribution / Project reminder]
+ 👥 Recipients: [Specify group/individuals]
+⚠️ Kindly ensure you take note of this notification and act accordingly.
+ If you have any ❓ questions or face any ⚡ issues receiving the message, please contact the system administrator at [Insert Contact Info].
+🙏 We appreciate your attention and cooperation.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+ 📡 Notification_Application
+Would you like me to format this exactly into your send_alert_task message body (so it goes out through Telegram automatically with these icons), or keep it as a standalone template you can copy-paste manually?
+You said:
+
+give a little message formal
+ChatGPT said:
+
+Got it 👍 Here’s a short and formal version you can use:
+📌 Notice – Scheduled Notification
+Dear Team,
+ A scheduled notification will be sent through the 📡 Notification_Application system on:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [Insert Purpose]
+Please take note and act accordingly. For any issues, contact the system administrator.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+Do you want me to make this even shorter (just 2–3 lines) for quick alerts in Telegram?
+2025-09-03 17:52:03 [INFO] [CeleryWorker] sample.file_upload: piku.jpg
+[2025-09-03 17:52:03,842: INFO/ForkPoolWorker-4] sample.file_upload: piku.jpg
+2025-09-03 17:52:03 [INFO] [CeleryWorker] cleaned_body after img tag removal: 👋 Dear Team,
+This is to formally notify you that a scheduled notification will be sent through the 📡 Notification_Application system. Please be advised of the following details:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [e.g., System update / Alert distribution / Project reminder]
+ 👥 Recipients: [Specify group/individuals]
+⚠️ Kindly ensure you take note of this notification and act accordingly.
+ If you have any ❓ questions or face any ⚡ issues receiving the message, please contact the system administrator at [Insert Contact Info].
+🙏 We appreciate your attention and cooperation.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+ 📡 Notification_Application
+Would you like me to format this exactly into your send_alert_task message body (so it goes out through Telegram automatically with these icons), or keep it as a standalone template you can copy-paste manually?
+You said:
+
+give a little message formal
+ChatGPT said:
+
+Got it 👍 Here’s a short and formal version you can use:
+📌 Notice – Scheduled Notification
+Dear Team,
+ A scheduled notification will be sent through the 📡 Notification_Application system on:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [Insert Purpose]
+Please take note and act accordingly. For any issues, contact the system administrator.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+Do you want me to make this even shorter (just 2–3 lines) for quick alerts in Telegram?
+[2025-09-03 17:52:03,842: INFO/ForkPoolWorker-4] cleaned_body after img tag removal: 👋 Dear Team,
+This is to formally notify you that a scheduled notification will be sent through the 📡 Notification_Application system. Please be advised of the following details:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [e.g., System update / Alert distribution / Project reminder]
+ 👥 Recipients: [Specify group/individuals]
+⚠️ Kindly ensure you take note of this notification and act accordingly.
+ If you have any ❓ questions or face any ⚡ issues receiving the message, please contact the system administrator at [Insert Contact Info].
+🙏 We appreciate your attention and cooperation.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+ 📡 Notification_Application
+Would you like me to format this exactly into your send_alert_task message body (so it goes out through Telegram automatically with these icons), or keep it as a standalone template you can copy-paste manually?
+You said:
+
+give a little message formal
+ChatGPT said:
+
+Got it 👍 Here’s a short and formal version you can use:
+📌 Notice – Scheduled Notification
+Dear Team,
+ A scheduled notification will be sent through the 📡 Notification_Application system on:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [Insert Purpose]
+Please take note and act accordingly. For any issues, contact the system administrator.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+Do you want me to make this even shorter (just 2–3 lines) for quick alerts in Telegram?
+2025-09-03 17:52:03 [INFO] [CeleryWorker] Final message payload text: 🔔 Alert
+
+🕒 Time: September 03, 2025 at 05:52 PM
+📸 Author: saurov
+
+----------------------------------------
+
+📢 Message: 👋 Dear Team,
+This is to formally notify you that a scheduled notification will be sent through the 📡 Notification_Application system. Please be advised of the following details:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [e.g., System update / Alert distribution / Project reminder]
+ 👥 Recipients: [Specify group/individuals]
+⚠️ Kindly ensure you take note of this notification and act accordingly.
+ If you have any ❓ questions or face any ⚡ issues receiving the message, please contact the system administrator at [Insert Contact Info].
+🙏 We appreciate your attention and cooperation.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+ 📡 Notification_Application
+Would you like me to format this exactly into your send_alert_task message body (so it goes out through Telegram automatically with these icons), or keep it as a standalone template you can copy-paste manually?
+You said:
+
+give a little message formal
+ChatGPT said:
+
+Got it 👍 Here’s a short and formal version you can use:
+📌 Notice – Scheduled Notification
+Dear Team,
+ A scheduled notification will be sent through the 📡 Notification_Application system on:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [Insert Purpose]
+Please take note and act accordingly. For any issues, contact the system administrator.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+Do you want me to make this even shorter (just 2–3 lines) for quick alerts in Telegram?
+[2025-09-03 17:52:03,842: INFO/ForkPoolWorker-4] Final message payload text: 🔔 Alert
+
+🕒 Time: September 03, 2025 at 05:52 PM
+📸 Author: saurov
+
+----------------------------------------
+
+📢 Message: 👋 Dear Team,
+This is to formally notify you that a scheduled notification will be sent through the 📡 Notification_Application system. Please be advised of the following details:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [e.g., System update / Alert distribution / Project reminder]
+ 👥 Recipients: [Specify group/individuals]
+⚠️ Kindly ensure you take note of this notification and act accordingly.
+ If you have any ❓ questions or face any ⚡ issues receiving the message, please contact the system administrator at [Insert Contact Info].
+🙏 We appreciate your attention and cooperation.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+ 📡 Notification_Application
+Would you like me to format this exactly into your send_alert_task message body (so it goes out through Telegram automatically with these icons), or keep it as a standalone template you can copy-paste manually?
+You said:
+
+give a little message formal
+ChatGPT said:
+
+Got it 👍 Here’s a short and formal version you can use:
+📌 Notice – Scheduled Notification
+Dear Team,
+ A scheduled notification will be sent through the 📡 Notification_Application system on:
+🗓️ Date & Time: [Insert Date & Time]
+ 🎯 Purpose: [Insert Purpose]
+Please take note and act accordingly. For any issues, contact the system administrator.
+Sincerely,
+ ✍️ [Your Name]
+ 🛠️ System Administrator
+Do you want me to make this even shorter (just 2–3 lines) for quick alerts in Telegram?
+2025-09-03 17:52:03 [INFO] [CeleryWorker] Sending group message to PingBot
+[2025-09-03 17:52:03,842: INFO/ForkPoolWorker-4] Sending group message to PingBot
+2025-09-03 17:52:03 [INFO] [TelegramBot] Attempting to send photo from: /home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/../media/uploads/piku.jpg to chat_id: -4893790782
+[2025-09-03 17:52:03,842: INFO/ForkPoolWorker-4] Attempting to send photo from: /home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/../media/uploads/piku.jpg to chat_id: -4893790782
+2025-09-03 17:52:03 [WARNING] [TelegramBot] Caption for photo exceeds 1024 characters. Truncating. Original length: 1540
+[2025-09-03 17:52:03,842: WARNING/ForkPoolWorker-4] Caption for photo exceeds 1024 characters. Truncating. Original length: 1540
+2025-09-03 17:52:03 [INFO] [TelegramBot] Sending group message to -4893790782. Payload: {"chat_id": "-4893790782", "caption": "\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:52 PM\n\ud83d\udcf8 Author: saurov\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udc4b Dear Team,\nThis is to formally notify you that a scheduled notification will be sent through the \ud83d\udce1 Notification_Application system. Please be advised of the following details:\n\ud83d\uddd3\ufe0f Date & Time: [Insert Date & Time]\n \ud83c\udfaf Purpose: [e.g., System update / Alert distribution / Project reminder]\n \ud83d\udc65 Recipients: [Specify group/individuals]\n\u26a0\ufe0f Kindly ensure you take note of this notification and act accordingly.\n If you have any \u2753 questions or face any \u26a1 issues receiving the message, please contact the system administrator at [Insert Contact Info].\n\ud83d\ude4f We appreciate your attention and cooperation.\nSincerely,\n \u270d\ufe0f [Your Name]\n \ud83d\udee0\ufe0f System Administrator\n \ud83d\udce1 Notification_Application\nWould you like me to format this exactly into your send_alert_task message body (so it goes out through Telegram automatically with these icons), or keep it as a standalone template you can copy-paste manually?\nYou said:\n\ngive a ..."}
+[2025-09-03 17:52:03,842: INFO/ForkPoolWorker-4] Sending group message to -4893790782. Payload: {"chat_id": "-4893790782", "caption": "\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:52 PM\n\ud83d\udcf8 Author: saurov\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udc4b Dear Team,\nThis is to formally notify you that a scheduled notification will be sent through the \ud83d\udce1 Notification_Application system. Please be advised of the following details:\n\ud83d\uddd3\ufe0f Date & Time: [Insert Date & Time]\n \ud83c\udfaf Purpose: [e.g., System update / Alert distribution / Project reminder]\n \ud83d\udc65 Recipients: [Specify group/individuals]\n\u26a0\ufe0f Kindly ensure you take note of this notification and act accordingly.\n If you have any \u2753 questions or face any \u26a1 issues receiving the message, please contact the system administrator at [Insert Contact Info].\n\ud83d\ude4f We appreciate your attention and cooperation.\nSincerely,\n \u270d\ufe0f [Your Name]\n \ud83d\udee0\ufe0f System Administrator\n \ud83d\udce1 Notification_Application\nWould you like me to format this exactly into your send_alert_task message body (so it goes out through Telegram automatically with these icons), or keep it as a standalone template you can copy-paste manually?\nYou said:\n\ngive a ..."}
+2025-09-03 17:52:06 [INFO] [TelegramBot] Group API response: {"ok":true,"result":{"message_id":297,"from":{"id":7251107233,"is_bot":true,"first_name":"PingBot","username":"ping732_bot"},"chat":{"id":-4893790782,"title":"PingBot","type":"group","all_members_are_administrators":true,"accepted_gift_types":{"unlimited_gifts":false,"limited_gifts":false,"unique_gifts":false,"premium_subscription":false}},"date":1756900326,"photo":[{"file_id":"AgACAgUAAxkDAAOdaLPG4-nLkI7WAsi-41lU66_17GsAApXFMRtux6FVCtON0h0TdL8BAAMCAANzAAM2BA","file_unique_id":"AQADlcUxG27HoVV4","file_size":1375,"width":77,"height":90},{"file_id":"AgACAgUAAxkDAAOdaLPG4-nLkI7WAsi-41lU66_17GsAApXFMRtux6FVCtON0h0TdL8BAAMCAANtAAM2BA","file_unique_id":"AQADlcUxG27HoVVy","file_size":20752,"width":274,"height":320},{"file_id":"AgACAgUAAxkDAAOdaLPG4-nLkI7WAsi-41lU66_17GsAApXFMRtux6FVCtON0h0TdL8BAAMCAAN4AAM2BA","file_unique_id":"AQADlcUxG27HoVV9","file_size":109771,"width":686,"height":800},{"file_id":"AgACAgUAAxkDAAOdaLPG4-nLkI7WAsi-41lU66_17GsAApXFMRtux6FVCtON0h0TdL8BAAMCAAN5AAM2BA","file_unique_id":"AQADlcUxG27HoVV-","file_size":305027,"width":1097,"height":1280},{"file_id":"AgACAgUAAxkDAAOdaLPG4-nLkI7WAsi-41lU66_17GsAApXFMRtux6FVCtON0h0TdL8BAAMCAAN3AAM2BA","file_unique_id":"AQADlcUxG27HoVV8","file_size":1181570,"width":2194,"height":2560}],"caption":"\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:52 PM\n\ud83d\udcf8 Author: saurov\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udc4b Dear Team,\nThis is to formally notify you that a scheduled notification will be sent through the \ud83d\udce1 Notification_Application system. Please be advised of the following details:\n\ud83d\uddd3\ufe0f Date & Time: [Insert Date & Time]\n \ud83c\udfaf Purpose: [e.g., System update / Alert distribution / Project reminder]\n \ud83d\udc65 Recipients: [Specify group/individuals]\n\u26a0\ufe0f Kindly ensure you take note of this notification and act accordingly.\n If you have any \u2753 questions or face any \u26a1 issues receiving the message, please contact the system administrator at [Insert Contact Info].\n\ud83d\ude4f We appreciate your attention and cooperation.\nSincerely,\n \u270d\ufe0f [Your Name]\n \ud83d\udee0\ufe0f System Administrator\n \ud83d\udce1 Notification_Application\nWould you like me to format this exactly into your send_alert_task message body (so it goes out through Telegram automatically with these icons), or keep it as a standalone template you can copy-paste manually?\nYou said:\n\ngive a ..."}}
+[2025-09-03 17:52:06,553: INFO/ForkPoolWorker-4] Group API response: {"ok":true,"result":{"message_id":297,"from":{"id":7251107233,"is_bot":true,"first_name":"PingBot","username":"ping732_bot"},"chat":{"id":-4893790782,"title":"PingBot","type":"group","all_members_are_administrators":true,"accepted_gift_types":{"unlimited_gifts":false,"limited_gifts":false,"unique_gifts":false,"premium_subscription":false}},"date":1756900326,"photo":[{"file_id":"AgACAgUAAxkDAAOdaLPG4-nLkI7WAsi-41lU66_17GsAApXFMRtux6FVCtON0h0TdL8BAAMCAANzAAM2BA","file_unique_id":"AQADlcUxG27HoVV4","file_size":1375,"width":77,"height":90},{"file_id":"AgACAgUAAxkDAAOdaLPG4-nLkI7WAsi-41lU66_17GsAApXFMRtux6FVCtON0h0TdL8BAAMCAANtAAM2BA","file_unique_id":"AQADlcUxG27HoVVy","file_size":20752,"width":274,"height":320},{"file_id":"AgACAgUAAxkDAAOdaLPG4-nLkI7WAsi-41lU66_17GsAApXFMRtux6FVCtON0h0TdL8BAAMCAAN4AAM2BA","file_unique_id":"AQADlcUxG27HoVV9","file_size":109771,"width":686,"height":800},{"file_id":"AgACAgUAAxkDAAOdaLPG4-nLkI7WAsi-41lU66_17GsAApXFMRtux6FVCtON0h0TdL8BAAMCAAN5AAM2BA","file_unique_id":"AQADlcUxG27HoVV-","file_size":305027,"width":1097,"height":1280},{"file_id":"AgACAgUAAxkDAAOdaLPG4-nLkI7WAsi-41lU66_17GsAApXFMRtux6FVCtON0h0TdL8BAAMCAAN3AAM2BA","file_unique_id":"AQADlcUxG27HoVV8","file_size":1181570,"width":2194,"height":2560}],"caption":"\ud83d\udd14 Alert\n\n\ud83d\udd52 Time: September 03, 2025 at 05:52 PM\n\ud83d\udcf8 Author: saurov\n\n----------------------------------------\n\n\ud83d\udce2 Message: \ud83d\udc4b Dear Team,\nThis is to formally notify you that a scheduled notification will be sent through the \ud83d\udce1 Notification_Application system. Please be advised of the following details:\n\ud83d\uddd3\ufe0f Date & Time: [Insert Date & Time]\n \ud83c\udfaf Purpose: [e.g., System update / Alert distribution / Project reminder]\n \ud83d\udc65 Recipients: [Specify group/individuals]\n\u26a0\ufe0f Kindly ensure you take note of this notification and act accordingly.\n If you have any \u2753 questions or face any \u26a1 issues receiving the message, please contact the system administrator at [Insert Contact Info].\n\ud83d\ude4f We appreciate your attention and cooperation.\nSincerely,\n \u270d\ufe0f [Your Name]\n \ud83d\udee0\ufe0f System Administrator\n \ud83d\udce1 Notification_Application\nWould you like me to format this exactly into your send_alert_task message body (so it goes out through Telegram automatically with these icons), or keep it as a standalone template you can copy-paste manually?\nYou said:\n\ngive a ..."}}
+2025-09-03 17:52:06 [INFO] [CeleryWorker] Alert 142 sent successfully.
+[2025-09-03 17:52:06,569: INFO/ForkPoolWorker-4] Alert 142 sent successfully.
+[2025-09-03 17:52:06,570: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.send_alert_task[028e60f3-e3c4-4fc3-b5b9-b6dc29374387] succeeded in 2.7896045240013336s: 'Alert 142 sent'
+[2025-09-03 17:52:28,544: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:52:28,553: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[936e1557-40f1-40d9-9c0f-adf285889084] received
+2025-09-03 17:52:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:52:28,661: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:52:28,803: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[936e1557-40f1-40d9-9c0f-adf285889084] succeeded in 0.24749649400109774s: None
+[2025-09-03 17:52:58,677: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:53:03,535: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:53:28,544: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:53:28,552: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[96ee2b0a-8ce2-4b16-a0b5-ce4594627e84] received
+2025-09-03 17:53:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:53:28,659: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:53:28,802: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[96ee2b0a-8ce2-4b16-a0b5-ce4594627e84] succeeded in 0.24657434999971883s: None
+[2025-09-03 17:53:53,645: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[ae041cf9-15b2-4200-9b0e-a7a9ca8c3b69] received
+2025-09-03 17:53:53 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:53:53,890: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:53:54,060: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[ae041cf9-15b2-4200-9b0e-a7a9ca8c3b69] succeeded in 0.4063549429993145s: None
+[2025-09-03 17:53:58,677: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:53:58,687: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[815af17b-b99a-4696-9bef-1975e8984c40] received
+2025-09-03 17:53:58 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:53:58,820: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:53:59,198: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[815af17b-b99a-4696-9bef-1975e8984c40] succeeded in 0.5077710580007988s: None
+[2025-09-03 17:54:03,535: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:54:03,544: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[86d35970-6cd3-442c-a507-2d6921189fa0] received
+2025-09-03 17:54:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:54:03,644: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:54:03,793: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[86d35970-6cd3-442c-a507-2d6921189fa0] succeeded in 0.2474398550002661s: None
+[2025-09-03 17:54:28,544: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:54:58,677: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:55:03,536: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:55:03,546: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[84184f14-7ff6-4752-9a4c-5683f6c461a8] received
+2025-09-03 17:55:03 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:55:03,686: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:55:03,827: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[84184f14-7ff6-4752-9a4c-5683f6c461a8] succeeded in 0.2781199739984004s: None
+[2025-09-03 17:55:28,545: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:55:28,554: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[354a03a6-32ed-4258-a978-6dee605ecbfe] received
+2025-09-03 17:55:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:55:28,663: INFO/ForkPoolWorker-2] Flask app started successfully ✅
+[2025-09-03 17:55:28,803: INFO/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[354a03a6-32ed-4258-a978-6dee605ecbfe] succeeded in 0.24650016500163474s: None
+[2025-09-03 17:55:53,639: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[69e454fa-5d44-4875-9248-a28d8c9bc03c] received
+2025-09-03 17:55:53 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:55:53,811: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:55:54,341: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[69e454fa-5d44-4875-9248-a28d8c9bc03c] succeeded in 0.6988404559997434s: None
+[2025-09-03 17:55:58,677: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:55:58,686: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[e9d95663-8ee4-44a9-b08a-b44bba2ae33b] received
+2025-09-03 17:55:58 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:55:58,802: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:55:58,983: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[e9d95663-8ee4-44a9-b08a-b44bba2ae33b] succeeded in 0.29431083500094246s: None
+[2025-09-03 17:56:03,536: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:56:28,548: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:56:28,558: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[8d53abbe-c079-4f85-afd0-d8799d841697] received
+2025-09-03 17:56:28 [INFO] [FlaskApp] Flask app started successfully ✅
+[2025-09-03 17:56:28,601: INFO/ForkPoolWorker-4] Flask app started successfully ✅
+[2025-09-03 17:56:28,831: INFO/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[8d53abbe-c079-4f85-afd0-d8799d841697] succeeded in 0.2724888449993159s: None
+
+Restarting celery worker (/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/bin/celery -A app.app.celery_app worker -B --loglevel=info)
+
+Restarting celery worker (/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/bin/celery -A app.app.celery_app worker -B --loglevel=info)
+
+Restarting celery worker (/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/bin/celery -A app.app.celery_app worker -B --loglevel=info)
+[2025-09-03 17:56:38,655: INFO/MainProcess] beat: Shutting down...
+[2025-09-03 17:56:38,671: INFO/MainProcess] beat: Shutting down...
+[2025-09-03 17:56:39,664: INFO/MainProcess] beat: Shutting down...
+ 
+ -------------- celery@osman-HP-Pavilion-Laptop-14-bf0xx v5.3.6 (emerald-rush)
+--- ***** ----- 
+-- ******* ---- Linux-6.14.0-29-generic-x86_64-with-glibc2.39 2025-09-03 17:56:42
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         notification_app:0x78daffbd0e90
+- ** ---------- .> transport:   redis://10.123.140.101:6380/0
+- ** ---------- .> results:     redis://10.123.140.101:6380/0
+- *** --- * --- .> concurrency: 4 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . app.notification_sender.tasks.check_scheduled_alerts
+  . app.notification_sender.tasks.send_alert_task
+
+[2025-09-03 17:56:43,476: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-09-03 17:56:43,501: INFO/MainProcess] Connected to redis://10.123.140.101:6380/0
+[2025-09-03 17:56:43,502: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-09-03 17:56:43,509: INFO/MainProcess] mingle: searching for neighbors
+ 
+ -------------- celery@osman-HP-Pavilion-Laptop-14-bf0xx v5.3.6 (emerald-rush)
+--- ***** ----- 
+-- ******* ---- Linux-6.14.0-29-generic-x86_64-with-glibc2.39 2025-09-03 17:56:43
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         notification_app:0x752b78fb7e00
+- ** ---------- .> transport:   redis://10.123.140.101:6380/0
+- ** ---------- .> results:     redis://10.123.140.101:6380/0
+- *** --- * --- .> concurrency: 4 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . app.notification_sender.tasks.check_scheduled_alerts
+  . app.notification_sender.tasks.send_alert_task
+
+[2025-09-03 17:56:44,236: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-09-03 17:56:44,255: INFO/MainProcess] Connected to redis://10.123.140.101:6380/0
+[2025-09-03 17:56:44,257: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-09-03 17:56:44,267: INFO/MainProcess] mingle: searching for neighbors
+[2025-09-03 17:56:44,537: INFO/MainProcess] mingle: all alone
+[2025-09-03 17:56:44,552: INFO/MainProcess] celery@osman-HP-Pavilion-Laptop-14-bf0xx ready.
+ 
+ -------------- celery@osman-HP-Pavilion-Laptop-14-bf0xx v5.3.6 (emerald-rush)
+--- ***** ----- 
+-- ******* ---- Linux-6.14.0-29-generic-x86_64-with-glibc2.39 2025-09-03 17:56:45
+- *** --- * --- 
+- ** ---------- [config]
+- ** ---------- .> app:         notification_app:0x7dc99199dbe0
+- ** ---------- .> transport:   redis://10.123.140.101:6380/0
+- ** ---------- .> results:     redis://10.123.140.101:6380/0
+- *** --- * --- .> concurrency: 4 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . app.notification_sender.tasks.check_scheduled_alerts
+  . app.notification_sender.tasks.send_alert_task
+
+[2025-09-03 17:56:45,286: INFO/MainProcess] mingle: all alone
+[2025-09-03 17:56:45,314: INFO/MainProcess] celery@osman-HP-Pavilion-Laptop-14-bf0xx ready.
+[2025-09-03 17:56:45,680: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-09-03 17:56:45,703: INFO/MainProcess] Connected to redis://10.123.140.101:6380/0
+[2025-09-03 17:56:45,707: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2025-09-03 17:56:45,717: INFO/MainProcess] mingle: searching for neighbors
+[2025-09-03 17:56:46,659: INFO/Beat] beat: Starting...
+[2025-09-03 17:56:46,742: WARNING/MainProcess] /home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/control.py:56: DuplicateNodenameWarning: Received multiple replies from node name: celery@osman-HP-Pavilion-Laptop-14-bf0xx.
+Please make sure you give each node a unique nodename using
+the celery worker `-n` option.
+  warnings.warn(DuplicateNodenameWarning(
+
+[2025-09-03 17:56:46,742: INFO/MainProcess] mingle: all alone
+[2025-09-03 17:56:46,757: INFO/MainProcess] celery@osman-HP-Pavilion-Laptop-14-bf0xx ready.
+[2025-09-03 17:56:47,375: INFO/Beat] beat: Starting...
+[2025-09-03 17:56:47,391: ERROR/Beat] Removing corrupted schedule file 'celerybeat-schedule': error(11, 'Resource temporarily unavailable')
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/beat.py", line 531, in setup_schedule
+    self._store = self._open_schedule()
+                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/beat.py", line 521, in _open_schedule
+    return self.persistence.open(self.schedule_filename, writeback=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/shelve.py", line 243, in open
+    return DbfilenameShelf(filename, flag, protocol, writeback)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/shelve.py", line 227, in __init__
+    Shelf.__init__(self, dbm.open(filename, flag), protocol, writeback)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/dbm/__init__.py", line 95, in open
+    return mod.open(file, flag, mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_gdbm.error: [Errno 11] Resource temporarily unavailable: 'celerybeat-schedule'
+[2025-09-03 17:56:47,788: INFO/Beat] beat: Starting...
+[2025-09-03 17:56:47,801: ERROR/Beat] Removing corrupted schedule file 'celerybeat-schedule': error(11, 'Resource temporarily unavailable')
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/beat.py", line 531, in setup_schedule
+    self._store = self._open_schedule()
+                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/beat.py", line 521, in _open_schedule
+    return self.persistence.open(self.schedule_filename, writeback=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/shelve.py", line 243, in open
+    return DbfilenameShelf(filename, flag, protocol, writeback)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/shelve.py", line 227, in __init__
+    Shelf.__init__(self, dbm.open(filename, flag), protocol, writeback)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/dbm/__init__.py", line 95, in open
+    return mod.open(file, flag, mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_gdbm.error: [Errno 11] Resource temporarily unavailable: 'celerybeat-schedule'
+[2025-09-03 17:56:53,643: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:56:53,667: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[20cf6b35-3365-45ff-b108-c5056ac6b905] received
+[2025-09-03 17:56:53,693: ERROR/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[20cf6b35-3365-45ff-b108-c5056ac6b905] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 17:57:47,410: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:57:47,439: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[df144005-0185-4785-8d3e-c99407dc4ab2] received
+[2025-09-03 17:57:47,471: ERROR/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[df144005-0185-4785-8d3e-c99407dc4ab2] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 17:57:47,819: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:57:47,844: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[f91cecee-48c1-4d96-9fc1-d6f1fc5c4d4e] received
+[2025-09-03 17:57:47,861: ERROR/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[f91cecee-48c1-4d96-9fc1-d6f1fc5c4d4e] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 17:57:53,629: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:57:53,638: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[55bcd35f-a6da-4e70-9933-6cde46a10f11] received
+[2025-09-03 17:57:53,653: ERROR/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[55bcd35f-a6da-4e70-9933-6cde46a10f11] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 17:58:47,395: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:58:47,407: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[8f1fa980-b93e-461a-810e-8b57ac900c7d] received
+[2025-09-03 17:58:47,437: ERROR/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[8f1fa980-b93e-461a-810e-8b57ac900c7d] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 17:58:47,806: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:58:47,815: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[fffba7e1-f82a-49fd-8a70-eb2e32e79eca] received
+[2025-09-03 17:58:47,832: ERROR/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[fffba7e1-f82a-49fd-8a70-eb2e32e79eca] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 17:58:53,629: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:58:53,638: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[dab47ff0-3c21-4150-b017-eb0092658232] received
+[2025-09-03 17:58:53,654: ERROR/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[dab47ff0-3c21-4150-b017-eb0092658232] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 17:59:47,395: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:59:47,404: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[cd6a4809-e373-4641-ad1b-398cac713957] received
+[2025-09-03 17:59:47,420: ERROR/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[cd6a4809-e373-4641-ad1b-398cac713957] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 17:59:47,806: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:59:47,815: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[d5abbde4-3c16-4d64-b171-36eaffc49196] received
+[2025-09-03 17:59:47,831: ERROR/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[d5abbde4-3c16-4d64-b171-36eaffc49196] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 17:59:53,630: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 17:59:53,637: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[aa1e37aa-79d6-4e3e-8cb8-ecbf8caecfc3] received
+[2025-09-03 17:59:53,654: ERROR/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[aa1e37aa-79d6-4e3e-8cb8-ecbf8caecfc3] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 18:00:47,396: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 18:00:47,404: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[18379c3f-70c0-4383-8553-1a49ee7ca594] received
+[2025-09-03 18:00:47,421: ERROR/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[18379c3f-70c0-4383-8553-1a49ee7ca594] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 18:00:47,806: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 18:00:47,814: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[a3641a97-c72c-4515-be75-77d133ad7c76] received
+[2025-09-03 18:00:47,831: ERROR/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[a3641a97-c72c-4515-be75-77d133ad7c76] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 18:00:53,630: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 18:00:53,639: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[639e56f6-479a-424e-aad2-265b79ac13f8] received
+[2025-09-03 18:00:53,660: ERROR/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[639e56f6-479a-424e-aad2-265b79ac13f8] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 18:01:47,396: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 18:01:47,404: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[7579d5c9-2c60-4b89-9bcf-686d9c5fdd6a] received
+[2025-09-03 18:01:47,420: ERROR/ForkPoolWorker-4] Task app.notification_sender.tasks.check_scheduled_alerts[7579d5c9-2c60-4b89-9bcf-686d9c5fdd6a] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 18:01:47,806: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 18:01:47,815: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[941f398b-4e47-45c8-a3da-a63418d9481f] received
+[2025-09-03 18:01:47,834: ERROR/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[941f398b-4e47-45c8-a3da-a63418d9481f] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 18:01:53,630: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 18:01:53,639: INFO/MainProcess] Task app.notification_sender.tasks.check_scheduled_alerts[f143d7cd-b942-4cbe-80f6-763859c6fdd5] received
+[2025-09-03 18:01:53,652: ERROR/ForkPoolWorker-2] Task app.notification_sender.tasks.check_scheduled_alerts[f143d7cd-b942-4cbe-80f6-763859c6fdd5] raised unexpected: ImportError("cannot import name 'create_app' from 'app' (unknown location)")
+Traceback (most recent call last):
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 477, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/Notofication Application/Notification_Application/venv/lib/python3.12/site-packages/celery/app/trace.py", line 760, in __protected_call__
+    return self.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/osman/SSL Wireless/readyy/docker project/Notification_Application/app/notification_sender/tasks.py", line 157, in check_scheduled_alerts
+    from app import create_app
+ImportError: cannot import name 'create_app' from 'app' (unknown location)
+[2025-09-03 21:03:37,238: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 21:03:37,648: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+[2025-09-03 21:03:43,472: INFO/Beat] Scheduler: Sending due task check-scheduled-alerts-every-minute (app.notification_sender.tasks.check_scheduled_alerts)
+
+worker: Warm shutdown (MainProcess)
+
+worker: Warm shutdown (MainProcess)
+
+worker: Warm shutdown (MainProcess)
+
+worker: Warm shutdown (MainProcess)
+
+worker: Warm shutdown (MainProcess)
+
+worker: Warm shutdown (MainProcess)
