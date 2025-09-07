@@ -32,36 +32,36 @@ Before you begin, ensure you have installed the following:
 ### Configure Environment Variables:
 
  # Flask Configuration
-APP_IMAGE=notification_app
-APP_PORT=5001
-APP_CONTAINER_NAME=notification_app_web
-FLASK_APP=app.app:create_app
-FLASK_ENV=development
-SECRET_KEY=your_flask_secret_key
-JWT_SECRET_KEY=your_jwt_secret_key
+APP_IMAGE=notification_app<br>
+APP_PORT=5001<br>
+APP_CONTAINER_NAME=notification_app_web<br>
+FLASK_APP=app.app:create_app<br>
+FLASK_ENV=development<br>
+SECRET_KEY=your_flask_secret_key<br>
+JWT_SECRET_KEY=your_jwt_secret_key<br>
 TZ=Asia/Dhaka
 
 # MySQL Configuration
-MYSQL_HOST=db
-MYSQL_PORT=3306
-MYSQL_DATABASE=notification_db
-MYSQL_USER=your_mysql_user
+MYSQL_HOST=db<br>
+MYSQL_PORT=3306<br>
+MYSQL_DATABASE=notification_db<br>
+MYSQL_USER=your_mysql_user<br>
 MYSQL_PASSWORD=your_mysql_password
 
 # Redis Configuration
-CELERY_BROKER_URL=redis://redis:6379/0
-CELERY_BACKEND_URL=redis://redis:6379/0
+CELERY_BROKER_URL=redis://redis:6379/0<br>
+CELERY_BACKEND_URL=redis://redis:6379/0<br>
 
 # Volume Paths
-LOG_DIR_HOST=./logs
-IMAGE_DIR_HOST=./media
+LOG_DIR_HOST=./logs<br>
+IMAGE_DIR_HOST=./media<br>
 
 # Media URL
-MEDIA_BASE_URL=http://localhost:5001
+MEDIA_BASE_URL=http://localhost:5001<br>
 
 # Telegram Bot API (optional)
-BOT_GROUP_API=YOUR_BOT_GROUP_API
-BOT_PRIVATE_API=YOUR_BOT_PRIVATE_API
+BOT_GROUP_API=YOUR_BOT_GROUP_API<br>
+BOT_PRIVATE_API=YOUR_BOT_PRIVATE_API<br>
 
 
 ### Build and Run with Docker Compose:
