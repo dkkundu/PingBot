@@ -25,11 +25,6 @@ def create_app():
     db_name = os.getenv("MYSQL_DATABASE")
 
 
-
-    print(db_port, "db_port---------------------------------")
-
-
-
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
         "SQLALCHEMY_DATABASE_URI",
         f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
