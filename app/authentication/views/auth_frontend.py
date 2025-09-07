@@ -8,8 +8,12 @@ import os
 from werkzeug.utils import secure_filename
 from app.notification_sender.models import AlertConfig, AlertLog,AlertSample,AlertService
 from app.notification_sender.views.alert_views import LOCAL_TZ # Import LOCAL_TZ
+import logging
 
 frontend_bp = Blueprint('frontend', __name__, template_folder='../../templates/auth')
+
+# Set up a logger for this blueprint
+log = logging.getLogger(__name__)
 
 from flask import current_app
 
@@ -53,6 +57,9 @@ def logout():
 # -------------------- Dashboard --------------------
 @frontend_bp.route('/')
 def dashboard():
+    log.info("Dashboard route started.")
+    start_time = datetime.now()
+
     user_id = session.get('user_id')
     current_user = User.query.get(user_id)
 
@@ -76,33 +83,21 @@ def dashboard():
     utc_today_start = local_today_start.astimezone(pytz.utc)
     utc_today_end = local_today_end.astimezone(pytz.utc)
 
-    # Calculate total messages scheduled for today (based on AlertLog entries)
-    total_scheduled_messages_today = AlertLog.query.filter(
+    # Optimized query for status counts
+    status_counts = db.session.query(
+        func.count(AlertLog.id).label("total"),
+        func.count(func.nullif(AlertLog.status != 'sent', True)).label("sent"),
+        func.count(func.nullif(AlertLog.status != 'failed', True)).label("failed"),
+        func.count(func.nullif(AlertLog.status.notin_(['queued', 'scheduled']), True)).label("waiting")
+    ).filter(
         AlertLog.scheduled_for >= utc_today_start,
         AlertLog.scheduled_for <= utc_today_end
-    ).count()
+    ).first()
 
-    # Calculate sent messages for today (based on AlertLog entries)
-    sent_messages_today = AlertLog.query.filter(
-        AlertLog.scheduled_for >= utc_today_start,
-        AlertLog.scheduled_for <= utc_today_end,
-        AlertLog.status == 'sent'
-    ).count()
-
-    # Calculate counts for pie chart
-    failed_messages_today = AlertLog.query.filter(
-        AlertLog.scheduled_for >= utc_today_start,
-        AlertLog.scheduled_for <= utc_today_end,
-        AlertLog.status == 'failed'
-    ).count()
-
-    waiting_messages_today = AlertLog.query.filter(
-        AlertLog.scheduled_for >= utc_today_start,
-        AlertLog.scheduled_for <= utc_today_end,
-        AlertLog.status.in_(['queued', 'scheduled'])
-    ).count()
-
-    # Total messages for pie chart (sum of sent, failed, waiting)
+    total_scheduled_messages_today = status_counts.total
+    sent_messages_today = status_counts.sent
+    failed_messages_today = status_counts.failed
+    waiting_messages_today = status_counts.waiting
     total_messages_for_pie_chart = sent_messages_today + failed_messages_today + waiting_messages_today
 
     # Get the count of group names for each service
@@ -111,25 +106,27 @@ def dashboard():
         func.count(AlertConfig.group_name)
     ).filter(AlertConfig.group_name.isnot(None)).group_by(AlertConfig.service_name).all()
 
-    # Hourly message counts for chart
-    hourly_data = {}
-    for i in range(24): # Initialize all hours to 0
-        hourly_data[i] = {'total': 0, 'sent': 0}
-
-    # Get all AlertLog entries for today
-    today_logs = AlertLog.query.filter(
+    # Optimized query for hourly message counts (MySQL-compatible)
+    converted_time = func.CONVERT_TZ(AlertLog.scheduled_for, 'UTC', LOCAL_TZ.zone)
+    hour_extract_func = func.extract('hour', converted_time)
+    
+    hourly_counts = db.session.query(
+        hour_extract_func.label('hour'),
+        func.count(AlertLog.id).label('total'),
+        func.count(func.nullif(AlertLog.status != 'sent', True)).label('sent')
+    ).filter(
         AlertLog.scheduled_for >= utc_today_start,
         AlertLog.scheduled_for <= utc_today_end
-    ).all()
+    ).group_by(hour_extract_func).all()
 
-    for log in today_logs:
-        # Convert scheduled_for to local timezone to get the local hour
-        if log.scheduled_for:
-            local_scheduled_for = pytz.utc.localize(log.scheduled_for).astimezone(LOCAL_TZ)
-            hour = local_scheduled_for.hour
-            hourly_data[hour]['total'] += 1
-            if log.status == 'sent':
-                hourly_data[hour]['sent'] += 1
+    # Initialize hourly data and populate with query results
+    hourly_data = {i: {'total': 0, 'sent': 0} for i in range(24)}
+    for row in hourly_counts:
+        if row.hour is not None:
+            hour = int(row.hour)
+            if 0 <= hour < 24:
+                hourly_data[hour]['total'] = row.total
+                hourly_data[hour]['sent'] = row.sent
 
     # Convert hourly_data to a list of values for Chart.js
     chart_labels = []
@@ -144,6 +141,9 @@ def dashboard():
             chart_labels.append(f'{i - 12} PM')
     chart_total_data = [hourly_data[i]['total'] for i in range(24)]
     chart_sent_data = [hourly_data[i]['sent'] for i in range(24)]
+
+    end_time = datetime.now()
+    log.info(f"Dashboard route finished. Total time: {end_time - start_time}")
 
     return render_template(
         'dashboard.html',

@@ -1,9 +1,15 @@
 import os
 from celery import Celery
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ---------------- INIT CELERY ----------------
 
-using_redis_password = bool(int(os.getenv("USING_REDIS_PASSWORD")))
+def str_to_bool(val: str) -> bool:
+    return str(val).lower() in ("1", "true", "yes", "on")
+
+using_redis_password = str_to_bool(os.getenv("USING_REDIS_PASSWORD", "false"))
 
 if using_redis_password:
     celery = Celery(
@@ -13,10 +19,17 @@ if using_redis_password:
     )
 else:
     celery = Celery(
-        "notification_app",
-        broker=f"redis://:{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/{os.getenv('REDIS_DB')}",
-        backend=f"redis://:{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/{os.getenv('REDIS_DB')}"
-    )
+    "notification_app",
+    broker=f"redis://{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/{os.getenv('REDIS_DB')}",
+    backend=f"redis://{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/{os.getenv('REDIS_DB')}"
+)
+
+    
+    # celery = Celery(
+    #     "notification_app",
+    #     broker=f"redis://:{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/{os.getenv('REDIS_DB')}",
+    #     backend=f"redis://:{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/{os.getenv('REDIS_DB')}"
+    # )
 
 
 # celery = Celery(a

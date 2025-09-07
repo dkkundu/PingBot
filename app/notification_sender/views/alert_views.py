@@ -6,7 +6,7 @@ from app.extensions import db
 from app.notification_sender.models import AlertService, AlertConfig, AlertSample, AlertLog, TestCredentials
 from app.authentication.models import User
 from datetime import datetime, date, time
-from app.notification_sender.tasks import send_alert_task
+from app.notification_sender.tasks import send_alert_task, send_test_alert_task
 from app.notification_sender.telegram_bot import TelegramBot
 from app.notification_sender.message_geneator import get_messages
 
@@ -647,67 +647,11 @@ def test_sample_message(sample_id):
         return jsonify({"show_modal": True, "title": "Action Required", "message": "No active Test Credentials found for this service.", "category": "danger"})
 
     try:
-        message = get_messages(sample)
+        # Offload the sending of the test message to the Celery task
+        send_test_alert_task.delay(sample.id, test_credential.id)
         
-        # Define file paths
-        photo_path = os.path.join(current_app.config['UPLOAD_FOLDER'], sample.photo_upload) if sample.photo_upload else None
-        document_path = os.path.join(current_app.config['UPLOAD_FOLDER'], sample.document_upload) if sample.document_upload else None
-
-        # --- Sending Logic ---
-        # The group_message method handles both text and photo.
-        # It will send a photo with caption if photo_path is provided and exists,
-        # otherwise it will send a text message.
-
-        # Check if photo exists and is valid
-        final_photo_path = photo_path if (photo_path and os.path.exists(photo_path)) else None
-
-        logger.info(f"Sending message for sample {sample.id} with photo: {final_photo_path}")
-        response = bot.group_message(
-            auth_token=test_credential.auth_token,
-            chat_id=test_credential.group_id, # group_message will parse thread_id from this if present
-            message=message,
-            file_path=final_photo_path
-        )
-
-        if "error" in response:
-            logger.error(f"Failed to send message: {response['error']}")
-            # The original code had a specific error handling for photo/text send failures
-            # I will keep the existing error handling structure for the combined response.
-            # This means the `if "error" in response:` block below will catch it.
-        
-        # The document sending logic was commented out in the original alert_views.py,
-        # so I will keep it commented out.
-        # if document_path and os.path.exists(document_path):
-        #     logger.info(f"Sending document for sample {sample.id}")
-        #     doc_caption = f"Attached document for: {sample.title}"
-        #     response = bot.send_document(test_credential.auth_token, test_credential.group_id, document_path, caption=doc_caption)
-        #     if "error" in response:
-        #         logger.error(f"Failed to send document: {response['error']}")
-        #     logger.info(f"Telegram API response for document: {response}")
-
-        # If no response was set (e.g., no photo, no text, no document to send), set a default success
-        if response is None:
-            response = {"status_code": 200, "text": "No content to send, but process completed."}
-
-        if response and "error" in response:
-            error_message = response["error"]
-            if "Unauthorized" in error_message or "Forbidden" in error_message or "invalid bot token" in error_message:
-                return jsonify({"show_modal": True, "title": "Test Failed", "message": "Wrong token. Please check your authentication token.", "category": "danger"})
-            elif "chat not found" in error_message or "kicked from the group chat" in error_message:
-                return jsonify({"show_modal": True, "title": "Test Failed", "message": "Wrong group ID. Please check the group ID.", "category": "danger"})
-            else:
-                return jsonify({"show_modal": False, "flash_message": f"Test message failed: {error_message}", "category": "danger"})
-        elif response and "status_code" in response and response["status_code"] != 200:
-            error_message = response["text"]
-            if "Unauthorized" in error_message or "Forbidden" in error_message or "invalid bot token" in error_message:
-                return jsonify({"show_modal": True, "title": "Test Failed", "message": "Wrong token. Please check your authentication token.", "category": "danger"})
-            elif "chat not found" in error_message or "kicked from the group chat" in error_message:
-                return jsonify({"show_modal": True, "title": "Test Failed", "message": "Wrong group ID. Please check the group ID.", "category": "danger"})
-            else:
-                return jsonify({"show_modal": False, "flash_message": f"Test message failed: API Error - {error_message}", "category": "danger"})
-        else:
-            return jsonify({"show_modal": False, "flash_message": 'Test message sent successfully to test group!', "category": "success"})
+        return jsonify({"show_modal": False, "flash_message": 'Test message has been queued for sending!', "category": "success"})
 
     except Exception as e:
-        logger.exception("Error sending test message:")
-        return jsonify({"show_modal": False, "flash_message": f"An unexpected error occurred during test message sending: {str(e)}", "category": "danger"})
+        logger.exception("Error queuing test message:")
+        return jsonify({"show_modal": False, "flash_message": f"An unexpected error occurred while queuing the test message: {str(e)}", "category": "danger"})
