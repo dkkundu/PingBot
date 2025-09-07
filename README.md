@@ -44,34 +44,34 @@ TZ=Asia/Dhaka
 ```
 # MySQL Configuration
 ```
-MYSQL_HOST=db<br>
-MYSQL_PORT=3306<br>
-MYSQL_DATABASE=notification_db<br>
-MYSQL_USER=your_mysql_user<br>
+MYSQL_HOST=db
+MYSQL_PORT=3306
+MYSQL_DATABASE=notification_db
+MYSQL_USER=your_mysql_user
 MYSQL_PASSWORD=your_mysql_password
 ```
 
 # Redis Configuration
 ```
-CELERY_BROKER_URL=redis://redis:6379/0<br>
-CELERY_BACKEND_URL=redis://redis:6379/0<br>
+CELERY_BROKER_URL=redis://redis:6379/0
+CELERY_BACKEND_URL=redis://redis:6379/0
 ```
 
 # Volume Paths
 ```
-LOG_DIR_HOST=./logs<br>
-IMAGE_DIR_HOST=./media<br>
+LOG_DIR_HOST=./logs
+IMAGE_DIR_HOST=./media
 ```
 
 # Media URL
 ```
-MEDIA_BASE_URL=http://localhost:5001<br>
+MEDIA_BASE_URL=http://localhost:5001
 ```
 
 # Telegram Bot API (optional)
 ```
-BOT_GROUP_API=YOUR_BOT_GROUP_API<br>
-BOT_PRIVATE_API=YOUR_BOT_PRIVATE_API<br>
+BOT_GROUP_API=YOUR_BOT_GROUP_API
+BOT_PRIVATE_API=YOUR_BOT_PRIVATE_API
 ```
 
 
