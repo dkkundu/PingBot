@@ -18,11 +18,17 @@ def create_app():
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
     # Database configuration with URL-encoding for password
-    db_user = os.getenv("MYSQL_USER", "osman")
-    db_password = quote_plus(os.getenv("MYSQL_PASSWORD", "osmanosman"))  # Encode special chars like @
-    db_host = os.getenv("MYSQL_HOST", "localhost")
-    db_port = os.getenv("MYSQL_PORT", "3306")
-    db_name = os.getenv("MYSQL_DATABASE", "Notification_Application")
+    db_user = os.getenv("MYSQL_USER")
+    db_password = quote_plus(os.getenv("MYSQL_PASSWORD"))  # Encode special chars like @
+    db_host = os.getenv("MYSQL_HOST")
+    db_port = os.getenv("MYSQL_PORT")
+    db_name = os.getenv("MYSQL_DATABASE")
+
+
+
+    print(db_port, "db_port---------------------------------")
+
+
 
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
         "SQLALCHEMY_DATABASE_URI",
