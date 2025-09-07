@@ -1,0 +1,42 @@
+# Flask app configuration
+APP_IMAGE=PING_BOT_IMAGE
+APP_PORT=8003
+APP_CONTAINER_NAME=pingbot_app
+FLASK_APP=app.app:create_app
+FLASK_ENV=development
+SECRET_KEY=!$@&f#-7@cbl72tDSFSFyd8ylsk27_3@5c562wtBillkd(h_ggdv+++kgt-
+JWT_SECRET_KEY=jwt-secret-key
+TZ=Asia/Dhaka
+
+# External MySQL
+# MySQL configuration
+MYSQL_HOST=192.168.68.176
+MYSQL_PORT=3306
+MYSQL_DATABASE=ping_bot_db
+MYSQL_USER=dkkundu
+MYSQL_PASSWORD=DKmySQLPAS#2
+
+# External Redis for Celery
+CELERY_BROKER_URL=redis://192.168.68.176:6380/0
+CELERY_BACKEND_URL=redis://10.123.140.101:6380/0
+
+
+USING_REDIS_PASSWORD=True
+REDIS_PASSWORD=27723
+REDIS_HOST=192.168.68.176
+REDIS_PORT=6379
+REDIS_DB=0
+
+
+
+# Volume paths
+LOG_DIR_HOST=./logs
+LOG_DIR=/app/logs
+IMAGE_DIR_HOST=./media
+IMAGE_DIR=/app/media
+
+# Telegram BOT API (optional)
+BOT_GROUP_API=https://a24fca455f8f.ngrok-free.app/send-message-group
+BOT_PRIVATE_API=YOUR_BOT_PRIVATE_API
+
+MEDIA_BASE_URL=http://10.123.140.101:5001
