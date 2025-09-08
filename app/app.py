@@ -34,7 +34,6 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "supersecretkey")
     app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY", "jwt-secret-key")
     app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-    flask_logger.info(f"SQLALCHEMY_DATABASE_URI: {db_uri}")
 
     # Initialize extensions
     try:

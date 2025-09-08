@@ -681,23 +681,23 @@ def delete_test_credential(id):
 @alert_bp.route('/samples/test_message/<int:sample_id>', methods=['POST'])
 def test_sample_message(sample_id):
     sample = AlertSample.query.get_or_404(sample_id)
-    
-    # Find the active TestCredentials for this sample's service
-    service = AlertService.query.get(sample.service.id)
-    test_credential = TestCredentials.query.filter_by(
-        service_code=service.code,
-        is_active=True
-    ).first()
+
+    try:
+        # Find the active TestCredentials for this sample's service
+        test_credential = TestCredentials.query.filter_by(
+            service_code=sample.config.service.code,
+            is_active=True
+        ).first()
+    except Exception as e:
+        logger.exception("Error fetching TestCredentials:")
+        return jsonify({"show_modal": True, "title": "Action Required", "message": f"An error occurred while fetching Test Credentials: {str(e)}", "category": "danger"})
+
+    print(f"Testing sample ID: {sample.id} with service code: {sample.config.service.code} \n")
+    print(f"test_credential: {test_credential}\n")
 
     if not test_credential:
         return jsonify({"show_modal": True, "title": "Action Required", "message": "No active Test Credentials found for this service.", "category": "danger"})
 
-    try:
-        # Offload the sending of the test message to the Celery task
-        send_test_alert_task.delay(sample.id, test_credential.id)
-        
-        return jsonify({"show_modal": False, "flash_message": 'Test message has been queued for sending!', "category": "success"})
+    send_test_alert_task.delay(sample.id, test_credential.id)
+    return jsonify({"show_modal": True, "title": "Request in Process", "message": "Your test message is being processed.", "category": "success"})
 
-    except Exception as e:
-        logger.exception("Error queuing test message:")
-        return jsonify({"show_modal": False, "flash_message": f"An unexpected error occurred while queuing the test message: {str(e)}", "category": "danger"})
