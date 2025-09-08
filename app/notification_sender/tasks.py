@@ -188,7 +188,12 @@ def check_scheduled_alerts():
                 
                 celery_logger.info(f"Dispatching alert from log {log.id} for sample {log.sample_id}")
                 scheduled_alerts_logger.info(f"Dispatching alert from log {log.id} for sample {log.sample_id}.")
-                send_alert_task.delay(log.sample_id, log_id=log.id)
+                try:
+                    send_alert_task.delay(log.sample_id, log_id=log.id)
+                except Exception as dispatch_e:
+                    scheduled_alerts_logger.exception(f"Error dispatching send_alert_task for log {log.id}: {dispatch_e}")
+                    log.status = 'dispatch_failed' # Update log status
+                    db.session.commit()
             scheduled_alerts_logger.info("Finished check_scheduled_alerts task.")
     except Exception as e:
         scheduled_alerts_logger.exception(f"Error in check_scheduled_alerts task: {e}")
