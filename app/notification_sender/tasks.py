@@ -85,11 +85,12 @@ def send_alert_task(self, sample_id, log_id=None):
             final_photo_path = photo_path if (photo_path and os.path.exists(photo_path)) else None
             
             celery_logger.info(f"Sending message for alert {sample.id} to {target_chat_id} with photo: {final_photo_path}")
+
             response = telegram_bot.group_message(
                 auth_token=config.auth_token,
-                chat_id=target_chat_id, # group_message will parse thread_id from this if present
+                group_id=target_chat_id, # group_message will parse thread_id from this if present
                 message=message,
-                file_path=final_photo_path
+                images_path=final_photo_path
             )
 
             if "error" in response:
@@ -210,11 +211,11 @@ def send_test_alert_task(self, sample_id, test_credential_id):
         test_credential = TestCredentials.query.get(test_credential_id)
 
         if not sample:
-            test_message_logger.error(f"Test message failed: Sample {sample_id} not found.")
+            test_message_logger.error(f"Test message failed")
             return "Sample not found"
         
         if not test_credential:
-            test_message_logger.error(f"Test message failed: Test Credential {test_credential_id} not found.")
+            test_message_logger.error(f"Test message failed: Test Credential not found.")
             return "Test Credential not found"
 
         try:
@@ -222,25 +223,25 @@ def send_test_alert_task(self, sample_id, test_credential_id):
             
             # Define file paths
             photo_path = os.path.join(app.config['UPLOAD_FOLDER'], sample.photo_upload) if sample.photo_upload else None
-            document_path = os.path.join(app.config['UPLOAD_FOLDER'], sample.document_upload) if sample.document_upload else None
+            # document_path = os.path.join(app.config['UPLOAD_FOLDER'], sample.document_upload) if sample.document_upload else None
 
             # --- Sending Logic ---
             final_photo_path = photo_path if (photo_path and os.path.exists(photo_path)) else None
 
-            celery_logger.info(f"Sending test message for sample {sample.id} with photo: {final_photo_path}")
+            celery_logger.info(f"Sending test message for sample {sample.title} with photo: {final_photo_path}")
             response = telegram_bot.group_message(
                 auth_token=test_credential.auth_token,
-                chat_id=test_credential.group_id,
+                group_id=test_credential.group_id,
                 message=message,
-                file_path=final_photo_path
+                images_path=final_photo_path
             )
 
             if "error" in response:
                 raise Exception(f"Failed to send message: {response['error']}")
 
-            celery_logger.info(f"Test alert for sample {sample.id} processed successfully.")
-            test_message_logger.info(f"Test message for sample {sample.id} sent successfully to chat_id: {test_credential.group_id}.")
-            return f"Test alert for sample {sample.id} sent"
+            celery_logger.info(f"Test alert for sample {sample.title}  processed successfully.")
+            test_message_logger.info(f"Test message for sample {sample.title}  sent successfully to chat_id: {test_credential.group_id}.")
+            return f"Test alert for sample {sample.title} sent"
 
         except Exception as exc:
             redacted_error_message = redact_token(f"Error sending test alert for sample {sample_id}: {exc}", test_credential.auth_token if test_credential else None)

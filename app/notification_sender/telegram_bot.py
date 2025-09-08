@@ -16,7 +16,7 @@ def redact_token_from_url(url, token):
         return url.replace(token, "[REDACTED_AUTH_TOKEN]")
     return url
 
-class TelegramBot:
+class TelegramBot2:
     """
     A class to handle sending messages to Telegram.
     """
@@ -187,3 +187,70 @@ class TelegramBot:
         except Exception as e:
             telegram_logger.error(f"An unexpected error occurred while sending document: {e}")
             return {"error": str(e)}
+
+
+
+class TelegramBot:
+
+    def __init__(self):
+        self.url = bot_private_api
+        self.group_url = bot_group_api
+
+    def individual_message(self, mobile_number, message, image_url=None, file_path=None):
+        if image_url:
+            message = message + "\n" + "<a href='" + image_url + "'><i>Snapshot</i></a>"
+        payload = {
+            'mobile_number': mobile_number,
+            'message': message}
+        if file_path:
+            payload['file_path'] = file_path
+        payload = json.dumps(payload)
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        response = requests.request(
+            "POST", self.url, headers=headers, data=payload, timeout=10)
+        print(response.json())
+
+    def group_message(self, auth_token, group_id, message, images_path=None):
+        thread_id = None
+        if '_' in group_id:
+            group_id, thread_id = group_id.split('_', 1)
+
+        payload = {
+            "api_token": auth_token,
+            "group_id": group_id,
+            "message": message
+        }
+        if images_path:
+            payload['file_path'] = images_path
+        if thread_id:
+            payload['thread_id'] = thread_id
+
+        headers = {"Content-Type": "application/json"}
+
+        try:
+            response = requests.post(
+                self.group_url,
+                headers=headers,
+                data=json.dumps(payload),
+                timeout=10
+            )
+
+            # Log raw response for debugging
+            telegram_logger.debug(f"Telegram response status={response.status_code}, text={response.text}")
+
+            try:
+                return response.json()
+            except ValueError:
+                telegram_logger.error(f"Non-JSON response from Telegram API: {response.text}")
+                return {
+                    "ok": False,
+                    "error": "Invalid JSON response",
+                    "status_code": response.status_code,
+                    "raw": response.text
+                }
+
+        except requests.RequestException as e:
+            telegram_logger.error(f"Telegram request failed: {str(e)}")
+            return {"ok": False, "error": str(e)}
