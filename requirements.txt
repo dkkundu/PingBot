@@ -12,3 +12,4 @@ requests==2.31.0
 Flask-JWT-Extended
 cryptography
 gunicorn
+daphne

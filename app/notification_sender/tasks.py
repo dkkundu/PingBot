@@ -1,4 +1,3 @@
-
 import os
 import pytz
 import re
@@ -11,16 +10,24 @@ from app.notification_sender.message_geneator import get_messages
 from app.extensions import db
 from datetime import datetime,timedelta
 from app.celery_config import celery
-from app.logging_config import celery_logger
+from app.logging_config import celery_logger, test_message_logger, scheduled_alerts_logger
+from werkzeug.utils import secure_filename
+from flask import current_app
 
 # Initialize TelegramBot
 telegram_bot = TelegramBot()
+
+def redact_token(message, token):
+    if token and token in message:
+        return message.replace(token, "[REDACTED_AUTH_TOKEN]")
+    return message
 
 @celery.task(bind=True, max_retries=3)
 def send_alert_task(self, sample_id, log_id=None):
     """
     Celery task to send an alert with photo and document support.
     """
+    celery_logger.info(f"send_alert_task received for sample {sample_id}, log {log_id}") # Added log
     from app.app import create_app
     app = create_app()
     with app.app_context():
@@ -92,6 +99,8 @@ def send_alert_task(self, sample_id, log_id=None):
             # so I will keep it commented out. If it needs to be re-enabled,
             # it would require a separate call to group_message or a new method
             # in telegram_bot.py for documents.
+            
+            
             # if document_path and os.path.exists(document_path):
             #     celery_logger.info(f"Sending document for alert {sample.id} to {target_chat_id}")
             #     doc_caption = f"Attached document for: {sample.title}"
@@ -101,7 +110,7 @@ def send_alert_task(self, sample_id, log_id=None):
             #     if "error" in response:
             #         raise Exception(f"Failed to send document: {response['error']}")
 
-            # Mark the alert as sent
+            # # Mark the alert as sent
             sample.sent_at = datetime.now(pytz.utc)
             if log:
                 log.status = "sent"
@@ -124,9 +133,9 @@ def send_alert_task(self, sample_id, log_id=None):
                     api_error_response = exc.response.json()
                     if "description" in api_error_response:
                         error_message_from_api = api_error_response["description"]
-                        if "Unauthorized" in error_message_from_api or "Forbidden" in error_message_from_api or "invalid bot token" in error_message_from_api:
+                        if "Unauthorized" in error_message_from_api or "Forbidden" in error_message_for_log or "invalid bot token" in error_message_for_log:
                             error_message_for_log = "Wrong token. Please check your authentication token."
-                        elif "chat not found" in error_message_from_api or "kicked from the group chat" in error_message_from_api:
+                        elif "chat not found" in error_message_for_log or "kicked from the group chat" in error_message_for_log:
                             error_message_for_log = "Wrong group ID. Please check the group ID."
                         else:
                             error_message_for_log = f"Telegram API Error: {error_message_from_api}"
@@ -146,10 +155,10 @@ def send_alert_task(self, sample_id, log_id=None):
 
             if log:
                 log.status = "failed"
-                log.error_message = error_message_for_log
+                log.error_message = redact_token(error_message_for_log, config.auth_token if config else None)
                 log.retry_count = (log.retry_count or 0) + 1
             db.session.commit()
-            celery_logger.exception(f"Error sending alert {sample_id}: {exc}")
+            celery_logger.exception(redact_token(f"Error sending alert {sample_id}: {exc}", config.auth_token if config else None))
             raise self.retry(exc=exc, countdown=60)
 
 
@@ -160,23 +169,34 @@ def check_scheduled_alerts():
     """
     from app.app import create_app
     app = create_app()
-    with app.app_context():
-        now = datetime.now(pytz.utc)
-        
-        # Find all log entries that are queued and past their scheduled time.
-        logs_to_process = AlertLog.query.filter(
-            AlertLog.status == 'queued',
-            AlertLog.scheduled_for <= now
-        ).all()
-
-        for log in logs_to_process:
-            # Mark as 'sending' to prevent this worker, or another one,
-            # from picking up the same log in the next scheduler run.
-            log.status = 'sending'
-            db.session.commit()
+    try:
+        with app.app_context():
+            scheduled_alerts_logger.info("Starting check_scheduled_alerts task.")
+            now = datetime.now(pytz.utc)
             
-            celery_logger.info(f"Dispatching alert from log {log.id} for sample {log.sample_id}")
-            send_alert_task.delay(log.sample_id, log_id=log.id)
+            # Find all log entries that are queued and past their scheduled time.
+            logs_to_process = AlertLog.query.filter(
+                AlertLog.status == 'queued',
+                AlertLog.scheduled_for <= now
+            ).all()
+
+            for log in logs_to_process:
+                # Mark as 'sending' to prevent this worker, or another one,
+                # from picking up the same log in the next scheduler run.
+                log.status = 'sending'
+                db.session.commit()
+                
+                celery_logger.info(f"Dispatching alert from log {log.id} for sample {log.sample_id}")
+                scheduled_alerts_logger.info(f"Dispatching alert from log {log.id} for sample {log.sample_id}.")
+                try:
+                    send_alert_task.delay(log.sample_id, log_id=log.id)
+                except Exception as dispatch_e:
+                    scheduled_alerts_logger.exception(f"Error dispatching send_alert_task for log {log.id}: {dispatch_e}")
+                    log.status = 'dispatch_failed' # Update log status
+                    db.session.commit()
+            scheduled_alerts_logger.info("Finished check_scheduled_alerts task.")
+    except Exception as e:
+        scheduled_alerts_logger.exception(f"Error in check_scheduled_alerts task: {e}")
 
 @celery.task(bind=True, max_retries=3)
 def send_test_alert_task(self, sample_id, test_credential_id):
@@ -190,11 +210,11 @@ def send_test_alert_task(self, sample_id, test_credential_id):
         test_credential = TestCredentials.query.get(test_credential_id)
 
         if not sample:
-            celery_logger.error(f"Sample {sample_id} not found")
+            test_message_logger.error(f"Test message failed: Sample {sample_id} not found.")
             return "Sample not found"
         
         if not test_credential:
-            celery_logger.error(f"Test Credential {test_credential_id} not found")
+            test_message_logger.error(f"Test message failed: Test Credential {test_credential_id} not found.")
             return "Test Credential not found"
 
         try:
@@ -219,9 +239,65 @@ def send_test_alert_task(self, sample_id, test_credential_id):
                 raise Exception(f"Failed to send message: {response['error']}")
 
             celery_logger.info(f"Test alert for sample {sample.id} processed successfully.")
+            test_message_logger.info(f"Test message for sample {sample.id} sent successfully to chat_id: {test_credential.group_id}.")
             return f"Test alert for sample {sample.id} sent"
 
         except Exception as exc:
-            celery_logger.exception(f"Error sending test alert for sample {sample_id}: {exc}")
+            redacted_error_message = redact_token(f"Error sending test alert for sample {sample_id}: {exc}", test_credential.auth_token if test_credential else None)
+            celery_logger.exception(redacted_error_message)
+            test_message_logger.error(f"Failed to send test message for sample {sample.id} to chat_id: {test_credential.group_id}. Error: {redacted_error_message}")
             # We don't want to retry test messages
-            return f"Error sending test alert for sample {sample_id}: {exc}"
+            return redacted_error_message
+
+@celery.task(bind=True)
+def process_sample_creation_task(self, sample_id, photo_filename, document_filename, scheduled_for_utc_str, queued_at_utc_str, sender_id, target_user_id, audience, service_id, config_id, sender_name):
+    """
+    Celery task to handle file uploads and AlertLog creation for a new sample.
+    """
+    from app.app import create_app
+    app = create_app()
+    with app.app_context():
+        try:
+            sample = AlertSample.query.get(sample_id)
+            if not sample:
+                celery_logger.error(f"Sample {sample_id} not found in process_sample_creation_task.")
+                return "Sample not found"
+
+            # Update sample with photo filename
+            if photo_filename:
+                sample.photo_upload = photo_filename
+
+            # Update sample with document filename
+            if document_filename:
+                sample.document_upload = document_filename
+            
+            # Update sample with filenames and commit
+            db.session.add(sample)
+            db.session.commit()
+
+            # Convert string datetimes back to datetime objects
+            scheduled_for_utc = datetime.fromisoformat(scheduled_for_utc_str) if scheduled_for_utc_str else None
+            queued_at_utc = datetime.fromisoformat(queued_at_utc_str)
+
+            # Create AlertLog entry
+            log = AlertLog(
+                sample_id=sample.id,
+                service_id=service_id,
+                config_id=config_id,
+                sender_id=sender_id,
+                sender_name=sender_name,
+                target_user_id=target_user_id,
+                audience=audience,
+                status="queued",
+                scheduled_for=scheduled_for_utc,
+                queued_at=queued_at_utc
+            )
+            db.session.add(log)
+            db.session.commit()
+            celery_logger.info(f"Sample {sample_id} processed and log created successfully by Celery task.")
+            return "Sample processed and log created"
+
+        except Exception as e:
+            db.session.rollback()
+            celery_logger.exception(f"Error in process_sample_creation_task for sample {sample_id}:")
+            raise # Re-raise to allow Celery to handle retries if configured

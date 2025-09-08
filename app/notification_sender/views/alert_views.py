@@ -7,6 +7,7 @@ from app.notification_sender.models import AlertService, AlertConfig, AlertSampl
 from app.authentication.models import User
 from datetime import datetime, date, time
 from app.notification_sender.tasks import send_alert_task, send_test_alert_task
+import time
 from app.notification_sender.telegram_bot import TelegramBot
 from app.notification_sender.message_geneator import get_messages
 
@@ -65,7 +66,7 @@ def list_logs():
 
 @alert_bp.route('/logs/<int:id>')
 def detail_log(id):
-    log = AlertLog.query.get_or_404(id)
+    log = AlertLog.query.options(joinedload(AlertLog.sender)).get_or_404(id)
     if log.queued_at:
         log.queued_at = pytz.utc.localize(log.queued_at).astimezone(LOCAL_TZ)
     if log.sent_at:
@@ -279,92 +280,122 @@ def create_sample():
         config_item.service = AlertService.query.get(config_item.service_id)
 
     if request.method == 'POST':
-        service_code = request.form['service_code']
-        service = AlertService.query.filter_by(code=service_code).first()
-        if not service:
-            flash('Invalid Service Code provided.', 'error')
+        try:
+            service_code = request.form['service_code']
+            service = AlertService.query.filter_by(code=service_code).first()
+            if not service:
+                flash('Invalid Service Code provided.', 'error')
+                return redirect(url_for('alert.create_sample'))
+
+            config = AlertConfig.query.get(request.form['config_id'])
+            user = User.query.get(request.form.get('user_id')) if request.form.get('user_id') else None
+            
+            current_user_id_for_task = current_user.id if current_user else None
+            user_id_for_task = user.id if user else None
+
+            # Handle photo and document uploads
+            photo_file = request.files.get('photo_upload')
+            document_file = request.files.get('document_upload')
+            photo_filename = None
+            document_filename = None
+
+            logger.info(f"Photo file received: {bool(photo_file)} - Filename: {photo_file.filename if photo_file else 'N/A'}")
+            logger.info(f"Document file received: {bool(document_file)} - Filename: {document_file.filename if document_file else 'N/A'}")
+
+            if photo_file and photo_file.filename != '':
+                photo_filename = secure_filename(photo_file.filename)
+                logger.info(f"Saving photo: {photo_filename}")
+                photo_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], photo_filename))
+                logger.info(f"Photo saved: {photo_filename}")
+
+            if document_file and document_file.filename != '':
+                document_filename = secure_filename(document_file.filename)
+                logger.info(f"Saving document: {document_filename}")
+                document_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], document_filename))
+                logger.info(f"Document saved: {document_filename}")
+
+            start_date_str = request.form.get('start_date')
+            start_time_str = request.form.get('start_time')
+            end_date_str = request.form.get('end_date')
+
+            start_datetime = None
+            if start_date_str and start_time_str:
+                start_datetime = datetime.strptime(f"{start_date_str} {start_time_str}", "%Y-%m-%d %H:%M")
+                start_datetime = LOCAL_TZ.localize(start_datetime)
+
+            end_date = None
+            if end_date_str:
+                end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+
+            is_recurring = 'is_recurring' in request.form
+            received_recurrence_interval = request.form.get('recurrence_interval')
+            
+            sender_name_from_form = request.form.get('sender_name')
+            if sender_name_from_form:
+                final_sender_name = sender_name_from_form
+            elif current_user and current_user.full_name:
+                final_sender_name = current_user.full_name
+            else:
+                final_sender_name = "System"
+
+            new_sample = AlertSample(
+                company_name=request.form.get('company_name'),
+                sender_name=final_sender_name,
+                service_id=service.id,
+                config_id=config.id,
+                user_id=user.id if user else None,
+                device_type_id=int(request.form.get('device_type_id')) if request.form.get('device_type_id') else None,
+                title=request.form['title'],
+                body=request.form.get('body'),
+                # photo_upload and document_upload will be set by the Celery task
+                start_date=start_datetime.astimezone(pytz.utc).date() if start_datetime else None,
+                start_time=start_datetime.astimezone(pytz.utc).time() if start_datetime else None,
+                end_date=end_date,
+                is_recurring=is_recurring,
+                recurrence_interval=received_recurrence_interval if is_recurring else None,
+                type="Recurring" if is_recurring else "One-Time"
+            )
+            db.session.add(new_sample)
+            db.session.commit()
+            db.session.refresh(new_sample)
+
+            # Dispatch task to handle file uploads and AlertLog creation
+            from app.notification_sender.tasks import process_sample_creation_task
+
+            from app.notification_sender.tasks import process_sample_creation_task
+            
+            max_retries = 3
+            for i in range(max_retries):
+                try:
+                    process_sample_creation_task.delay(
+                        new_sample.id,
+                        photo_filename,
+                        document_filename,
+                        start_datetime.astimezone(pytz.utc).isoformat() if start_datetime else None,
+                        datetime.now(pytz.utc).isoformat(),
+                        current_user_id_for_task,
+                        user_id_for_task,
+                        "all", # audience
+                        service.id,
+                        config.id,
+                        new_sample.sender_name
+                    )
+                    break # If successful, break the loop
+                except Exception as celery_e:
+                    logger.warning(f"Attempt {i+1}/{max_retries} to dispatch Celery task failed: {celery_e}")
+                    if i < max_retries - 1:
+                        time.sleep(1) # Wait a bit before retrying
+                    else:
+                        raise # Re-raise if all retries fail
+            flash('Alert Sample created successfully!', 'success')
+            db.session.close() # Explicitly close the session
+            return redirect(url_for('alert.list_samples'))
+
+        except Exception as e:
+            db.session.rollback()
+            logger.exception("Error creating sample:")
+            flash(f'An error occurred while creating the sample: {e}', 'error')
             return redirect(url_for('alert.create_sample'))
-
-        config = AlertConfig.query.get(request.form['config_id'])
-        user = User.query.get(request.form.get('user_id')) if request.form.get('user_id') else None
-
-        # Handle photo and document uploads
-        photo_file = request.files.get('photo_upload')
-        document_file = request.files.get('document_upload')
-        photo_filename = None
-        document_filename = None
-
-        if photo_file and photo_file.filename != '':
-            photo_filename = secure_filename(photo_file.filename)
-            photo_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], photo_filename))
-
-        if document_file and document_file.filename != '':
-            document_filename = secure_filename(document_file.filename)
-            document_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], document_filename))
-
-        start_date_str = request.form.get('start_date')
-        start_time_str = request.form.get('start_time')
-        end_date_str = request.form.get('end_date')
-
-        start_datetime = None
-        if start_date_str and start_time_str:
-            start_datetime = datetime.strptime(f"{start_date_str} {start_time_str}", "%Y-%m-%d %H:%M")
-            start_datetime = LOCAL_TZ.localize(start_datetime)
-
-        end_date = None
-        if end_date_str:
-            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
-
-        is_recurring = 'is_recurring' in request.form
-        received_recurrence_interval = request.form.get('recurrence_interval')
-        
-        sender_name_from_form = request.form.get('sender_name')
-        if sender_name_from_form:
-            final_sender_name = sender_name_from_form
-        elif current_user and current_user.full_name:
-            final_sender_name = current_user.full_name
-        else:
-            final_sender_name = "System"
-
-        new_sample = AlertSample(
-            company_name=request.form.get('company_name'),
-            sender_name=final_sender_name,
-            service_id=service.id,
-            config_id=config.id,
-            user_id=user.id if user else None,
-            device_type_id=int(request.form.get('device_type_id')) if request.form.get('device_type_id') else None,
-            title=request.form['title'],
-            body=request.form.get('body'),
-            photo_upload=photo_filename,
-            document_upload=document_filename,
-            start_date=start_datetime.astimezone(pytz.utc).date() if start_datetime else None,
-            start_time=start_datetime.astimezone(pytz.utc).time() if start_datetime else None,
-            end_date=end_date,
-            is_recurring=is_recurring,
-            recurrence_interval=received_recurrence_interval if is_recurring else None,
-            type="Recurring" if is_recurring else "One-Time"
-        )
-        db.session.add(new_sample)
-        db.session.commit()
-
-        log = AlertLog(
-            sample_id=new_sample.id,
-            service_id=new_sample.service_id,
-            config_id=new_sample.config_id,
-            sender_id=current_user.id if current_user else None,
-            sender_name=new_sample.sender_name,
-            target_user_id=user.id if user else None,
-            audience="all",
-            status="queued",
-            scheduled_for=start_datetime.astimezone(pytz.utc) if start_datetime else None,
-            queued_at=datetime.now(pytz.utc)
-        )
-        db.session.add(log)
-        db.session.commit()
-
-        
-
-        return redirect(url_for('alert.list_samples'))
 
     return render_template('create_sample.html', services=services, configs=configs, users=users, current_user=current_user)
 
@@ -394,15 +425,23 @@ def edit_sample(id):
 
         # Handle photo and document uploads
         photo_file = request.files.get('photo_upload')
+        document_file = request.files.get('document_upload')
+
+        logger.info(f"Edit Sample - Photo file received: {bool(photo_file)} - Filename: {photo_file.filename if photo_file else 'N/A'}")
+        logger.info(f"Edit Sample - Document file received: {bool(document_file)} - Filename: {document_file.filename if document_file else 'N/A'}")
+
         if photo_file and photo_file.filename != '':
             photo_filename = secure_filename(photo_file.filename)
+            logger.info(f"Edit Sample - Saving photo: {photo_filename}")
             photo_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], photo_filename))
+            logger.info(f"Edit Sample - Photo saved: {photo_filename}")
             sample.photo_upload = photo_filename
 
-        document_file = request.files.get('document_upload')
         if document_file and document_file.filename != '':
             document_filename = secure_filename(document_file.filename)
+            logger.info(f"Edit Sample - Saving document: {document_filename}")
             document_file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], document_filename))
+            logger.info(f"Edit Sample - Document saved: {document_filename}")
             sample.document_upload = document_filename
 
         sender_name_from_form = request.form.get('sender_name')
@@ -526,6 +565,13 @@ def detail_sample(id):
     sample.start_datetime_str = start_datetime.strftime("%I:%M %p %Y-%m-%d") if start_datetime else ""
 
     logs = AlertLog.query.filter_by(sample_id=sample.id).order_by(AlertLog.queued_at.desc()).all()
+    for log in logs:
+        if log.queued_at:
+            log.queued_at = pytz.utc.localize(log.queued_at).astimezone(LOCAL_TZ)
+        if log.sent_at:
+            log.sent_at = pytz.utc.localize(log.sent_at).astimezone(LOCAL_TZ)
+        if log.scheduled_for:
+            log.scheduled_for = pytz.utc.localize(log.scheduled_for).astimezone(LOCAL_TZ)
     return render_template('detail_sample.html', sample=sample, service=service, config=config, user=user, current_user=current_user, logs=logs)
 
 

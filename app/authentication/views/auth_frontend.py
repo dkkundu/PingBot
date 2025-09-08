@@ -61,7 +61,9 @@ def dashboard():
     start_time = datetime.now()
 
     user_id = session.get('user_id')
-    current_user = User.query.get(user_id)
+    current_user = None
+    if user_id:
+        current_user = User.query.get(user_id)
 
     if not current_user:
         flash("You must be logged in to view this page.", "danger")

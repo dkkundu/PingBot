@@ -11,6 +11,11 @@ load_dotenv()
 bot_group_api = os.getenv("BOT_GROUP_API")
 bot_private_api = os.getenv("BOT_PRIVATE_API")
 
+def redact_token_from_url(url, token):
+    if token and token in url:
+        return url.replace(token, "[REDACTED_AUTH_TOKEN]")
+    return url
+
 class TelegramBot:
     """
     A class to handle sending messages to Telegram.
@@ -90,27 +95,45 @@ class TelegramBot:
 
         files = {}
         if file_path and os.path.exists(file_path):
-            telegram_logger.info(f"Attempting to send photo from: {file_path} to chat_id: {chat_id}")
-            url = f"https://api.telegram.org/bot{auth_token}/sendPhoto"
-            
-            caption = message # Use original message for caption, assuming it's already escaped where needed
-            if len(caption) > 1024: # Telegram caption limit
-                telegram_logger.warning(f"Caption for photo exceeds 1024 characters. Truncating. Original length: {len(caption)}")
-                caption = caption[:1020] + "..." # Truncate and add ellipsis
+            file_extension = os.path.splitext(file_path)[1].lower()
+            if file_extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']:# <--- This line
+                telegram_logger.info(f"Attempting to send photo from: {file_path} to chat_id: {chat_id}")
+                url = f"https://api.telegram.org/bot{auth_token}/sendPhoto"
+                
+                caption = message # Use original message for caption, assuming it's already escaped where needed
+                if len(caption) > 1024: # Telegram caption limit
+                    telegram_logger.warning(f"Caption for photo exceeds 1024 characters. Truncating. Original length: {len(caption)}")
+                    caption = caption[:1020] + "..." # Truncate and add ellipsis
 
-            payload["caption"] = caption # Use caption for photo
-            
-            try:
-                files = {'photo': (os.path.basename(file_path), open(file_path, 'rb'))}
-            except FileNotFoundError:
-                telegram_logger.error(f"File not found at {file_path} for group message.")
-                return {"error": "File not found"}
+                payload["caption"] = caption # Use caption for photo
+                
+                try:
+                    files = {'photo': (os.path.basename(file_path), open(file_path, 'rb'))}
+                except FileNotFoundError:
+                    telegram_logger.error(f"File not found at {file_path} for group message.")
+                    return {"error": "File not found"}
+            else: # Assume it's a document if not a recognized image type
+                telegram_logger.info(f"Attempting to send document from: {file_path} to chat_id: {chat_id}")
+                url = f"https://api.telegram.org/bot{auth_token}/sendDocument"
+                
+                caption = message # Use original message for caption, assuming it's already escaped where needed
+                if len(caption) > 1024: # Telegram caption limit
+                    telegram_logger.warning(f"Caption for document exceeds 1024 characters. Truncating. Original length: {len(caption)}")
+                    caption = caption[:1020] + "..." # Truncate and add ellipsis
+
+                payload["caption"] = caption # Use caption for document
+                
+                try:
+                    files = {'document': (os.path.basename(file_path), open(file_path, 'rb'))}
+                except FileNotFoundError:
+                    telegram_logger.error(f"File not found at {file_path} for group message.")
+                    return {"error": "File not found"}
         else:
             url = f"https://api.telegram.org/bot{auth_token}/sendMessage"
             payload["text"] = message # Use original message for text, assuming it's already escaped where needed
 
         log_payload = payload.copy()
-        telegram_logger.info(f"Sending group message to {chat_id}. Payload: {json.dumps(log_payload)}")
+        telegram_logger.info(f"Sending group message to {chat_id}. URL: {redact_token_from_url(url, auth_token)}. Payload: {json.dumps(log_payload)}")
 
         try:
             if files:
@@ -121,7 +144,7 @@ class TelegramBot:
             telegram_logger.info(f"Group API response: {response.text}")
             return response.json()
         except requests.exceptions.RequestException as e:
-            telegram_logger.error(f"Error sending group message: {e}")
+            telegram_logger.error(f"Error sending group message to {redact_token_from_url(url, auth_token)}: {e}")
             if e.response:
                 telegram_logger.error(f"Telegram API full error response: {e.response.text}")
             return {"error": str(e)}
@@ -129,3 +152,38 @@ class TelegramBot:
             # This part of the original code is problematic as response might not be defined if RequestException occurs
             # Keeping it for now as per user's request to keep the code, but noting it.
             return {"status_code": response.status_code, "text": response.text}
+
+    def send_document(self, auth_token, chat_id, file_path, caption=None, thread_id=None):
+        """
+        Sends a document to a group or individual chat.
+        """
+        url = f"https://api.telegram.org/bot{auth_token}/sendDocument"
+        
+        payload = {
+            "chat_id": chat_id,
+            "parse_mode": "HTML"
+        }
+        if caption:
+            payload["caption"] = caption
+        if thread_id:
+            payload["message_thread_id"] = thread_id
+
+        try:
+            with open(file_path, 'rb') as f:
+                files = {'document': (os.path.basename(file_path), f)}
+                telegram_logger.info(f"Sending document from: {file_path} to chat_id: {chat_id}. URL: {redact_token_from_url(url, auth_token)}")
+                response = requests.post(url, data=payload, files=files, timeout=30) # Increased timeout for file uploads
+                response.raise_for_status()
+                telegram_logger.info(f"Document API response: {response.text}")
+                return response.json()
+        except FileNotFoundError:
+            telegram_logger.error(f"File not found at {file_path} for sending document.")
+            return {"error": "File not found"}
+        except requests.exceptions.RequestException as e:
+            telegram_logger.error(f"Error sending document to {redact_token_from_url(url, auth_token)}: {e}")
+            if e.response:
+                telegram_logger.error(f"Telegram API full error response: {e.response.text}")
+            return {"error": str(e)}
+        except Exception as e:
+            telegram_logger.error(f"An unexpected error occurred while sending document: {e}")
+            return {"error": str(e)}

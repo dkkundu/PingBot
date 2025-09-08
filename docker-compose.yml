@@ -12,13 +12,11 @@ services:
       - ./app:/app/app
       - ${LOG_DIR_HOST}:${LOG_DIR}
       - ${IMAGE_DIR_HOST}:${IMAGE_DIR}
-    command: >
-      bash -c "
-      echo 'Starting Gunicorn...';
-      gunicorn -w 4 -b 0.0.0.0:5001 'app.app:create_app()'
-      "
     networks:
       - sslsentinel_ping_bot
+    
+
+  
 
 networks:
   sslsentinel_ping_bot:

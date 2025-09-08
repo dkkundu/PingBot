@@ -40,3 +40,5 @@ def setup_logger(name, log_file, level=logging.INFO):
 flask_logger = setup_logger("FlaskApp", "flask_app.log")
 celery_logger = setup_logger("CeleryWorker", "celery_worker.log")
 telegram_logger = setup_logger("TelegramBot", "telegram_bot.log")
+test_message_logger = setup_logger("TestMessages", "test_messages.log")
+scheduled_alerts_logger = setup_logger("ScheduledAlerts", "scheduled_alerts.log")
