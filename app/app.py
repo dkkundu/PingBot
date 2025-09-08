@@ -7,7 +7,7 @@ from .authentication.views.auth_frontend import frontend_bp
 from .notification_sender.views.alert_views import alert_bp
 from .logging_config import flask_logger
 from .celery_config import celery as celery_app
-import click
+import click,sys
 from app.authentication.models import User
 
 def create_app():
@@ -25,18 +25,32 @@ def create_app():
     db_name = os.getenv("MYSQL_DATABASE")
 
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+    db_uri = os.getenv(
         "SQLALCHEMY_DATABASE_URI",
         f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
     )
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "supersecretkey")
     app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY", "jwt-secret-key")
     app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    flask_logger.info(f"SQLALCHEMY_DATABASE_URI: {db_uri}")
 
     # Initialize extensions
-    db.init_app(app)
-    migrate.init_app(app, db)
+    try:
+        db.init_app(app)
+        flask_logger.info("Database initialized successfully.")
+    except Exception as e:
+        flask_logger.error(f"Error initializing database: {e}")
+        sys.exit(1) # Exit if database initialization fails
+
+    try:
+        migrate.init_app(app, db)
+        flask_logger.info("Migrations initialized successfully.")
+    except Exception as e:
+        flask_logger.error(f"Error initializing migrations: {e}")
+        sys.exit(1) # Exit if migrations initialization fails
+
     jwt.init_app(app)
 
     # Register blueprints

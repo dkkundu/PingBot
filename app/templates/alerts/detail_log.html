@@ -13,7 +13,7 @@
                 <p><span class="font-semibold">Config:</span> {{ log.config.group_name if log.config else "N/A" }}</p>
             </div>
             <div>
-                <p><span class="font-semibold">Sender:</span> {{ log.sender_display_name }}</p>
+                <p><span class="font-semibold">Sender:</span> {{ log.sender_name if log.sender_name else (log.sender.full_name if log.sender else 'N/A') }}</p>
                 <p><span class="font-semibold">Target:</span> {{ log.target_display_name }}</p>
                 <p><span class="font-semibold">Audience:</span> {{ log.audience }}</p>
                 <p><span class="font-semibold">Status:</span> 
