@@ -23,6 +23,7 @@ else:
     broker=f"redis://{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/{os.getenv('REDIS_DB')}",
     backend=f"redis://{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/{os.getenv('REDIS_DB')}"
 )
+celery.conf.broker_connection_retry_on_startup = True
 
     
     # celery = Celery(

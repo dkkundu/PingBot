@@ -196,14 +196,18 @@ class TelegramBot:
         self.url = bot_private_api
         self.group_url = bot_group_api
 
-    def individual_message(self, mobile_number, message, image_url=None, file_path=None):
-        if image_url:
-            message = message + "\n" + "<a href='" + image_url + "'><i>Snapshot</i></a>"
+    def individual_message(self, mobile_number, message, images_path=None, file_path=None, full_file_path=None):
+        if images_path:
+            message = message + "\n" + "<a href='" + images_path + "'><i>Snapshot</i></a>"
         payload = {
             'mobile_number': mobile_number,
             'message': message}
         if file_path:
             payload['file_path'] = file_path
+
+        if full_file_path:
+            payload['full_file_path'] = full_file_path
+            
         payload = json.dumps(payload)
         headers = {
             'Content-Type': 'application/json'
@@ -212,7 +216,7 @@ class TelegramBot:
             "POST", self.url, headers=headers, data=payload, timeout=10)
         print(response.json())
 
-    def group_message(self, auth_token, group_id, message, images_path=None):
+    def group_message(self, auth_token, group_id, message, images_path=None, file_path=None, full_file_path=None):
         thread_id = None
         if '_' in group_id:
             group_id, thread_id = group_id.split('_', 1)
@@ -223,9 +227,14 @@ class TelegramBot:
             "message": message
         }
         if images_path:
+            payload['file_path'] = file_path
+        if images_path:
             payload['file_path'] = images_path
         if thread_id:
             payload['thread_id'] = thread_id
+
+        if full_file_path:
+            payload['full_file_path'] = full_file_path
 
         headers = {"Content-Type": "application/json"}
 

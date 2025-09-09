@@ -3,6 +3,8 @@ import pytz
 import re
 import html
 import json
+from pathlib import Path
+from flask import url_for
 from app.notification_sender.telegram_bot import TelegramBot
 from app.notification_sender.models import AlertSample, AlertLog, AlertConfig, TestCredentials
 from app.authentication.models import User
@@ -16,6 +18,12 @@ from flask import current_app
 
 # Initialize TelegramBot
 telegram_bot = TelegramBot()
+
+def get_images_path_for_bot(image_path_name_with_folder):
+    media_base_url = os.getenv("MEDIA_BASE_URL") 
+    return f"{media_base_url}/media/uploads/{image_path_name_with_folder}"
+
+
 
 def redact_token(message, token):
     if token and token in message:
@@ -208,6 +216,7 @@ def send_test_alert_task(self, sample_id, test_credential_id):
     app = create_app()
     with app.app_context():
         sample = AlertSample.query.get(sample_id)
+        test_message_logger.info(f"image_path_name_with_folder: {get_images_path_for_bot(sample.photo_upload)} ---------------")
         test_credential = TestCredentials.query.get(test_credential_id)
 
         if not sample:
@@ -226,14 +235,14 @@ def send_test_alert_task(self, sample_id, test_credential_id):
             # document_path = os.path.join(app.config['UPLOAD_FOLDER'], sample.document_upload) if sample.document_upload else None
 
             # --- Sending Logic ---
-            final_photo_path = photo_path if (photo_path and os.path.exists(photo_path)) else None
 
-            celery_logger.info(f"Sending test message for sample {sample.title} with photo: {final_photo_path}")
+            celery_logger.info(f"Final photo path: {get_images_path_for_bot(sample.photo_upload)}, Type: {type(get_images_path_for_bot(sample.photo_upload))}")
+
             response = telegram_bot.group_message(
                 auth_token=test_credential.auth_token,
                 group_id=test_credential.group_id,
                 message=message,
-                images_path=final_photo_path
+                full_file_path=get_images_path_for_bot(sample.photo_upload)
             )
 
             if "error" in response:
