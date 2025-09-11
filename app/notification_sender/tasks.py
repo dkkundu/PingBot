@@ -20,8 +20,11 @@ from flask import current_app
 telegram_bot = TelegramBot()
 
 def get_images_path_for_bot(image_path_name_with_folder):
-    media_base_url = os.getenv("MEDIA_BASE_URL") 
-    return f"{media_base_url}/media/uploads/{image_path_name_with_folder}"
+    media_base_url = os.getenv("MEDIA_BASE_URL")
+    if image_path_name_with_folder:
+        return f"{media_base_url}/media/uploads/{image_path_name_with_folder}"
+    else:
+        return None
 
 
 
@@ -238,12 +241,20 @@ def send_test_alert_task(self, sample_id, test_credential_id):
 
             celery_logger.info(f"Final photo path: {get_images_path_for_bot(sample.photo_upload)}, Type: {type(get_images_path_for_bot(sample.photo_upload))}")
 
-            response = telegram_bot.group_message(
-                auth_token=test_credential.auth_token,
-                group_id=test_credential.group_id,
-                message=message,
-                full_file_path=get_images_path_for_bot(sample.photo_upload)
-            )
+            if get_images_path_for_bot(sample.photo_upload):
+                response = telegram_bot.group_message(
+                    auth_token=test_credential.auth_token,
+                    group_id=test_credential.group_id,
+                    message=message,
+                    full_file_path=get_images_path_for_bot(sample.photo_upload)
+                )
+            else:
+                response = telegram_bot.group_message(
+                    auth_token=test_credential.auth_token,
+                    group_id=test_credential.group_id,
+                    message=message
+                )
+            celery_logger.info(f"response {response} successfully.")
 
             if "error" in response:
                 raise Exception(f"Failed to send message: {response['error']}")

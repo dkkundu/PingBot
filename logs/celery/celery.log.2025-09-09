@@ -1,0 +1,143 @@
+2025-09-09 12:30:01 [INFO] [CeleryWorker] Final photo path: None, Type: <class 'NoneType'>
+2025-09-09 12:30:01 [INFO] [CeleryWorker] Sending test message for sample Please Update Your Logs with photo: None
+2025-09-09 12:30:01 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Failed to send message: Invalid JSON response
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 242, in send_test_alert_task
+    raise Exception(f"Failed to send message: {response['error']}")
+Exception: Failed to send message: Invalid JSON response
+2025-09-09 12:31:27 [INFO] [CeleryWorker] Final photo path: None, Type: <class 'NoneType'>
+2025-09-09 12:31:27 [INFO] [CeleryWorker] Sending test message for sample Please Update Your Logs with photo: None
+2025-09-09 12:31:28 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 12:32:43 [INFO] [CeleryWorker] Dispatching alert from log 2 for sample 1
+2025-09-09 12:32:43 [INFO] [CeleryWorker] send_alert_task received for sample 1, log 2
+2025-09-09 12:32:43 [INFO] [CeleryWorker] Sending message for alert 1 to -1002127724015 with photo: /mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg
+2025-09-09 12:32:44 [INFO] [CeleryWorker] Alert 1 processed successfully.
+2025-09-09 12:32:46 [INFO] [CeleryWorker] Final photo path: /mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 12:32:46 [INFO] [CeleryWorker] Sending test message for sample Please Update Your Logs with photo: /mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg
+2025-09-09 12:32:46 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 12:35:37 [INFO] [CeleryWorker] Final photo path: /mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 12:35:37 [INFO] [CeleryWorker] Sending test message for sample Please Update Your Logs with photo: /mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg
+2025-09-09 12:35:38 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 12:35:59 [INFO] [CeleryWorker] Final photo path: /mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 12:35:59 [INFO] [CeleryWorker] Sending test message for sample Please Update Your Logs with photo: /mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg
+2025-09-09 12:36:00 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 12:38:26 [INFO] [CeleryWorker] Final photo path: /mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 12:38:26 [INFO] [CeleryWorker] Sending test message for sample Please Update Your Logs with photo: /mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg
+2025-09-09 12:38:26 [INFO] [CeleryWorker] Error reading file: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+2025-09-09 12:38:26 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 14:12:54 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 14:12:54 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Failed to send message: Invalid JSON response
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 248, in send_test_alert_task
+    raise Exception(f"Failed to send message: {response['error']}")
+Exception: Failed to send message: Invalid JSON response
+2025-09-09 14:13:09 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 14:13:09 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Failed to send message: Invalid JSON response
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 248, in send_test_alert_task
+    raise Exception(f"Failed to send message: {response['error']}")
+Exception: Failed to send message: Invalid JSON response
+2025-09-09 14:15:04 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 14:15:04 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Failed to send message: Invalid JSON response
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 248, in send_test_alert_task
+    raise Exception(f"Failed to send message: {response['error']}")
+Exception: Failed to send message: Invalid JSON response
+2025-09-09 14:15:20 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 14:15:20 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Failed to send message: Invalid JSON response
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 248, in send_test_alert_task
+    raise Exception(f"Failed to send message: {response['error']}")
+Exception: Failed to send message: Invalid JSON response
+2025-09-09 14:15:46 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 14:15:46 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 14:16:04 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 14:16:04 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 14:16:50 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 14:16:51 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 16:41:04 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 16:41:05 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 16:41:33 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 16:41:33 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 16:44:17 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 16:44:18 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 16:46:41 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 16:46:41 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 16:47:45 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 16:47:45 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 16:48:00 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 16:48:00 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 16:49:43 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 16:49:44 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 16:51:25 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 16:51:25 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 16:53:06 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 16:53:07 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 16:53:27 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 16:53:28 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 16:55:21 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 16:55:21 [ERROR] [CeleryWorker] Error sending test alert for sample 1: 'str' object has no attribute 'url'
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 240, in send_test_alert_task
+    image_path_name_with_folder = sample.photo_upload.url if sample.photo_upload else None
+AttributeError: 'str' object has no attribute 'url'
+2025-09-09 17:13:13 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 17:13:13 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Unable to build URLs outside an active request without 'SERVER_NAME' configured. Also configure 'APPLICATION_ROOT' and 'PREFERRED_URL_SCHEME' as needed.
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 241, in send_test_alert_task
+    image_path_name_with_folder = url_for('uploaded_file', filename=sample.photo_upload, _external=True)
+  File "/mnt/backup/projects/PingBot/venv/lib/python3.10/site-packages/flask/helpers.py", line 225, in url_for
+    return current_app.url_for(
+  File "/mnt/backup/projects/PingBot/venv/lib/python3.10/site-packages/flask/app.py", line 1666, in url_for
+    raise RuntimeError(
+RuntimeError: Unable to build URLs outside an active request without 'SERVER_NAME' configured. Also configure 'APPLICATION_ROOT' and 'PREFERRED_URL_SCHEME' as needed.
+2025-09-09 17:22:58 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 17:22:58 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Unable to build URLs outside an active request without 'SERVER_NAME' configured. Also configure 'APPLICATION_ROOT' and 'PREFERRED_URL_SCHEME' as needed.
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 241, in send_test_alert_task
+    image_path_name_with_folder = url_for('uploaded_file', filename=sample.photo_upload, _external=True)
+  File "/mnt/backup/projects/PingBot/venv/lib/python3.10/site-packages/flask/helpers.py", line 225, in url_for
+    return current_app.url_for(
+  File "/mnt/backup/projects/PingBot/venv/lib/python3.10/site-packages/flask/app.py", line 1666, in url_for
+    raise RuntimeError(
+RuntimeError: Unable to build URLs outside an active request without 'SERVER_NAME' configured. Also configure 'APPLICATION_ROOT' and 'PREFERRED_URL_SCHEME' as needed.
+2025-09-09 17:36:37 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 17:36:37 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Unable to build URLs outside an active request without 'SERVER_NAME' configured. Also configure 'APPLICATION_ROOT' and 'PREFERRED_URL_SCHEME' as needed.
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 242, in send_test_alert_task
+    image_path_name_with_folder = url_for('uploaded_file', filename=sample.photo_upload, _external=True)
+  File "/mnt/backup/projects/PingBot/venv/lib/python3.10/site-packages/flask/helpers.py", line 225, in url_for
+    return current_app.url_for(
+  File "/mnt/backup/projects/PingBot/venv/lib/python3.10/site-packages/flask/app.py", line 1666, in url_for
+    raise RuntimeError(
+RuntimeError: Unable to build URLs outside an active request without 'SERVER_NAME' configured. Also configure 'APPLICATION_ROOT' and 'PREFERRED_URL_SCHEME' as needed.
+2025-09-09 17:38:04 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 17:38:04 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Unable to build URLs outside an active request without 'SERVER_NAME' configured. Also configure 'APPLICATION_ROOT' and 'PREFERRED_URL_SCHEME' as needed.
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 242, in send_test_alert_task
+    image_path_name_with_folder = url_for('uploaded_file', filename=sample.photo_upload, _external=True)
+  File "/mnt/backup/projects/PingBot/venv/lib/python3.10/site-packages/flask/helpers.py", line 225, in url_for
+    return current_app.url_for(
+  File "/mnt/backup/projects/PingBot/venv/lib/python3.10/site-packages/flask/app.py", line 1666, in url_for
+    raise RuntimeError(
+RuntimeError: Unable to build URLs outside an active request without 'SERVER_NAME' configured. Also configure 'APPLICATION_ROOT' and 'PREFERRED_URL_SCHEME' as needed.
+2025-09-09 17:39:38 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads//mnt/backup/projects/PingBot/app/../media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 17:39:39 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 17:42:22 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 17:42:22 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 17:44:39 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 17:44:40 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 17:45:58 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 17:45:58 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 17:52:13 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 17:52:13 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 17:53:23 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:8003/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 17:53:24 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 17:55:58 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:8003/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 17:55:59 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 17:56:12 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:8003/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 17:56:13 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 18:15:43 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:8003/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 18:15:43 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-09 18:16:07 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:8003/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-09 18:16:07 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
