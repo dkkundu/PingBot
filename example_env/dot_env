@@ -38,7 +38,8 @@ IMAGE_DIR=/app/media
 BOT_GROUP_API=https://a24fca455f8f.ngrok-free.app/send-message-group
 BOT_PRIVATE_API=YOUR_BOT_PRIVATE_API
 
-MEDIA_BASE_URL=http://192.168.68.176:5001
+# MEDIA_BASE_URL=http://192.168.68.176:5001
+MEDIA_BASE_URL=https://7f5ab9f7a7cf.ngrok-free.app
 
 
 DOCKER_FULL_SUBNET=172.25.0.0/16
