@@ -1,0 +1,9 @@
+2025-09-16 15:39:02 [INFO] [CeleryWorker] Final photo path: None, Type: <class 'NoneType'>
+2025-09-16 15:39:02 [INFO] [CeleryWorker] response {'task_id': '276abb50-4476-46e7-862b-dc21bf48f01d'} successfully.
+2025-09-16 15:39:02 [INFO] [CeleryWorker] Test alert for sample SADSADSAD  processed successfully.
+2025-09-16 15:47:22 [INFO] [CeleryWorker] Final photo path: None, Type: <class 'NoneType'>
+2025-09-16 15:47:22 [INFO] [CeleryWorker] response {'task_id': 'bbdd8313-5f07-43f0-bdfe-18a8c100e779'} successfully.
+2025-09-16 15:47:22 [INFO] [CeleryWorker] Test alert for sample SADSADSAD  processed successfully.
+2025-09-16 15:48:37 [INFO] [CeleryWorker] Final photo path: None, Type: <class 'NoneType'>
+2025-09-16 15:48:37 [INFO] [CeleryWorker] response {'task_id': '7f99b390-95d5-4624-95e0-ffcd5ace9837'} successfully.
+2025-09-16 15:48:37 [INFO] [CeleryWorker] Test alert for sample SADSADSAD  processed successfully.

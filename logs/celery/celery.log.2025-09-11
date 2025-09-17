@@ -1,0 +1,59 @@
+2025-09-11 18:47:36 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:8003/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-11 18:47:36 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Failed to send message: Invalid JSON response
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 249, in send_test_alert_task
+    raise Exception(f"Failed to send message: {response['error']}")
+Exception: Failed to send message: Invalid JSON response
+2025-09-11 18:48:31 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:8003/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-11 18:48:32 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Failed to send message: Invalid JSON response
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 249, in send_test_alert_task
+    raise Exception(f"Failed to send message: {response['error']}")
+Exception: Failed to send message: Invalid JSON response
+2025-09-11 18:50:16 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:8003/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-11 18:50:16 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Failed to send message: Invalid JSON response
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 249, in send_test_alert_task
+    raise Exception(f"Failed to send message: {response['error']}")
+Exception: Failed to send message: Invalid JSON response
+2025-09-11 18:51:38 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:8003/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-11 18:51:39 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Failed to send message: Invalid JSON response
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 249, in send_test_alert_task
+    raise Exception(f"Failed to send message: {response['error']}")
+Exception: Failed to send message: Invalid JSON response
+2025-09-11 18:55:16 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-11 18:55:16 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Failed to send message: Invalid JSON response
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 249, in send_test_alert_task
+    raise Exception(f"Failed to send message: {response['error']}")
+Exception: Failed to send message: Invalid JSON response
+2025-09-11 19:07:29 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-11 19:07:29 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Failed to send message: Invalid JSON response
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 249, in send_test_alert_task
+    raise Exception(f"Failed to send message: {response['error']}")
+Exception: Failed to send message: Invalid JSON response
+2025-09-11 19:08:45 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-11 19:08:46 [INFO] [CeleryWorker] response {'ok': False, 'error': 'Invalid JSON response', 'status_code': 404, 'raw': '<!DOCTYPE html>\n<html class="h-full" lang="en-US" dir="ltr">\n  <head>\n    <link rel="preload" href="https://cdn.ngrok.com/static/fonts/euclid-square/EuclidSquare-Regular-WebS.woff" as="font" type="font/woff" crossorigin="anonymous" />\n    <link rel="preload" href="https://cdn.ngrok.com/static/fonts/euclid-square/EuclidSquare-RegularItalic-WebS.woff" as="font" type="font/woff" crossorigin="anonymous" />\n    <link rel="preload" href="https://cdn.ngrok.com/static/fonts/euclid-square/EuclidSquare-Medium-WebS.woff" as="font" type="font/woff" crossorigin="anonymous" />\n    <link rel="preload" href="https://cdn.ngrok.com/static/fonts/euclid-square/EuclidSquare-Semibold-WebS.woff" as="font" type="font/woff" crossorigin="anonymous" />\n    <link rel="preload" href="https://cdn.ngrok.com/static/fonts/euclid-square/EuclidSquare-MediumItalic-WebS.woff" as="font" type="font/woff" crossorigin="anonymous" />\n    <link rel="preload" href="https://cdn.ngrok.com/static/fonts/ibm-plex-mono/IBMPlexMono-Text.woff" as="font" type="font/woff" crossorigin="anonymous" />\n    <link rel="preload" href="https://cdn.ngrok.com/static/fonts/ibm-plex-mono/IBMPlexMono-TextItalic.woff" as="font" type="font/woff" crossorigin="anonymous" />\n    <link rel="preload" href="https://cdn.ngrok.com/static/fonts/ibm-plex-mono/IBMPlexMono-SemiBold.woff" as="font" type="font/woff" crossorigin="anonymous" />\n    <link rel="preload" href="https://cdn.ngrok.com/static/fonts/ibm-plex-mono/IBMPlexMono-SemiBoldItalic.woff" as="font" type="font/woff" crossorigin="anonymous" />\n    <meta charset="utf-8">\n    <meta name="author" content="ngrok">\n    <meta name="description" content="ngrok is the fastest way to put anything on the internet with a single command.">\n    <meta name="robots" content="noindex, nofollow">\n    <meta name="viewport" content="width=device-width, initial-scale=1">\n    <link id="style" rel="stylesheet" href="https://cdn.ngrok.com/static/css/error.css">\n    <noscript>The endpoint 0131d75c8e71.ngrok-free.app is offline. (ERR_NGROK_3200)</noscript>\n    <script id="script" src="https://cdn.ngrok.com/static/js/error.js" type="text/javascript"></script>\n  </head>\n  <body class="h-full" id="ngrok">\n    <div id="root" data-payload="eyJjZG5CYXNlIjoiaHR0cHM6Ly9jZG4ubmdyb2suY29tLyIsImNvZGUiOiIzMjAwIiwibWVzc2FnZSI6IlRoZSBlbmRwb2ludCAwMTMxZDc1YzhlNzEubmdyb2stZnJlZS5hcHAgaXMgb2ZmbGluZS4iLCJ0aXRsZSI6Ik5vdCBGb3VuZCJ9"></div>\n  </body>\n</html>\n'} successfully.
+2025-09-11 19:08:46 [ERROR] [CeleryWorker] Error sending test alert for sample 1: Failed to send message: Invalid JSON response
+Traceback (most recent call last):
+  File "/mnt/backup/projects/PingBot/app/notification_sender/tasks.py", line 250, in send_test_alert_task
+    raise Exception(f"Failed to send message: {response['error']}")
+Exception: Failed to send message: Invalid JSON response
+2025-09-11 19:10:07 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-11 19:10:08 [INFO] [CeleryWorker] response {'task_id': '4b7ef2e5-de15-49c3-85d4-0ae2520dba8d'} successfully.
+2025-09-11 19:10:08 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-11 19:10:28 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads/janakanthadigital_logo.jpeg, Type: <class 'str'>
+2025-09-11 19:10:28 [INFO] [CeleryWorker] response {'task_id': '2894dcc8-22f4-4e56-886a-99bdda3b101c'} successfully.
+2025-09-11 19:10:28 [INFO] [CeleryWorker] Test alert for sample Please Update Your Logs  processed successfully.
+2025-09-11 19:10:50 [INFO] [CeleryWorker] Sample 2 processed and log created successfully by Celery task.
+2025-09-11 19:10:57 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads/None, Type: <class 'str'>
+2025-09-11 19:10:57 [INFO] [CeleryWorker] response {'task_id': '81c8d4ca-5a28-4565-9a00-8507ba7f1694'} successfully.
+2025-09-11 19:10:57 [INFO] [CeleryWorker] Test alert for sample SADSADSAD  processed successfully.
+2025-09-11 19:11:19 [INFO] [CeleryWorker] Final photo path: http://192.168.68.176:5001/media/uploads/None, Type: <class 'str'>
+2025-09-11 19:11:19 [INFO] [CeleryWorker] response {'task_id': '24f5b889-f04d-4cfb-888f-a162d03dad6d'} successfully.
+2025-09-11 19:11:19 [INFO] [CeleryWorker] Test alert for sample SADSADSAD  processed successfully.
+2025-09-11 19:14:19 [INFO] [CeleryWorker] Final photo path: None, Type: <class 'NoneType'>
+2025-09-11 19:14:20 [INFO] [CeleryWorker] response {'task_id': '81a24889-8f56-4bfe-9d5f-60fe681b57c7'} successfully.
+2025-09-11 19:14:20 [INFO] [CeleryWorker] Test alert for sample SADSADSAD  processed successfully.
