@@ -21,8 +21,16 @@ telegram_bot = TelegramBot()
 
 def get_images_path_for_bot(image_path_name_with_folder):
     media_base_url = os.getenv("MEDIA_BASE_URL")
+    celery_logger.info(f"MEDIA_BASE_URL retrieved: {media_base_url}")
     if image_path_name_with_folder:
         return f"{media_base_url}/media/uploads/{image_path_name_with_folder}"
+    else:
+        return None
+
+def get_documents_path_for_bot(document_path_name_with_folder):
+    media_base_url = os.getenv("MEDIA_BASE_URL")
+    if document_path_name_with_folder:
+        return f"{media_base_url}/media/uploads/{document_path_name_with_folder}"
     else:
         return None
 
@@ -93,15 +101,22 @@ def send_alert_task(self, sample_id, log_id=None):
             # otherwise it will send a text message.
             
             # Check if photo exists and is valid
-            final_photo_path = photo_path if (photo_path and os.path.exists(photo_path)) else None
+            # We don't need to check os.path.exists here, as get_images_path_for_bot will construct the URL
+            # based on the filename stored in sample.photo_upload
             
-            celery_logger.info(f"Sending message for alert {sample.id} to {target_chat_id} with photo: {final_photo_path}")
+            image_filename = sample.photo_upload if sample.photo_upload else None
+            celery_logger.debug(f"DEBUG: sample.photo_upload before URL construction: {image_filename}") # ADD THIS LINE
+            
+            # Convert local photo filename to URL for the bot
+            image_url_for_bot = get_images_path_for_bot(image_filename) if image_filename else None
+
+            celery_logger.info(f"Sending message for alert {sample.id} to {target_chat_id} with photo: {image_url_for_bot}")
 
             response = telegram_bot.group_message(
                 auth_token=config.auth_token,
                 group_id=target_chat_id, # group_message will parse thread_id from this if present
                 message=message,
-                images_path=final_photo_path
+                images_path=image_url_for_bot # Pass the URL here
             )
 
             if "error" in response:
@@ -130,8 +145,55 @@ def send_alert_task(self, sample_id, log_id=None):
 
             # Handle recurring alerts
             if sample.is_recurring and sample.recurrence_interval:
-                # ... (existing recurrence logic can be pasted here if needed) ...
-                pass
+                # Find the last scheduled/sent datetime for this sample
+                last_log = AlertLog.query.filter_by(sample_id=sample.id, status="sent").order_by(AlertLog.sent_at.desc()).first()
+                if last_log and last_log.scheduled_for:
+                    # Use the scheduled_for of the last sent log as the base for the next calculation
+                    base_datetime = last_log.scheduled_for
+                else:
+                    # If no previous sent log, use the sample's start_datetime
+                    base_datetime = datetime.combine(sample.start_date, sample.start_time).replace(tzinfo=pytz.utc)
+
+                next_scheduled_for = None
+                if sample.recurrence_interval == "daily":
+                    next_scheduled_for = base_datetime + timedelta(days=1)
+                elif sample.recurrence_interval == "weekly":
+                    next_scheduled_for = base_datetime + timedelta(weeks=1)
+                elif sample.recurrence_interval == "monthly":
+                    # This is more complex. Need to handle month-end dates.
+                    # Add one month, then adjust day if necessary.
+                    year = base_datetime.year
+                    month = base_datetime.month + 1
+                    if month > 12:
+                        month = 1
+                        year += 1
+                    
+                    day = base_datetime.day
+                    # Get the last day of the next month
+                    # This calculation needs to be robust for month boundaries
+                    try:
+                        next_scheduled_for = datetime(year, month, day, base_datetime.hour, base_datetime.minute, base_datetime.second, tzinfo=pytz.utc)
+                    except ValueError: # Day out of range for month
+                        # Set to the last day of the next month
+                        last_day_of_next_month = (datetime(year, month + 1, 1, tzinfo=pytz.utc) - timedelta(days=1)).day if month < 12 else (datetime(year + 1, 1, 1, tzinfo=pytz.utc) - timedelta(days=1)).day
+                        next_scheduled_for = datetime(year, month, last_day_of_next_month, base_datetime.hour, base_datetime.minute, base_datetime.second, tzinfo=pytz.utc)
+                
+                if next_scheduled_for and (not sample.end_date or next_scheduled_for.date() <= sample.end_date):
+                    # Create a new log entry for the next recurrence
+                    new_log = AlertLog(
+                        sample_id=sample.id,
+                        service_id=sample.service_id,
+                        config_id=sample.config_id,
+                        sender_id=sample.user_id,
+                        sender_name=sample.sender_name,
+                        target_user_id=sample.user_id,
+                        audience="all", # Assuming recurring alerts are always for "all"
+                        status="queued",
+                        scheduled_for=next_scheduled_for,
+                        queued_at=datetime.now(pytz.utc)
+                    )
+                    db.session.add(new_log)
+                    celery_logger.info(f"Scheduled next recurrence for sample {sample.id} at {next_scheduled_for}")
 
             db.session.commit()
             celery_logger.info(f"Alert {sample.id} processed successfully.")
@@ -210,6 +272,67 @@ def check_scheduled_alerts():
     except Exception as e:
         scheduled_alerts_logger.exception(f"Error in check_scheduled_alerts task: {e}")
 
+
+
+# @celery.task(bind=True, max_retries=3)
+# def send_test_alert_task(self, sample_id, test_credential_id):
+#     """
+#     Celery task to send a test alert.
+#     """
+#     from app.app import create_app
+#     app = create_app()
+#     with app.app_context():
+#         sample = AlertSample.query.get(sample_id)
+#         test_message_logger.info(f"image_path_name_with_folder: {get_images_path_for_bot(sample.photo_upload)} ---------------")
+#         test_credential = TestCredentials.query.get(test_credential_id)
+
+#         if not sample:
+#             test_message_logger.error("Test message failed: Sample not found")
+#             return "Sample not found"
+
+#         if not test_credential:
+#             test_message_logger.error("Test message failed: Test Credential not found.")
+#             return "Test Credential not found"
+
+#         try:
+#             message = get_messages(sample)
+
+#             # Get the public URL for the photo
+#             photo_url = get_images_path_for_bot(sample.photo_upload) if sample.photo_upload else None
+
+#             response = telegram_bot.group_message(
+#                 auth_token=test_credential.auth_token,
+#                 group_id=test_credential.group_id,
+#                 message=message,
+#                 image_url=photo_url  # ✅ send photo here
+#             )
+
+#             celery_logger.info(f"Telegram API response: {response}")
+
+#             if "error" in response:
+#                 raise Exception(f"Failed to send message: {response['error']}")
+
+#             celery_logger.info(f"Test alert for sample {sample.title} processed successfully.")
+#             test_message_logger.info(
+#                 f"Test message for sample {sample.title} sent successfully to chat_id: {test_credential.group_id}."
+#             )
+#             return f"Test alert for sample {sample.title} sent"
+
+#         except Exception as exc:
+#             redacted_error_message = redact_token(
+#                 f"Error sending test alert for sample {sample_id}: {exc}",
+#                 test_credential.auth_token if test_credential else None
+#             )
+#             celery_logger.exception(redacted_error_message)
+#             test_message_logger.error(
+#                 f"Failed to send test message for sample {sample.id} to chat_id: {test_credential.group_id}. "
+#                 f"Error: {redacted_error_message}"
+#             )
+#             # Do not retry test messages
+#             return redacted_error_message
+
+
+
 @celery.task(bind=True, max_retries=3)
 def send_test_alert_task(self, sample_id, test_credential_id):
     """
@@ -271,7 +394,7 @@ def send_test_alert_task(self, sample_id, test_credential_id):
             return redacted_error_message
 
 @celery.task(bind=True)
-def process_sample_creation_task(self, sample_id, photo_filename, document_filename, scheduled_for_utc_str, queued_at_utc_str, sender_id, target_user_id, audience, service_id, config_id, sender_name):
+def process_sample_creation_task(self, sample_id, scheduled_for_utc_str, queued_at_utc_str, sender_id, target_user_id, audience, service_id, config_id, sender_name):
     """
     Celery task to handle file uploads and AlertLog creation for a new sample.
     """
@@ -284,15 +407,7 @@ def process_sample_creation_task(self, sample_id, photo_filename, document_filen
                 celery_logger.error(f"Sample {sample_id} not found in process_sample_creation_task.")
                 return "Sample not found"
 
-            # Update sample with photo filename
-            if photo_filename:
-                sample.photo_upload = photo_filename
-
-            # Update sample with document filename
-            if document_filename:
-                sample.document_upload = document_filename
-            
-            # Update sample with filenames and commit
+            # Commit the sample changes (photo/document uploads are handled before task dispatch)
             db.session.add(sample)
             db.session.commit()
 

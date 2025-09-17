@@ -132,19 +132,27 @@
                     <label for="photo_upload" class="block text-gray-700 font-semibold mb-2">Attach Photo (Optional)</label>
                     <input type="file" name="photo_upload" id="photo_upload" accept="image/*"
                            class="w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"/>
-                    {% if sample.photo_upload %}
-                        <p class="mt-2 text-sm text-gray-500">Current photo: <span class="font-medium text-gray-700">{{ sample.photo_upload }}</span></p>
-                        <p class="text-xs text-gray-500">(Uploading a new photo will replace it)</p>
-                    {% endif %}
+                    <div id="photo-display" style="margin-top: 5px;">
+                        {% if sample.photo_upload %}
+                            Current photo: <span class="font-medium text-gray-700">{{ sample.photo_upload }}</span>
+                            <button type="button" class="btn btn-sm btn-danger ml-2" id="remove-existing-photo" style="background-color: #dc3545; color: white; border-color: #dc3545;">Remove Existing</button>
+                            <input type="hidden" name="remove_photo_existing" id="remove-photo-existing-input" value="0">
+                        {% endif %}
+                    </div>
+                    <button type="button" class="btn btn-sm btn-danger mt-2" id="remove-photo" style="display: none; background-color: #dc3545; color: white; border-color: #dc3545;">Remove Photo</button>
                 </div>
                 <div>
                     <label for="document_upload" class="block text-gray-700 font-semibold mb-2">Attach Document (Optional)</label>
                     <input type="file" name="document_upload" id="document_upload"
                            class="w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"/>
-                    {% if sample.document_upload %}
-                        <p class="mt-2 text-sm text-gray-500">Current document: <span class="font-medium text-gray-700">{{ sample.document_upload }}</span></p>
-                        <p class="text-xs text-gray-500">(Uploading a new document will replace it)</p>
-                    {% endif %}
+                    <div id="document-display" style="margin-top: 5px;">
+                        {% if sample.document_upload %}
+                            Current document: <span class="font-medium text-gray-700">{{ sample.document_upload }}</span>
+                            <button type="button" class="btn btn-sm btn-danger ml-2" id="remove-existing-document" style="background-color: #dc3545; color: white; border-color: #dc3545;">Remove Existing</button>
+                            <input type="hidden" name="remove_document_existing" id="remove-document-existing-input" value="0">
+                        {% endif %}
+                    </div>
+                    <button type="button" class="btn btn-sm btn-danger mt-2" id="remove-document" style="display: none; background-color: #dc3545; color: white; border-color: #dc3545;">Remove Document</button>
                 </div>
             </div>
 
@@ -161,6 +169,68 @@
             </div>
 
         </form>
+
+<script>
+    function setupFileInput(inputId, displayId, removeBtnId, existingFileName, removeExistingBtnId, removeExistingInputId) {
+        const input = document.getElementById(inputId);
+        const display = document.getElementById(displayId);
+        const removeBtn = document.getElementById(removeBtnId);
+        const removeExistingBtn = document.getElementById(removeExistingBtnId);
+        const removeExistingInput = document.getElementById(removeExistingInputId);
+
+        // Apply enhanced styling to new file remove button
+        removeBtn.classList.add('px-4', 'py-2', 'rounded-full', 'transition', 'duration-150', 'ease-in-out', 'hover:bg-red-700');
+        // Apply enhanced styling to existing file remove button if it exists
+        if (removeExistingBtn) {
+            removeExistingBtn.classList.add('px-4', 'py-2', 'rounded-full', 'transition', 'duration-150', 'ease-in-out', 'hover:bg-red-700');
+        }
+
+        // Initial display for existing files
+        if (existingFileName) {
+            if (removeExistingBtn) {
+                removeExistingBtn.style.display = 'inline-block';
+            }
+        }
+
+        input.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                display.innerHTML = 'Selected file: ' + this.files[0].name;
+                removeBtn.style.display = 'block';
+                if (removeExistingBtn) removeExistingBtn.style.display = 'none'; // Hide existing remove if new file selected
+                if (removeExistingInput) removeExistingInput.value = '0'; // Ensure existing is not marked for removal
+            } else {
+                display.innerHTML = existingFileName ? 'Current ' + (inputId.includes('photo') ? 'photo' : 'document') + ': <span class="font-medium text-gray-700">' + existingFileName + '</span>' : '';
+                removeBtn.style.display = 'none';
+                if (removeExistingBtn && existingFileName) removeExistingBtn.style.display = 'inline-block'; // Show existing remove if no new file
+            }
+        });
+
+        removeBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to remove the selected file?')) {
+                input.value = ''; // Clear the file input
+                display.innerHTML = existingFileName ? 'Current ' + (inputId.includes('photo') ? 'photo' : 'document') + ': <span class="font-medium text-gray-700">' + existingFileName + '</span>' : '';
+                removeBtn.style.display = 'none'; // Hide the remove button
+                if (removeExistingBtn && existingFileName) removeExistingBtn.style.display = 'inline-block'; // Show existing remove if no new file
+                if (removeExistingInput) removeExistingInput.value = '0'; // Ensure existing is not marked for removal
+            }
+        });
+
+        if (removeExistingBtn) {
+            removeExistingBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to remove the existing ' + (inputId.includes('photo') ? 'photo' : 'document') + '?')) {
+                    display.innerHTML = ''; // Clear display
+                    removeExistingBtn.style.display = 'none'; // Hide remove existing button
+                    if (removeExistingInput) removeExistingInput.value = '1'; // Mark for removal
+                    input.value = ''; // Clear any newly selected file
+                    removeBtn.style.display = 'none'; // Hide new file remove button
+                }
+            });
+        }
+    }
+
+    setupFileInput('photo_upload', 'photo-display', 'remove-photo', '{{ sample.photo_upload or "" }}', 'remove-existing-photo', 'remove-photo-existing-input');
+    setupFileInput('document_upload', 'document-display', 'remove-document', '{{ sample.document_upload or "" }}', 'remove-existing-document', 'remove-document-existing-input');
+</script>
     </div>
 </div>
 

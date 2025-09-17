@@ -226,15 +226,14 @@ class TelegramBot:
             "group_id": group_id,
             "message": message
         }
-        if images_path:
-            payload['file_path'] = file_path
-        if images_path:
-            payload['file_path'] = images_path
         if thread_id:
             payload['thread_id'] = thread_id
 
-        if full_file_path:
-            payload['full_file_path'] = full_file_path
+        # Use a consistent key for image URLs
+        if images_path: # This comes from send_alert_task
+            payload['image_url'] = images_path
+        elif full_file_path: # This comes from send_test_alert_task
+            payload['image_url'] = full_file_path
 
         headers = {"Content-Type": "application/json"}
 
