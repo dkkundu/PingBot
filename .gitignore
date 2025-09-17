@@ -5,7 +5,8 @@ __pycache__/
 *$py.class
 # Ignore uploaded files
 media/uploads/
-
+logs/
+*.log
 # C extensions
 *.so
 
