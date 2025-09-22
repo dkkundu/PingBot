@@ -2,8 +2,23 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
 
-LOG_DIR = os.path.join(os.path.dirname(__file__), "..", "logs")
-os.makedirs(LOG_DIR, exist_ok=True)
+LOGS_DIR = os.getenv('LOG_DIR_HOST', 'logs')
+os.makedirs(LOGS_DIR, exist_ok=True)
+
+
+if not os.path.exists(f'{LOGS_DIR}/app'):
+    os.makedirs(f'{LOGS_DIR}/app')
+
+if not os.path.exists(f'{LOGS_DIR}/celery'):
+    os.makedirs(f'{LOGS_DIR}/celery')
+
+if not os.path.exists(f'{LOGS_DIR}/bot'):
+    os.makedirs(f'{LOGS_DIR}/bot')
+
+if not os.path.exists(f'{LOGS_DIR}/alerts'):
+    os.makedirs(f'{LOGS_DIR}/alerts')
+
+
 
 def setup_logger(name, log_file, level=logging.INFO):
     """Function to setup a single logger with daily rotation"""
@@ -12,7 +27,7 @@ def setup_logger(name, log_file, level=logging.INFO):
 
     # File handler with daily rotation
     file_handler = TimedRotatingFileHandler(
-        os.path.join(LOG_DIR, log_file),
+        os.path.join(LOGS_DIR, log_file),
         when="midnight",     # rotate at midnight
         interval=1,          # every 1 day
         backupCount=7,       # keep last 7 days
@@ -40,8 +55,8 @@ def setup_logger(name, log_file, level=logging.INFO):
     return logger
 
 # Initialize separate loggers
-flask_logger = setup_logger("FlaskApp", "app.log")
-celery_logger = setup_logger("CeleryWorker", "celery.log")
-telegram_logger = setup_logger("TelegramBot", "bot.log")
-test_message_logger = setup_logger("TestMessages", "text_bot.log")
-scheduled_alerts_logger = setup_logger("ScheduledAlerts", "scheduled_alerts.log")
+flask_logger = setup_logger("FlaskApp", "app/app.log")
+celery_logger = setup_logger("CeleryWorker", "celery/celery.log", level=logging.DEBUG)
+telegram_logger = setup_logger("TelegramBot", "bot/bot.log", level=logging.DEBUG)
+test_message_logger = setup_logger("TestMessages", "bot/text_bot.log")
+scheduled_alerts_logger = setup_logger("ScheduledAlerts", "alerts/scheduled_alerts.log")

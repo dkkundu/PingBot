@@ -135,11 +135,15 @@
                 <label for="photo_upload" class="block text-gray-700 font-semibold mb-2">Attach Photo (Optional)</label>
                 <input type="file" name="photo_upload" id="photo_upload" accept="image/*"
                        class="w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"/>
+                <div id="photo-display" style="margin-top: 5px;"></div>
+                <button type="button" class="btn btn-sm btn-danger mt-2" id="remove-photo" style="display: none; background-color: #dc3545; color: white; border-color: #dc3545;">Remove Photo</button>
             </div>
             <div>
                 <label for="document_upload" class="block text-gray-700 font-semibold mb-2">Attach Document (Optional)</label>
                 <input type="file" name="document_upload" id="document_upload"
                        class="w-full text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"/>
+                <div id="document-display" style="margin-top: 5px;"></div>
+                <button type="button" class="btn btn-sm btn-danger mt-2" id="remove-document" style="display: none; background-color: #dc3545; color: white; border-color: #dc3545;">Remove Document</button>
             </div>
         </div>
 
@@ -156,6 +160,38 @@
         </div>
 
     </form>
+
+<script>
+    function setupFileInput(inputId, displayId, removeBtnId) {
+        const input = document.getElementById(inputId);
+        const display = document.getElementById(displayId);
+        const removeBtn = document.getElementById(removeBtnId);
+
+        // Apply enhanced styling
+        removeBtn.classList.add('px-4', 'py-2', 'rounded-full', 'transition', 'duration-150', 'ease-in-out', 'hover:bg-red-700');
+
+        input.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                display.textContent = 'Selected file: ' + this.files[0].name;
+                removeBtn.style.display = 'block';
+            } else {
+                display.textContent = '';
+                removeBtn.style.display = 'none';
+            }
+        });
+
+        removeBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to remove the selected file?')) {
+                input.value = ''; // Clear the file input
+                display.textContent = ''; // Clear the display
+                removeBtn.style.display = 'none'; // Hide the remove button
+            }
+        });
+    }
+
+    setupFileInput('photo_upload', 'photo-display', 'remove-photo');
+    setupFileInput('document_upload', 'document-display', 'remove-document');
+</script>
 </div>
 </div>
 

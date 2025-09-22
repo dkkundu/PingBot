@@ -347,7 +347,8 @@ def create_sample():
                 device_type_id=int(request.form.get('device_type_id')) if request.form.get('device_type_id') else None,
                 title=request.form['title'],
                 body=request.form.get('body'),
-                # photo_upload and document_upload will be set by the Celery task
+                photo_upload=photo_filename,
+                document_upload=document_filename,
                 start_date=start_datetime.astimezone(pytz.utc).date() if start_datetime else None,
                 start_time=start_datetime.astimezone(pytz.utc).time() if start_datetime else None,
                 end_date=end_date,
@@ -369,8 +370,6 @@ def create_sample():
                 try:
                     process_sample_creation_task.delay(
                         new_sample.id,
-                        photo_filename,
-                        document_filename,
                         start_datetime.astimezone(pytz.utc).isoformat() if start_datetime else None,
                         datetime.now(pytz.utc).isoformat(),
                         current_user_id_for_task,
@@ -426,6 +425,26 @@ def edit_sample(id):
         # Handle photo and document uploads
         photo_file = request.files.get('photo_upload')
         document_file = request.files.get('document_upload')
+
+        # Handle removal of existing photo
+        remove_photo_existing = request.form.get('remove_photo_existing')
+        if remove_photo_existing == '1' and sample.photo_upload:
+            try:
+                os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], sample.photo_upload))
+                sample.photo_upload = None
+                logger.info(f"Existing photo {sample.photo_upload} removed.")
+            except OSError as e:
+                logger.error(f"Error removing existing photo {sample.photo_upload}: {e}")
+
+        # Handle removal of existing document
+        remove_document_existing = request.form.get('remove_document_existing')
+        if remove_document_existing == '1' and sample.document_upload:
+            try:
+                os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], sample.document_upload))
+                sample.document_upload = None
+                logger.info(f"Existing document {sample.document_upload} removed.")
+            except OSError as e:
+                logger.error(f"Error removing existing document {sample.document_upload}: {e}")
 
         logger.info(f"Edit Sample - Photo file received: {bool(photo_file)} - Filename: {photo_file.filename if photo_file else 'N/A'}")
         logger.info(f"Edit Sample - Document file received: {bool(document_file)} - Filename: {document_file.filename if document_file else 'N/A'}")
